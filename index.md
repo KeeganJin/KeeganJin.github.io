@@ -5,8 +5,6 @@ title: 首页
 
 <section class="intro">
   <h1>你好，我是 Keegan。</h1>
-  <p>{{ site.description }}</p>
-  <p>这个站点以 Markdown 写作为核心，记录技术、生活和长期项目。</p>
 </section>
 
 ## 最新文章
