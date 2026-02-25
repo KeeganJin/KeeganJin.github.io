@@ -1,3 +1,5 @@
+theme: jekyll-theme-cayman
+
 title: KeeganJin Blog
 description: 用 Markdown 记录日常、技术和思考
 url: "https://keeganjin.github.io"
