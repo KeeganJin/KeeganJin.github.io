@@ -1,0 +1,67 @@
+{
+  "modules": [
+    {
+      "name": "技术",
+      "slug": "tech",
+      "submodules": [
+        {
+          "name": "前端",
+          "slug": "frontend",
+          "template": "tech-frontend.md"
+        },
+        {
+          "name": "后端",
+          "slug": "backend",
+          "template": "tech-backend.md"
+        },
+        {
+          "name": "移动开发",
+          "slug": "mobile",
+          "template": "tech-mobile.md"
+        },
+        {
+          "name": "DevOps",
+          "slug": "devops",
+          "template": "tech-devops.md"
+        }
+      ]
+    },
+    {
+      "name": "生活",
+      "slug": "life",
+      "submodules": [
+        {
+          "name": "日常",
+          "slug": "daily",
+          "template": "life-daily.md"
+        },
+        {
+          "name": "旅行",
+          "slug": "travel",
+          "template": "life-travel.md"
+        },
+        {
+          "name": "读书",
+          "slug": "reading",
+          "template": "life-reading.md"
+        }
+      ]
+    },
+    {
+      "name": "项目",
+      "slug": "project",
+      "submodules": [
+        {
+          "name": "个人项目",
+          "slug": "personal",
+          "template": "project-personal.md"
+        },
+        {
+          "name": "团队项目",
+          "slug": "team",
+          "template": "project-team.md"
+        }
+      ]
+    }
+  ]
+}
