@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Recurse -Depth 2 \"E:\\\\Projects\\\\KeeganJin.github.io\\\\jinsblog\")",
+      "Bash(Select-Object FullName)",
+      "Bash(cp *)",
+      "Bash(npx hexo *)",
+      "Bash(curl -s http://localhost:4000/)",
+      "Bash(curl -s http://localhost:4000/2026/05/10/zh-CN/技术文档/机器学习/树模型/)",
+      "Bash(curl -s http://localhost:4000/products/)",
+      "Bash(curl -s http://localhost:4000/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/)",
+      "Bash(curl -s \"http://localhost:4000/2026/05/08/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/\")",
+      "Bash(curl -s \"http://localhost:4000/2026/05/10/en/tech-docs/machine-learning/tree-models/\")",
+      "Bash(node -e \"try { require.resolve\\('hexo-generator-feed'\\); console.log\\('installed'\\); } catch\\(e\\) { console.log\\('not installed'\\); }\")",
+      "Bash(curl -s http://localhost:4000/search.json)"
+    ]
+  }
+}

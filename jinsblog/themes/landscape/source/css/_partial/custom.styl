@@ -1,0 +1,206 @@
+// === Dropdown Navigation ===
+#header-inner
+  overflow: visible !important
+
+.dropdown-nav-item
+  position: relative
+  display: inline-block
+
+  .dropdown-toggle
+    cursor: pointer
+    .fa-chevron-down
+      font-size: 0.7em
+      margin-left: 4px
+      vertical-align: middle
+
+  .dropdown-menu
+    display: none
+    position: absolute
+    top: 100%
+    left: 0
+    min-width: 160px
+    background: rgba(0, 0, 0, 0.85)
+    border-radius: 0 0 4px 4px
+    padding: 5px 0
+    z-index: 1000
+    list-style: none
+    margin: 0
+
+    li
+      margin: 0
+      padding: 0
+
+    .main-nav-link
+      float: none
+      display: block
+      padding: 10px 20px
+      white-space: nowrap
+      font-size: 0.95em
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1)
+      &:hover
+        background: rgba(255, 255, 255, 0.1)
+
+    li:last-child .main-nav-link
+      border-bottom: none
+
+  &:hover .dropdown-menu,
+  &.open .dropdown-menu
+    display: block
+
+// === Language Switcher ===
+.lang-switch
+  font-size: 0.85em !important
+  width: auto !important
+  padding: 20px 10px !important
+
+#lang-label
+  display: inline-block
+  background: rgba(255, 255, 255, 0.2)
+  border-radius: 3px
+  padding: 2px 8px
+  font-weight: bold
+  letter-spacing: 0.5px
+  font-size: 0.85em
+  &:hover
+    background: rgba(255, 255, 255, 0.35)
+
+// === Category Posts Sidebar ===
+.category-posts-sidebar
+  @extend $block
+  margin: block-margin 0
+  padding: article-padding
+  background: #fff
+  border-radius: 3px
+
+  h3
+    font-size: 1.2em
+    font-weight: bold
+    color: color-default
+    margin-bottom: 15px
+    padding-bottom: 8px
+    border-bottom: 2px solid color-link
+
+.category-posts-list
+  list-style: none
+  margin: 0
+  padding: 0
+
+  li
+    margin: 0
+    padding: 8px 0
+    border-bottom: 1px solid color-border
+    &:last-child
+      border-bottom: none
+
+  a
+    color: color-link
+    text-decoration: none
+    &:hover
+      text-decoration: underline
+
+.category-post-meta
+  color: color-grey
+  font-size: 0.85em
+  margin-left: 6px
+
+// === Local Search Results ===
+#local-search-result
+  position: absolute
+  top: 100%
+  left: 0
+  right: 0
+  background: #fff
+  border-radius: 0 0 4px 4px
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15)
+  max-height: 400px
+  overflow-y: auto
+  z-index: 1000
+  display: none
+  #search-form-wrap.on &
+    display: block
+
+.local-search-result
+  .local-search-empty
+    padding: 20px
+    text-align: center
+    color: color-grey
+    font-size: 0.9em
+
+.local-search-list
+  list-style: none
+  margin: 0
+  padding: 0
+
+  li
+    margin: 0
+    border-bottom: 1px solid color-border
+    &:last-child
+      border-bottom: none
+
+  a
+    display: block
+    padding: 12px 15px
+    text-decoration: none
+    &:hover
+      background: #f5f5f5
+
+  .local-search-title
+    display: block
+    color: color-link
+    font-weight: bold
+    margin-bottom: 3px
+    em
+      color: #e74c3c
+      font-style: normal
+      background: #ffeaa7
+
+  .local-search-meta
+    display: block
+    color: color-grey
+    font-size: 0.8em
+
+// === Mobile Nav Dropdown ===
+.mobile-nav-dropdown
+  .mobile-nav-toggle
+    .fa-chevron-down
+      float: right
+      font-size: 0.8em
+      margin-top: 3px
+
+  .mobile-nav-sub
+    display: none
+    background: rgba(255, 255, 255, 0.05)
+
+  &.open .mobile-nav-sub
+    display: block
+
+.mobile-nav-sublink
+  padding-left: 35px !important
+  font-weight: normal !important
+  font-size: 0.9em
+
+@media mq-mobile
+  .dropdown-nav-item
+    display: block
+
+    .dropdown-toggle
+      display: block !important
+      padding: 15px 20px
+      color: color-grey
+      font-weight: bold
+      text-decoration: none
+
+    .dropdown-menu
+      position: static
+      background: transparent
+      padding: 0 0 0 20px
+      min-width: auto
+
+      .main-nav-link
+        display: block !important
+        padding: 10px 20px
+        color: color-grey
+        border-bottom: none
+        &:hover
+          color: #fff
+          background: transparent

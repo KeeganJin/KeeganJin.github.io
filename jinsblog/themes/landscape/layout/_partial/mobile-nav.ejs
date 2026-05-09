@@ -1,0 +1,23 @@
+<nav id="mobile-nav">
+  <% if (theme.nav) { %>
+    <% for (var name in theme.nav) { %>
+      <% var item = theme.nav[name]; %>
+      <% if (item.children) { %>
+        <div class="mobile-nav-dropdown">
+          <a class="mobile-nav-link mobile-nav-toggle"<%- item.url ? ' href="' + url_for(item.url) + '"' : '' %>><%= name %> <span class="fa fa-chevron-down"></span></a>
+          <div class="mobile-nav-sub">
+            <% for (var childName in item.children) { %>
+              <a href="<%- url_for(item.children[childName]) %>" class="mobile-nav-link mobile-nav-sublink"><%= childName %></a>
+            <% } %>
+          </div>
+        </div>
+      <% } else { %>
+        <a href="<%- url_for(item) %>" class="mobile-nav-link"><%= name %></a>
+      <% } %>
+    <% } %>
+  <% } else if (theme.menu) { %>
+    <% for (var i in theme.menu){ %>
+      <a href="<%- url_for(theme.menu[i]) %>" class="mobile-nav-link"><%= i %></a>
+    <% } %>
+  <% } %>
+</nav>

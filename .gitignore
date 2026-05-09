@@ -1,4 +1,7 @@
-_site/
-.jekyll-cache/
-.sass-cache/
-.bundle/
+node_modules/
+public/
+db.json
+*.log
+.DS_Store
+Thumbs.db
+.deploy*/
