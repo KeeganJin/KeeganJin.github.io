@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang=&#34;zh-CN&#34;>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>AI Agent 入门指南 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  
+    <meta name="language" content="zh-CN">
+  
+  
+    <meta name="translation" content="/2026/05/08/en/tech-docs/agent/agent-introduction/">
+  
+  <meta name="description" content="什么是 AI AgentAI Agent 是能够自主执行任务、做出决策并与环境交互的智能系统。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI Agent 入门指南">
+<meta property="og:url" content="https://keeganjin.github.io/2026/05/08/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="什么是 AI AgentAI Agent 是能够自主执行任务、做出决策并与环境交互的智能系统。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-09T17:27:41.351Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="工具调用">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Product Docs</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          
+            
+            
+              <div class="dropdown-nav-item">
+                <a class="main-nav-link dropdown-toggle" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档 <span class="fa fa-chevron-down"></span></a>
+                <ul class="dropdown-menu">
+                  
+                    <li><a class="main-nav-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></li>
+                  
+                    <li><a class="main-nav-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a></li>
+                  
+                </ul>
+              </div>
+            
+          
+            
+            
+              <a class="main-nav-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a>
+            
+          
+            
+            
+              <a class="main-nav-link" href="/products/">产品</a>
+            
+          
+        
+      </nav>
+      <nav id="sub-nav">
+        <a class="nav-icon lang-switch" href="javascript:void(0)" id="lang-toggle" title="切换语言">
+          <span id="lang-label">EN</span>
+        </a>
+        
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <div class="search-form"><input type="search" id="local-search-input" class="search-form-input" placeholder="搜索"><button type="button" class="search-form-submit">&#xF002;</button></div>
+        <div id="local-search-result" class="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/Agent/agent-intro" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/05/08/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/" class="article-date">
+  <time class="dt-published" datetime="2026-05-07T16:00:00.000Z" itemprop="datePublished">2026-05-08</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      AI Agent 入门指南
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是-AI-Agent"><a href="#什么是-AI-Agent" class="headerlink" title="什么是 AI Agent"></a>什么是 AI Agent</h2><p>AI Agent 是能够自主执行任务、做出决策并与环境交互的智能系统。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/05/08/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/" data-id="cuidiWYVVsHIM4SxwUwTLY3bZ" data-title="AI Agent 入门指南" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" rel="tag">工具调用</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/05/09/en/tech-docs/machine-learning/xgboost-algorithm/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          XGBoost Algorithm Explained
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/05/08/en/tech-docs/agent/agent-introduction/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">AI Agent Introduction</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+
+  
+  
+  <section class="category-posts-sidebar">
+    <h3>相关文章 — 技术文档</h3>
+    <ul class="category-posts-list">
+      
+        
+        
+        
+        <li>
+          <a href="/2026/05/10/en/tech-docs/machine-learning/tree-models/">Tree Models Introduction</a>
+          
+            <span class="category-post-meta">[机器学习]</span>
+          
+        </li>
+      
+        
+        
+        
+        <li>
+          <a href="/2026/05/08/en/tech-docs/agent/agent-introduction/">AI Agent Introduction</a>
+          
+            <span class="category-post-meta">[Agent]</span>
+          
+        </li>
+      
+        
+        
+        
+        <li>
+          <a href="/2026/05/09/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/xgboost%E7%AE%97%E6%B3%95/">XGBoost 算法解析</a>
+          
+            <span class="category-post-meta">[机器学习]</span>
+          
+        </li>
+      
+        
+        
+        
+        <li>
+          <a href="/2026/05/09/en/tech-docs/machine-learning/xgboost-algorithm/">XGBoost Algorithm Explained</a>
+          
+            <span class="category-post-meta">[机器学习]</span>
+          
+        </li>
+      
+        
+        
+        
+        <li>
+          <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型入门</a>
+          
+            <span class="category-post-meta">[机器学习]</span>
+          
+        </li>
+      
+    </ul>
+  </section>
+  
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decision-Tree/" rel="tag">Decision Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GBDT/" rel="tag">GBDT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gradient-Boosting/" rel="tag">Gradient Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Forest/" rel="tag">Random Forest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tool-Use/" rel="tag">Tool Use</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XGBoost/" rel="tag">XGBoost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/" rel="tag">life</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" rel="tag">决策树</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" rel="tag">工具调用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%83%B3/" rel="tag">感想</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" rel="tag">梯度提升</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%B4%BB/" rel="tag">生活</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/" rel="tag">随机森林</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Agent/" style="font-size: 20px;">Agent</a> <a href="/tags/Decision-Tree/" style="font-size: 10px;">Decision Tree</a> <a href="/tags/GBDT/" style="font-size: 20px;">GBDT</a> <a href="/tags/Gradient-Boosting/" style="font-size: 10px;">Gradient Boosting</a> <a href="/tags/LLM/" style="font-size: 20px;">LLM</a> <a href="/tags/Random-Forest/" style="font-size: 10px;">Random Forest</a> <a href="/tags/Tool-Use/" style="font-size: 10px;">Tool Use</a> <a href="/tags/XGBoost/" style="font-size: 20px;">XGBoost</a> <a href="/tags/life/" style="font-size: 10px;">life</a> <a href="/tags/thoughts/" style="font-size: 10px;">thoughts</a> <a href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" style="font-size: 10px;">决策树</a> <a href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" style="font-size: 10px;">工具调用</a> <a href="/tags/%E6%84%9F%E6%83%B3/" style="font-size: 10px;">感想</a> <a href="/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" style="font-size: 10px;">梯度提升</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">生活</a> <a href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/" style="font-size: 10px;">随机森林</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/en/essays/blog-redesign/">After the Blog Redesign</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/en/tech-docs/machine-learning/tree-models/">Tree Models Introduction</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型入门</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/09/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/xgboost%E7%AE%97%E6%B3%95/">XGBoost 算法解析</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    
+      
+      
+        <div class="mobile-nav-dropdown">
+          <a class="mobile-nav-link mobile-nav-toggle" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档 <span class="fa fa-chevron-down"></span></a>
+          <div class="mobile-nav-sub">
+            
+              <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" class="mobile-nav-link mobile-nav-sublink">机器学习</a>
+            
+              <a href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/" class="mobile-nav-link mobile-nav-sublink">Agent</a>
+            
+          </div>
+        </div>
+      
+    
+      
+      
+        <a href="/categories/%E9%9A%8F%E7%AC%94/" class="mobile-nav-link">随笔</a>
+      
+    
+      
+      
+        <a href="/products/" class="mobile-nav-link">产品</a>
+      
+    
+  
+</nav>
+
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
