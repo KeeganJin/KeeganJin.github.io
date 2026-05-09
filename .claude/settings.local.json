@@ -3,7 +3,11 @@
     "allow": [
       "Bash(npm ls *)",
       "Bash(npx hexo *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(gh workflow *)",
+      "Bash(git rm *)"
     ]
   }
 }
