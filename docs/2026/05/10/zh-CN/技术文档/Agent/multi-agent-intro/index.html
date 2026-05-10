@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>多 Agent 系统概述 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="多 Agent 系统的定义多 Agent 系统（Multi-Agent System, MAS）是由多个 Agent 组成的系统，这些 Agent 通过协作、竞争或协调来完成单个 Agent 无法完成的复杂任务。 核心概念多 Agent 系统的关键特征是多个智能实体协同工作：  每个 Agent 有自己的目标、知识和能力 Agent 之间可以通信和交互 系统整体行为超出单个 Agent 能力之和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多 Agent 系统概述">
+<meta property="og:url" content="https://keeganjin.github.io/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-intro/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="多 Agent 系统的定义多 Agent 系统（Multi-Agent System, MAS）是由多个 Agent 组成的系统，这些 Agent 通过协作、竞争或协调来完成单个 Agent 无法完成的复杂任务。 核心概念多 Agent 系统的关键特征是多个智能实体协同工作：  每个 Agent 有自己的目标、知识和能力 Agent 之间可以通信和交互 系统整体行为超出单个 Agent 能力之和">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-09T19:03:33.255Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="Multi-Agent">
+<meta property="article:tag" content="系统协作">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Product Docs</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/Agent/multi-agent-intro" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-intro/" class="article-date">
+  <time class="dt-published" datetime="2026-05-09T16:00:00.000Z" itemprop="datePublished">2026-05-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      多 Agent 系统概述
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="多-Agent-系统的定义"><a href="#多-Agent-系统的定义" class="headerlink" title="多 Agent 系统的定义"></a>多 Agent 系统的定义</h2><p>多 Agent 系统（Multi-Agent System, MAS）是由多个 Agent 组成的系统，这些 Agent 通过协作、竞争或协调来完成单个 Agent 无法完成的复杂任务。</p>
+<h3 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h3><p>多 Agent 系统的关键特征是<strong>多个智能实体协同工作</strong>：</p>
+<ul>
+<li>每个 Agent 有自己的目标、知识和能力</li>
+<li>Agent 之间可以通信和交互</li>
+<li>系统整体行为超出单个 Agent 能力之和</li>
+</ul>
+<h3 id="与单-Agent-的对比"><a href="#与单-Agent-的对比" class="headerlink" title="与单 Agent 的对比"></a>与单 Agent 的对比</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>单 Agent</th>
+<th>多 Agent 系统</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>智能实体</td>
+<td>1个</td>
+<td>多个</td>
+</tr>
+<tr>
+<td>能力范围</td>
+<td>受单个 Agent 限制</td>
+<td>组合多种能力</td>
+</tr>
+<tr>
+<td>失败影响</td>
+<td>全系统失败</td>
+<td>部分失败可继续</td>
+</tr>
+<tr>
+<td>复杂度</td>
+<td>结构简单</td>
+<td>结构复杂</td>
+</tr>
+<tr>
+<td>协调开销</td>
+<td>无</td>
+<td>需协调机制</td>
+</tr>
+</tbody></table>
+<h2 id="为何需要多-Agent：单-Agent-的局限"><a href="#为何需要多-Agent：单-Agent-的局限" class="headerlink" title="为何需要多 Agent：单 Agent 的局限"></a>为何需要多 Agent：单 Agent 的局限</h2><p>单 Agent 在处理复杂任务时存在明显局限：</p>
+<h3 id="能力局限"><a href="#能力局限" class="headerlink" title="能力局限"></a>能力局限</h3><p>单个 Agent 的能力受限于其”大脑”（LLM）和工具集：</p>
+<ul>
+<li>无法同时具备多种专业能力（如编程+分析+设计）</li>
+<li>无法处理需要多方视角的任务（如评审+撰写）</li>
+<li>无法同时处理多个并行任务</li>
+</ul>
+<h3 id="处理复杂度局限"><a href="#处理复杂度局限" class="headerlink" title="处理复杂度局限"></a>处理复杂度局限</h3><p>复杂任务的维度超出单 Agent 处理范围：</p>
+<ul>
+<li>任务太大：无法一次性处理</li>
+<li>任务太复杂：无法同时维护所有状态</li>
+<li>任务太动态：无法实时响应所有变化</li>
+</ul>
+<h3 id="风险局限"><a href="#风险局限" class="headerlink" title="风险局限"></a>风险局限</h3><p>单 Agent 存在单点故障风险：</p>
+<ul>
+<li>LLM 错误直接影响整个任务</li>
+<li>工具失败可能导致任务中断</li>
+<li>无法进行自我验证</li>
+</ul>
+<h3 id="多-Agent-的优势"><a href="#多-Agent-的优势" class="headerlink" title="多 Agent 的优势"></a>多 Agent 的优势</h3><p>多 Agent 系统解决了这些局限：</p>
+<ul>
+<li><strong>专业分工</strong>：不同 Agent 专注不同领域</li>
+<li><strong>并行处理</strong>：多个任务同时执行</li>
+<li><strong>交叉验证</strong>：Agent 互相验证结果</li>
+<li><strong>容错能力</strong>：部分 Agent 失败不影响整体</li>
+</ul>
+<h2 id="多-Agent-系统的分类"><a href="#多-Agent-系统的分类" class="headerlink" title="多 Agent 系统的分类"></a>多 Agent 系统的分类</h2><h3 id="按协作方式分类"><a href="#按协作方式分类" class="headerlink" title="按协作方式分类"></a>按协作方式分类</h3><h4 id="协作型（Cooperative）"><a href="#协作型（Cooperative）" class="headerlink" title="协作型（Cooperative）"></a>协作型（Cooperative）</h4><p>所有 Agent 为共同目标努力：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────┐</span><br><span class="line">│          共同目标           │</span><br><span class="line">└─────────────────────────────┘</span><br><span class="line">      ↑       ↑       ↑</span><br><span class="line">  ┌───┐   ┌───┐   ┌───┐</span><br><span class="line">  │ A │   │ B │   │ C │</span><br><span class="line">  └───┘   └───┘   └───┐</span><br><span class="line">      ↓       ↓       ↓</span><br><span class="line">    贡献1   被贡献2  被贡献3</span><br><span class="line">      ↓       ↓       ↓</span><br><span class="line">  ┌─────────────────────────┐</span><br><span class="line">  │        汇合结果         │</span><br><span class="line">  └─────────────────────────┐</span><br></pre></td></tr></table></figure>
+
+<p><strong>特点</strong>：</p>
+<ul>
+<li>共享目标</li>
+<li>互相帮助</li>
+<li>信息共享</li>
+<li>结果整合</li>
+</ul>
+<h4 id="竞争型（Competitive）"><a href="#竞争型（Competitive）" class="headerlink" title="竞争型（Competitive）"></a>竞争型（Competitive）</h4><p>Agent 之间存在竞争或对抗：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">┌───┐           ┌───┐</span><br><span class="line">│ A │   ←对抗→  │ B │</span><br><span class="line">└───┘           └───┘</span><br><span class="line">   ↓              ↓</span><br><span class="line">方案1          方案2</span><br><span class="line">   ↓              ↓</span><br><span class="line">   ←────评判────→</span><br><span class="line">          ↓</span><br><span class="line">       最佳方案</span><br></pre></td></tr></table></figure>
+
+<p><strong>特点</strong>：</p>
+<ul>
+<li>相互对抗</li>
+<li>独立策略</li>
+<li>博弈论基础</li>
+<li>选优机制</li>
+</ul>
+<h4 id="协调型（Coordinated）"><a href="#协调型（Coordinated）" class="headerlink" title="协调型（Coordinated）"></a>协调型（Coordinated）</h4><p>Agent 有各自目标但需要协调：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Agent A目标 ←→ 协调机制 ←→ Agent B目标</span><br><span class="line">     ↓              ↓              ↓</span><br><span class="line">  局部行动      冲突消解       局部行动</span><br><span class="line">     ↓              ↓              ↓</span><br><span class="line">     ←───────全局一致───────→</span><br></pre></td></tr></table></figure>
+
+<p><strong>特点</strong>：</p>
+<ul>
+<li>各有目标</li>
+<li>需避免冲突</li>
+<li>共享资源约束</li>
+<li>协调机制</li>
+</ul>
+<h3 id="按组织结构分类"><a href="#按组织结构分类" class="headerlink" title="按组织结构分类"></a>按组织结构分类</h3><h4 id="层次型（Hierarchical）"><a href="#层次型（Hierarchical）" class="headerlink" title="层次型（Hierarchical）"></a>层次型（Hierarchical）</h4><p>上下级关系：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">   ┌───────┐</span><br><span class="line">   │ Manager│</span><br><span class="line">   └───────┘</span><br><span class="line">      ↓ ↓ ↓</span><br><span class="line">┌────┬────┬────┐</span><br><span class="line">│ W1 │ W2 │ W3 │</span><br><span class="line">└────┴────┴────┘</span><br></pre></td></tr></table></figure>
+
+<h4 id="对等型（Peer-to-Peer）"><a href="#对等型（Peer-to-Peer）" class="headerlink" title="对等型（Peer-to-Peer）"></a>对等型（Peer-to-Peer）</h4><p>平等关系：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">┌───┐ ←→ ┌───┐ ←→ ┌───┐</span><br><span class="line">│ A │   │ B │   │ C │</span><br><span class="line">└───┘ ←→ └───┘ ←→ ┌───┘</span><br></pre></td></tr></table></figure>
+
+<h4 id="混合型（Hybrid）"><a href="#混合型（Hybrid）" class="headerlink" title="混合型（Hybrid）"></a>混合型（Hybrid）</h4><p>层次和对等结合：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">      ┌───────┐</span><br><span class="line">      │ Manager│</span><br><span class="line">      └───────┘</span><br><span class="line">         ↓</span><br><span class="line">┌───┐ ←→ ┌───┐ ←→ ┌───┐</span><br><span class="line">│ W │   │ W │   │ W │</span><br><span class="line">└───┘ ←→ └───┘ ←→ ┌───┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="按交互模式分类"><a href="#按交互模式分类" class="headerlink" title="按交互模式分类"></a>按交互模式分类</h3><h4 id="同步交互"><a href="#同步交互" class="headerlink" title="同步交互"></a>同步交互</h4><p>Agent 同步等待：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">A → 请求 → B</span><br><span class="line">      ↓</span><br><span class="line">   等待</span><br><span class="line">      ↓</span><br><span class="line">A ← 响应 ← B</span><br></pre></td></tr></table></figure>
+
+<h4 id="异步交互"><a href="#异步交互" class="headerlink" title="异步交互"></a>异步交互</h4><p>Agent 不等待响应：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A → 消息 → B → 继续执行 → ...</span><br><span class="line">      ↓</span><br><span class="line">   不等待，继续工作</span><br></pre></td></tr></table></figure>
+
+<h4 id="发布订阅"><a href="#发布订阅" class="headerlink" title="发布订阅"></a>发布订阅</h4><p>Agent订阅感兴趣的事件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">发布者 → 事件 → [订阅者1, 订阅者2, ...]</span><br></pre></td></tr></table></figure>
+
+<h2 id="多-Agent-系统的优势"><a href="#多-Agent-系统的优势" class="headerlink" title="多 Agent 系统的优势"></a>多 Agent 系统的优势</h2><h3 id="专业分工"><a href="#专业分工" class="headerlink" title="专业分工"></a>专业分工</h3><p>不同 Agent 可以专业化：</p>
+<ul>
+<li><strong>研究 Agent</strong>：擅长信息检索和知识整合</li>
+<li><strong>编程 Agent</strong>：擅长代码生成和调试</li>
+<li><strong>写作 Agent</strong>：擅长内容创作和排版</li>
+<li><strong>评审 Agent</strong>：擅长质量检查和优化</li>
+</ul>
+<h3 id="并行处理"><a href="#并行处理" class="headerlink" title="并行处理"></a>并行处理</h3><p>多个 Agent 可并行工作：</p>
+<ul>
+<li>同时处理多个子任务</li>
+<li>缩短整体完成时间</li>
+<li>提高系统吞吐量</li>
+</ul>
+<h3 id="交叉验证"><a href="#交叉验证" class="headerlink" title="交叉验证"></a>交叉验证</h3><p>Agent 可以互相验证：</p>
+<ul>
+<li><strong>自检+互检</strong>：双重验证机制</li>
+<li><strong>辩论模式</strong>：通过讨论达成共识</li>
+<li><strong>对抗测试</strong>：安全漏洞检测</li>
+</ul>
+<h3 id="可扩展性"><a href="#可扩展性" class="headerlink" title="可扩展性"></a>可扩展性</h3><p>多 Agent 系统易于扩展：</p>
+<ul>
+<li>添加新 Agent 增加新能力</li>
+<li>负载增加时添加更多 Agent</li>
+<li>灵活调整 Agent 组合</li>
+</ul>
+<h3 id="容错能力"><a href="#容错能力" class="headerlink" title="容错能力"></a>容错能力</h3><p>部分 Agent 失败不影响整体：</p>
+<ul>
+<li>其他 Agent 可以接管</li>
+<li>降级继续运行</li>
+<li>快速恢复机制</li>
+</ul>
+<h2 id="多-Agent-系统的挑战"><a href="#多-Agent-系统的挑战" class="headerlink" title="多 Agent 系统的挑战"></a>多 Agent 系统的挑战</h2><h3 id="协调复杂性"><a href="#协调复杂性" class="headerlink" title="协调复杂性"></a>协调复杂性</h3><p>多 Agent 需要复杂的协调机制：</p>
+<ul>
+<li>通信协议设计</li>
+<li>任务分配算法</li>
+<li>冲突检测与解决</li>
+<li>同步机制实现</li>
+</ul>
+<h3 id="通信开销"><a href="#通信开销" class="headerlink" title="通信开销"></a>通信开销</h3><p>Agent 间通信产生开销：</p>
+<ul>
+<li>消息传输延迟</li>
+<li>信息处理时间</li>
+<li>通信带宽限制</li>
+<li>协议解析成本</li>
+</ul>
+<h3 id="一致性维护"><a href="#一致性维护" class="headerlink" title="一致性维护"></a>一致性维护</h3><p>确保所有 Agent 对状态有一致理解：</p>
+<ul>
+<li>共享状态同步</li>
+<li>决策一致性</li>
+<li>结果一致性</li>
+<li>时间一致性</li>
+</ul>
+<h3 id="调试困难"><a href="#调试困难" class="headerlink" title="调试困难"></a>调试困难</h3><p>多 Agent 系统调试更复杂：</p>
+<ul>
+<li>多个 Agent 行为交织</li>
+<li>交互序列难以追踪</li>
+<li>错误传播路径复杂</li>
+<li>日志分散难以汇总</li>
+</ul>
+<h3 id="成本控制"><a href="#成本控制" class="headerlink" title="成本控制"></a>成本控制</h3><p>多 Agent 增加运行成本：</p>
+<ul>
+<li>多个 LLM 调用</li>
+<li>更多 Token 消耗</li>
+<li>更长等待时间</li>
+<li>更多 API 调用</li>
+</ul>
+<h2 id="多-Agent-系统的应用场景"><a href="#多-Agent-系统的应用场景" class="headerlink" title="多 Agent 系统的应用场景"></a>多 Agent 系统的应用场景</h2><h3 id="复杂任务分解"><a href="#复杂任务分解" class="headerlink" title="复杂任务分解"></a>复杂任务分解</h3><p>当任务太大需要分解时：</p>
+<ul>
+<li><strong>软件开发</strong>：设计+开发+测试+文档多个 Agent</li>
+<li><strong>研究报告</strong>：研究+分析+撰写+排版多个 Agent</li>
+<li><strong>项目管理</strong>：规划+执行+监控+报告多个 Agent</li>
+</ul>
+<h3 id="多视角任务"><a href="#多视角任务" class="headerlink" title="多视角任务"></a>多视角任务</h3><p>需要多方视角的任务：</p>
+<ul>
+<li><strong>辩论系统</strong>：正方 Agent + 反方 Agent + 评判 Agent</li>
+<li><strong>评审系统</strong>：创作 Agent + 评审 Agent + 修改 Agent</li>
+<li><strong>安全测试</strong>：开发 Agent + Red Team Agent</li>
+</ul>
+<h3 id="并行处理-1"><a href="#并行处理-1" class="headerlink" title="并行处理"></a>并行处理</h3><p>需要并行处理的场景：</p>
+<ul>
+<li><strong>数据并行</strong>：多个 Agent 同时处理数据分片</li>
+<li><strong>任务并行</strong>：多个 Agent 同时处理不同子任务</li>
+<li><strong>搜索并行</strong>：多个 Agent 同时搜索不同来源</li>
+</ul>
+<h3 id="专业分工-1"><a href="#专业分工-1" class="headerlink" title="专业分工"></a>专业分工</h3><p>需要专业能力的场景：</p>
+<ul>
+<li><strong>企业自动化</strong>：客服 Agent + 财务 Agent + HR Agent</li>
+<li><strong>智能运维</strong>：监控 Agent + 分析 Agent + 修复 Agent</li>
+<li><strong>内容生产</strong>：写作 Agent + 图片 Agent + 编辑 Agent</li>
+</ul>
+<h2 id="多-Agent-系统设计原则"><a href="#多-Agent-系统设计原则" class="headerlink" title="多 Agent 系统设计原则"></a>多 Agent 系统设计原则</h2><h3 id="明确分工"><a href="#明确分工" class="headerlink" title="明确分工"></a>明确分工</h3><p>每个 Agent 有清晰职责：</p>
+<ul>
+<li>定义 Agent 能力边界</li>
+<li>避免职责重叠</li>
+<li>覆盖所有必要能力</li>
+</ul>
+<h3 id="简洁通信"><a href="#简洁通信" class="headerlink" title="简洁通信"></a>简洁通信</h3><p>Agent 间通信应简洁高效：</p>
+<ul>
+<li>标准化消息格式</li>
+<li>最小化通信次数</li>
+<li>批量传递信息</li>
+</ul>
+<h3 id="明确协调"><a href="#明确协调" class="headerlink" title="明确协调"></a>明确协调</h3><p>协调机制应明确可预测：</p>
+<ul>
+<li>定义协调规则</li>
+<li>设定优先级</li>
+<li>处理冲突策略</li>
+</ul>
+<h3 id="容错设计"><a href="#容错设计" class="headerlink" title="容错设计"></a>容错设计</h3><p>系统应能容错：</p>
+<ul>
+<li>Agent 失败处理</li>
+<li>通信失败处理</li>
+<li>降级运行机制</li>
+</ul>
+<h3 id="可观测性"><a href="#可观测性" class="headerlink" title="可观测性"></a>可观测性</h3><p>系统应可观测调试：</p>
+<ul>
+<li>全局日志记录</li>
+<li>交互序列追踪</li>
+<li>状态可视化</li>
+</ul>
+<h2 id="主流多-Agent-框架"><a href="#主流多-Agent-框架" class="headerlink" title="主流多 Agent 框架"></a>主流多 Agent 框架</h2><h3 id="AutoGen"><a href="#AutoGen" class="headerlink" title="AutoGen"></a>AutoGen</h3><p>微软的多 Agent 框架：</p>
+<ul>
+<li>对话式协作</li>
+<li>人机协同支持</li>
+<li>灵活的 Agent 定义</li>
+<li>GroupChat 群聊模式</li>
+</ul>
+<h3 id="CrewAI"><a href="#CrewAI" class="headerlink" title="CrewAI"></a>CrewAI</h3><p>角色扮演式框架：</p>
+<ul>
+<li>Agent &#x3D; 角色</li>
+<li>Task &#x3D; 任务</li>
+<li>Crew &#x3D; 团队</li>
+<li>Sequential&#x2F;Hierarchical 流程</li>
+</ul>
+<h3 id="LangGraph"><a href="#LangGraph" class="headerlink" title="LangGraph"></a>LangGraph</h3><p>基于状态图的框架：</p>
+<ul>
+<li>状态节点定义 Agent</li>
+<li>边定义转换条件</li>
+<li>循环和分支支持</li>
+<li>与 LangChain 无缝集成</li>
+</ul>
+<h3 id="Semantic-Kernel"><a href="#Semantic-Kernel" class="headerlink" title="Semantic Kernel"></a>Semantic Kernel</h3><p>微软企业级框架：</p>
+<ul>
+<li>Skills 定义能力</li>
+<li>Planners 规划执行</li>
+<li>与 Azure 服务集成</li>
+<li>企业级安全合规</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>多 Agent 系统通过多个 Agent 的协作、竞争或协调，解决单 Agent 无法处理的复杂任务。系统优势包括专业分工、并行处理、交叉验证、可扩展性、容错能力；挑战包括协调复杂性、通信开销、一致性维护、调试困难、成本控制。</p>
+<p>设计多 Agent 系统需要遵循：明确分工、简洁通信、明确协调、容错设计、可观测性原则。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-architecture/">Agent 架构模式</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-collaboration/">多 Agent 协作模式</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/hierarchical-agent/">层次化 Agent 系统</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-frameworks/">Agent 框架概览</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-intro/" data-id="cuidGFUuweMf-WSF49DgIBBMh" data-title="多 Agent 系统概述" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Multi-Agent/" rel="tag">Multi-Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E5%8D%8F%E4%BD%9C/" rel="tag">系统协作</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-collaboration/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          多 Agent 协作模式
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-competition/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">多 Agent 竞争与博弈</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGI/" rel="tag">AGI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E4%BC%A6%E7%90%86/" rel="tag">AI伦理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E5%9F%BA%E7%A1%80/" rel="tag">AI基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E6%9E%B6%E6%9E%84/" rel="tag">AI架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AgentBench/" rel="tag">AgentBench</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AutoGen/" rel="tag">AutoGen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boosting/" rel="tag">Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNN/" rel="tag">CNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CoT/" rel="tag">CoT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CrewAI/" rel="tag">CrewAI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DQN/" rel="tag">DQN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decision-Tree/" rel="tag">Decision Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Framework/" rel="tag">Framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Function-Calling/" rel="tag">Function Calling</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GAN/" rel="tag">GAN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GBDT/" rel="tag">GBDT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gradient-Boosting/" rel="tag">Gradient Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KNN/" rel="tag">KNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LSTM/" rel="tag">LSTM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LangChain/" rel="tag">LangChain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LangGraph/" rel="tag">LangGraph</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LightGBM/" rel="tag">LightGBM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Memory/" rel="tag">Memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Microsoft/" rel="tag">Microsoft</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Multi-Agent/" rel="tag">Multi-Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ONNX/" rel="tag">ONNX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PPO/" rel="tag">PPO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Planning/" rel="tag">Planning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Policy-Gradient/" rel="tag">Policy Gradient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prompt-Injection/" rel="tag">Prompt Injection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Q-Learning/" rel="tag">Q-Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RLHF/" rel="tag">RLHF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RNN/" rel="tag">RNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Forest/" rel="tag">Random Forest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReAct/" rel="tag">ReAct</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasoning/" rel="tag">Reasoning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVM/" rel="tag">SVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Semantic-Kernel/" rel="tag">Semantic Kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Stacking/" rel="tag">Stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tool-Use/" rel="tag">Tool Use</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transformer/" rel="tag">Transformer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VAE/" rel="tag">VAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XGBoost/" rel="tag">XGBoost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/" rel="tag">life</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%8A%A9%E6%89%8B/" rel="tag">代码助手</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/" rel="tag">优化理论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" rel="tag">优化算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%A6%E7%90%86/" rel="tag">伦理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2/" rel="tag">信息检索</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%A5%E9%97%A8/" rel="tag">入门</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" rel="tag">决策树</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83/" rel="tag">分布式训练</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB%E7%AE%97%E6%B3%95/" rel="tag">分类算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F/" rel="tag">协作模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" rel="tag">博弈论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" rel="tag">反向传播</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" rel="tag">可视化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">向量数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/" rel="tag">多智能体</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" rel="tag">大模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%A2%E6%9C%8D/" rel="tag">客服</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F/" rel="tag">对话系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B1%82%E6%AC%A1%E5%8C%96%E6%9E%B6%E6%9E%84/" rel="tag">层次化架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" rel="tag">工具调用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/" rel="tag">并行策略</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" rel="tag">开发工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" rel="tag">强化学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag">微服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E8%B0%83/" rel="tag">微调</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%83%B3/" rel="tag">感想</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" rel="tag">扩散模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" rel="tag">损失函数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/" rel="tag">推理优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/" rel="tag">提示工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/" rel="tag">数学基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" rel="tag">数据分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" rel="tag">数据清洗</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/" rel="tag">数据预处理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%BF%97/" rel="tag">日志</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%AA%E6%9D%A5%E8%B6%8B%E5%8A%BF/" rel="tag">未来趋势</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" rel="tag">架构设计</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" rel="tag">梯度提升</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/" rel="tag">概率论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A6%82%E8%BF%B0/" rel="tag">概述</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E5%8E%8B%E7%BC%A9/" rel="tag">模型压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" rel="tag">模型部署</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AD%A3%E5%88%99%E5%8C%96/" rel="tag">正则化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/" rel="tag">注意力机制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" rel="tag">激活函数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" rel="tag">特征工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9/" rel="tag">特征选择</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" rel="tag">生成模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%B4%BB/" rel="tag">生活</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" rel="tag">监督学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" rel="tag">知识蒸馏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A0%94%E7%A9%B6/" rel="tag">研究</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag">神经网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AB%9E%E4%BA%89/" rel="tag">竞争</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E5%8D%8F%E4%BD%9C/" rel="tag">系统协作</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" rel="tag">系统架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" rel="tag">线性代数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" rel="tag">线性回归</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" rel="tag">统计学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E6%B5%8B/" rel="tag">评测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B0%83%E8%AF%95/" rel="tag">调试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" rel="tag">贝叶斯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/" rel="tag">超参数调优</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" rel="tag">软件工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" rel="tag">逻辑回归</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8F%E5%8C%96/" rel="tag">量化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/" rel="tag">随机森林</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/" rel="tag">集成学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A2%84%E8%AE%AD%E7%BB%83/" rel="tag">预训练</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AGI/" style="font-size: 10px;">AGI</a> <a href="/tags/AI%E4%BC%A6%E7%90%86/" style="font-size: 10px;">AI伦理</a> <a href="/tags/AI%E5%9F%BA%E7%A1%80/" style="font-size: 10px;">AI基础</a> <a href="/tags/AI%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">AI架构</a> <a href="/tags/Agent/" style="font-size: 18.89px;">Agent</a> <a href="/tags/AgentBench/" style="font-size: 10px;">AgentBench</a> <a href="/tags/AutoGen/" style="font-size: 11.11px;">AutoGen</a> <a href="/tags/Boosting/" style="font-size: 11.11px;">Boosting</a> <a href="/tags/CNN/" style="font-size: 10px;">CNN</a> <a href="/tags/CoT/" style="font-size: 10px;">CoT</a> <a href="/tags/CrewAI/" style="font-size: 10px;">CrewAI</a> <a href="/tags/DQN/" style="font-size: 10px;">DQN</a> <a href="/tags/Decision-Tree/" style="font-size: 10px;">Decision Tree</a> <a href="/tags/Framework/" style="font-size: 10px;">Framework</a> <a href="/tags/Function-Calling/" style="font-size: 10px;">Function Calling</a> <a href="/tags/GAN/" style="font-size: 10px;">GAN</a> <a href="/tags/GBDT/" style="font-size: 12.22px;">GBDT</a> <a href="/tags/Gradient-Boosting/" style="font-size: 10px;">Gradient Boosting</a> <a href="/tags/KNN/" style="font-size: 10px;">KNN</a> <a href="/tags/LLM/" style="font-size: 14.44px;">LLM</a> <a href="/tags/LSTM/" style="font-size: 10px;">LSTM</a> <a href="/tags/LangChain/" style="font-size: 11.11px;">LangChain</a> <a href="/tags/LangGraph/" style="font-size: 10px;">LangGraph</a> <a href="/tags/LightGBM/" style="font-size: 10px;">LightGBM</a> <a href="/tags/Memory/" style="font-size: 10px;">Memory</a> <a href="/tags/Microsoft/" style="font-size: 10px;">Microsoft</a> <a href="/tags/Multi-Agent/" style="font-size: 15.56px;">Multi-Agent</a> <a href="/tags/ONNX/" style="font-size: 10px;">ONNX</a> <a href="/tags/PPO/" style="font-size: 10px;">PPO</a> <a href="/tags/Planning/" style="font-size: 10px;">Planning</a> <a href="/tags/Policy-Gradient/" style="font-size: 10px;">Policy Gradient</a> <a href="/tags/Prompt-Injection/" style="font-size: 10px;">Prompt Injection</a> <a href="/tags/Q-Learning/" style="font-size: 10px;">Q-Learning</a> <a href="/tags/RLHF/" style="font-size: 10px;">RLHF</a> <a href="/tags/RNN/" style="font-size: 10px;">RNN</a> <a href="/tags/Random-Forest/" style="font-size: 10px;">Random Forest</a> <a href="/tags/ReAct/" style="font-size: 10px;">ReAct</a> <a href="/tags/Reasoning/" style="font-size: 10px;">Reasoning</a> <a href="/tags/SVM/" style="font-size: 10px;">SVM</a> <a href="/tags/Semantic-Kernel/" style="font-size: 10px;">Semantic Kernel</a> <a href="/tags/Stacking/" style="font-size: 10px;">Stacking</a> <a href="/tags/Tool-Use/" style="font-size: 11.11px;">Tool Use</a> <a href="/tags/Transformer/" style="font-size: 10px;">Transformer</a> <a href="/tags/VAE/" style="font-size: 10px;">VAE</a> <a href="/tags/XGBoost/" style="font-size: 12.22px;">XGBoost</a> <a href="/tags/life/" style="font-size: 10px;">life</a> <a href="/tags/thoughts/" style="font-size: 10px;">thoughts</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E5%8A%A9%E6%89%8B/" style="font-size: 10px;">代码助手</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/" style="font-size: 10px;">优化理论</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" style="font-size: 10px;">优化算法</a> <a href="/tags/%E4%BC%A6%E7%90%86/" style="font-size: 10px;">伦理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2/" style="font-size: 10px;">信息检索</a> <a href="/tags/%E5%85%A5%E9%97%A8/" style="font-size: 10px;">入门</a> <a href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" style="font-size: 11.11px;">决策树</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83/" style="font-size: 10px;">分布式训练</a> <a href="/tags/%E5%88%86%E7%B1%BB%E7%AE%97%E6%B3%95/" style="font-size: 14.44px;">分类算法</a> <a href="/tags/%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">协作模式</a> <a href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" style="font-size: 10px;">博弈论</a> <a href="/tags/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" style="font-size: 10px;">反向传播</a> <a href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" style="font-size: 10px;">可视化</a> <a href="/tags/%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 10px;">向量数据库</a> <a href="/tags/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/" style="font-size: 10px;">多智能体</a> <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" style="font-size: 13.33px;">大模型</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 10px;">安全</a> <a href="/tags/%E5%AE%A2%E6%9C%8D/" style="font-size: 10px;">客服</a> <a href="/tags/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">对话系统</a> <a href="/tags/%E5%B1%82%E6%AC%A1%E5%8C%96%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">层次化架构</a> <a href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" style="font-size: 10px;">工具调用</a> <a href="/tags/%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/" style="font-size: 10px;">并行策略</a> <a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">开发工具</a> <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">强化学习</a> <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">微服务</a> <a href="/tags/%E5%BE%AE%E8%B0%83/" style="font-size: 10px;">微调</a> <a href="/tags/%E6%84%9F%E6%83%B3/" style="font-size: 10px;">感想</a> <a href="/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" style="font-size: 10px;">扩散模型</a> <a href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" style="font-size: 10px;">损失函数</a> <a href="/tags/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/" style="font-size: 10px;">推理优化</a> <a href="/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">提示工程</a> <a href="/tags/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/" style="font-size: 13.33px;">数学基础</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" style="font-size: 10px;">数据分析</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" style="font-size: 10px;">数据清洗</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/" style="font-size: 10px;">数据预处理</a> <a href="/tags/%E6%97%A5%E5%BF%97/" style="font-size: 10px;">日志</a> <a href="/tags/%E6%9C%AA%E6%9D%A5%E8%B6%8B%E5%8A%BF/" style="font-size: 10px;">未来趋势</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 20px;">机器学习</a> <a href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" style="font-size: 10px;">架构设计</a> <a href="/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" style="font-size: 10px;">梯度提升</a> <a href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/" style="font-size: 10px;">概率论</a> <a href="/tags/%E6%A6%82%E8%BF%B0/" style="font-size: 10px;">概述</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">模型压缩</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">模型部署</a> <a href="/tags/%E6%AD%A3%E5%88%99%E5%8C%96/" style="font-size: 10px;">正则化</a> <a href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/" style="font-size: 10px;">注意力机制</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 17.78px;">深度学习</a> <a href="/tags/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" style="font-size: 10px;">激活函数</a> <a href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">特征工程</a> <a href="/tags/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9/" style="font-size: 10px;">特征选择</a> <a href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" style="font-size: 12.22px;">生成模型</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">生活</a> <a href="/tags/%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">监督学习</a> <a href="/tags/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" style="font-size: 10px;">知识蒸馏</a> <a href="/tags/%E7%A0%94%E7%A9%B6/" style="font-size: 10px;">研究</a> <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" style="font-size: 16.67px;">神经网络</a> <a href="/tags/%E7%AB%9E%E4%BA%89/" style="font-size: 10px;">竞争</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E5%8D%8F%E4%BD%9C/" style="font-size: 10px;">系统协作</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">系统架构</a> <a href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" style="font-size: 10px;">线性代数</a> <a href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" style="font-size: 10px;">线性回归</a> <a href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" style="font-size: 10px;">统计学</a> <a href="/tags/%E8%AF%84%E6%B5%8B/" style="font-size: 10px;">评测</a> <a href="/tags/%E8%B0%83%E8%AF%95/" style="font-size: 10px;">调试</a> <a href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" style="font-size: 10px;">贝叶斯</a> <a href="/tags/%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/" style="font-size: 10px;">超参数调优</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">软件工程</a> <a href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" style="font-size: 10px;">逻辑回归</a> <a href="/tags/%E9%87%8F%E5%8C%96/" style="font-size: 10px;">量化</a> <a href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/" style="font-size: 11.11px;">随机森林</a> <a href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/" style="font-size: 16.67px;">集成学习</a> <a href="/tags/%E9%A2%84%E8%AE%AD%E7%BB%83/" style="font-size: 10px;">预训练</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-architecture/">Agent 架构模式</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/en/essays/blog-redesign/">After the Blog Redesign</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/llm-and-agent/">LLM 与 Agent 的关系</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/">Agent 入门指南</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>强化学习基础 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="强化学习定义什么是强化学习强化学习是通过与环境交互学习最优行为的机器学习方法。 核心要素：  Agent（智能体）：学习者 Environment（环境）：交互对象 Reward（奖励）：反馈信号  与其他学习方法的区别   学习类型 数据来源 特点    监督学习 标注数据 输入→输出映射   无监督学习 无标注数据 结构发现   强化学习 环境交互 试错学习   强化学习的特点   特点 描述">
+<meta property="og:type" content="article">
+<meta property="og:title" content="强化学习基础">
+<meta property="og:url" content="https://keeganjin.github.io/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-introduction/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="强化学习定义什么是强化学习强化学习是通过与环境交互学习最优行为的机器学习方法。 核心要素：  Agent（智能体）：学习者 Environment（环境）：交互对象 Reward（奖励）：反馈信号  与其他学习方法的区别   学习类型 数据来源 特点    监督学习 标注数据 输入→输出映射   无监督学习 无标注数据 结构发现   强化学习 环境交互 试错学习   强化学习的特点   特点 描述">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-10T05:35:01.760Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="强化学习">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Product Docs</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/机器学习/rl-introduction" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-introduction/" class="article-date">
+  <time class="dt-published" datetime="2026-05-09T16:00:00.000Z" itemprop="datePublished">2026-05-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      强化学习基础
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="强化学习定义"><a href="#强化学习定义" class="headerlink" title="强化学习定义"></a>强化学习定义</h2><h3 id="什么是强化学习"><a href="#什么是强化学习" class="headerlink" title="什么是强化学习"></a>什么是强化学习</h3><p>强化学习是通过与环境交互学习最优行为的机器学习方法。</p>
+<p><strong>核心要素</strong>：</p>
+<ul>
+<li>Agent（智能体）：学习者</li>
+<li>Environment（环境）：交互对象</li>
+<li>Reward（奖励）：反馈信号</li>
+</ul>
+<h3 id="与其他学习方法的区别"><a href="#与其他学习方法的区别" class="headerlink" title="与其他学习方法的区别"></a>与其他学习方法的区别</h3><table>
+<thead>
+<tr>
+<th>学习类型</th>
+<th>数据来源</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>监督学习</td>
+<td>标注数据</td>
+<td>输入→输出映射</td>
+</tr>
+<tr>
+<td>无监督学习</td>
+<td>无标注数据</td>
+<td>结构发现</td>
+</tr>
+<tr>
+<td>强化学习</td>
+<td>环境交互</td>
+<td>试错学习</td>
+</tr>
+</tbody></table>
+<h3 id="强化学习的特点"><a href="#强化学习的特点" class="headerlink" title="强化学习的特点"></a>强化学习的特点</h3><table>
+<thead>
+<tr>
+<th>特点</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>序列决策</td>
+<td>行动影响未来</td>
+</tr>
+<tr>
+<td>延迟奖励</td>
+<td>奖励可能延迟</td>
+</tr>
+<tr>
+<td>试错学习</td>
+<td>通过尝试学习</td>
+</tr>
+<tr>
+<td>平衡探索利用</td>
+<td>新尝试vs已知最优</td>
+</tr>
+</tbody></table>
+<h2 id="Agent-Environment模型"><a href="#Agent-Environment模型" class="headerlink" title="Agent-Environment模型"></a>Agent-Environment模型</h2><h3 id="基本框架"><a href="#基本框架" class="headerlink" title="基本框架"></a>基本框架</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Agent            Environment</span><br><span class="line">  │                   │</span><br><span class="line">  │──Action──────────&gt;│</span><br><span class="line">  │                   │</span><br><span class="line">  │&lt;──State, Reward──│</span><br><span class="line">  │                   │</span><br></pre></td></tr></table></figure>
+
+<h3 id="交互循环"><a href="#交互循环" class="headerlink" title="交互循环"></a>交互循环</h3><ol>
+<li>Agent观察状态 $s_t$</li>
+<li>Agent选择行动 $a_t$</li>
+<li>Environment执行行动</li>
+<li>Environment返回新状态 $s_{t+1}$ 和奖励 $r_t$</li>
+<li>Agent根据反馈学习</li>
+</ol>
+<h3 id="状态与行动"><a href="#状态与行动" class="headerlink" title="状态与行动"></a>状态与行动</h3><p><strong>状态（State）</strong>：</p>
+<ul>
+<li>Agent对环境的观察</li>
+<li>包含决策所需信息</li>
+</ul>
+<p><strong>行动（Action）</strong>：</p>
+<ul>
+<li>Agent可执行的操作</li>
+<li>可能有限或无限</li>
+</ul>
+<h3 id="奖励（Reward）"><a href="#奖励（Reward）" class="headerlink" title="奖励（Reward）"></a>奖励（Reward）</h3><p><strong>定义</strong>：环境给Agent的反馈信号。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>稀疏或密集</li>
+<li>即时或延迟</li>
+<li>正或负</li>
+</ul>
+<p><strong>设计原则</strong>：</p>
+<ul>
+<li>反映目标</li>
+<li>易于学习</li>
+<li>避免歧义</li>
+</ul>
+<h2 id="状态、动作、奖励"><a href="#状态、动作、奖励" class="headerlink" title="状态、动作、奖励"></a>状态、动作、奖励</h2><h3 id="状态空间"><a href="#状态空间" class="headerlink" title="状态空间"></a>状态空间</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>离散</td>
+<td>有限状态（如网格位置）</td>
+</tr>
+<tr>
+<td>连续</td>
+<td>无限状态（如机器人位置）</td>
+</tr>
+</tbody></table>
+<h3 id="动作空间"><a href="#动作空间" class="headerlink" title="动作空间"></a>动作空间</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>离散</td>
+<td>有限动作（如上下左右）</td>
+</tr>
+<tr>
+<td>连续</td>
+<td>无限动作（如力的大小）</td>
+</tr>
+</tbody></table>
+<h3 id="奖励设计"><a href="#奖励设计" class="headerlink" title="奖励设计"></a>奖励设计</h3><p><strong>原则</strong>：</p>
+<ul>
+<li>与目标一致</li>
+<li>适当的稀疏性</li>
+<li>避免局部最优</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 网格世界奖励示例</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_reward</span>(<span class="params">state, action, next_state</span>):</span><br><span class="line">    <span class="keyword">if</span> next_state == goal:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">10</span>  <span class="comment"># 到达目标</span></span><br><span class="line">    <span class="keyword">if</span> next_state <span class="keyword">in</span> obstacles:</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">10</span>  <span class="comment"># 碰到障碍</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>  <span class="comment"># 每步惩罚（鼓励快速到达）</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="策略与价值函数"><a href="#策略与价值函数" class="headerlink" title="策略与价值函数"></a>策略与价值函数</h2><h3 id="策略（Policy）"><a href="#策略（Policy）" class="headerlink" title="策略（Policy）"></a>策略（Policy）</h3><p>策略定义Agent如何选择行动：<br>$$\pi(a|s)$$</p>
+<p><strong>类型</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>定义</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>确定性策略</td>
+<td>$\pi(s) &#x3D; a$</td>
+<td>固定行动</td>
+</tr>
+<tr>
+<td>随机策略</td>
+<td>$\pi(a</td>
+<td>s) &#x3D; P(a</td>
+</tr>
+</tbody></table>
+<h3 id="价值函数（Value-Function）"><a href="#价值函数（Value-Function）" class="headerlink" title="价值函数（Value Function）"></a>价值函数（Value Function）</h3><p><strong>状态价值函数</strong>：<br>$$V^\pi(s) &#x3D; \mathbb{E}<em>\pi[\sum</em>{t&#x3D;0}^\infty \gamma^t r_t | s_0 &#x3D; s]$$</p>
+<p><strong>状态-行动价值函数</strong>（Q函数）：<br>$$Q^\pi(s, a) &#x3D; \mathbb{E}<em>\pi[\sum</em>{t&#x3D;0}^\infty \gamma^t r_t | s_0 &#x3D; s, a_0 &#x3D; a]$$</p>
+<h3 id="折扣因子（Discount-Factor）"><a href="#折扣因子（Discount-Factor）" class="headerlink" title="折扣因子（Discount Factor）"></a>折扣因子（Discount Factor）</h3><p>$$\gamma \in [0, 1]$$</p>
+<p><strong>作用</strong>：</p>
+<ul>
+<li>控制未来奖励的重要性</li>
+<li>$\gamma$接近0：重视即时奖励</li>
+<li>$\gamma$接近1：重视长期奖励</li>
+</ul>
+<h3 id="Bellman方程"><a href="#Bellman方程" class="headerlink" title="Bellman方程"></a>Bellman方程</h3><p><strong>Bellman期望方程</strong>：<br>$$V^\pi(s) &#x3D; \sum_a \pi(a|s) \sum_{s’} P(s’|s,a)[r(s,a,s’) + \gamma V^\pi(s’)]$$</p>
+<p><strong>Bellman最优方程</strong>：<br>$$V^<em>(s) &#x3D; \max_a \sum_{s’} P(s’|s,a)[r(s,a,s’) + \gamma V^</em>(s’)]$$</p>
+<p>$$Q^<em>(s, a) &#x3D; \sum_{s’} P(s’|s,a)[r(s,a,s’) + \gamma \max_{a’} Q^</em>(s’, a’)]$$</p>
+<h2 id="马尔可夫决策过程（MDP）"><a href="#马尔可夫决策过程（MDP）" class="headerlink" title="马尔可夫决策过程（MDP）"></a>马尔可夫决策过程（MDP）</h2><h3 id="MDP定义"><a href="#MDP定义" class="headerlink" title="MDP定义"></a>MDP定义</h3><p>马尔可夫决策过程描述强化学习环境：</p>
+<p>$$MDP &#x3D; (S, A, P, R, \gamma)$$</p>
+<p><strong>组成</strong>：</p>
+<ul>
+<li>S：状态空间</li>
+<li>A：动作空间</li>
+<li>P：转移概率 $P(s’|s,a)$</li>
+<li>R：奖励函数 $R(s,a,s’)$</li>
+<li>$\gamma$：折扣因子</li>
+</ul>
+<h3 id="马尔可夫性质"><a href="#马尔可夫性质" class="headerlink" title="马尔可夫性质"></a>马尔可夫性质</h3><p><strong>定义</strong>：未来只依赖当前状态，不依赖历史。</p>
+<p>$$P(s_{t+1}|s_t, a_t, s_{t-1}, …) &#x3D; P(s_{t+1}|s_t, a_t)$$</p>
+<p><strong>意义</strong>：简化决策过程。</p>
+<h3 id="MDP示例"><a href="#MDP示例" class="headerlink" title="MDP示例"></a>MDP示例</h3><p><strong>网格世界</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 状态：位置 (x, y)</span></span><br><span class="line">states = [(<span class="number">0</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">1</span>), ..., (<span class="number">3</span>, <span class="number">3</span>)]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 动作：上、下、左、右</span></span><br><span class="line">actions = [<span class="string">&#x27;up&#x27;</span>, <span class="string">&#x27;down&#x27;</span>, <span class="string">&#x27;left&#x27;</span>, <span class="string">&#x27;right&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 转移概率：确定性</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">transition</span>(<span class="params">state, action</span>):</span><br><span class="line">    <span class="keyword">if</span> action == <span class="string">&#x27;up&#x27;</span>:</span><br><span class="line">        <span class="keyword">return</span> (state[<span class="number">0</span>], state[<span class="number">1</span>] + <span class="number">1</span>)</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line"><span class="comment"># 奖励</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">reward</span>(<span class="params">state, next_state</span>):</span><br><span class="line">    <span class="keyword">if</span> next_state == goal:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">10</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="部分可观测MDP（POMDP）"><a href="#部分可观测MDP（POMDP）" class="headerlink" title="部分可观测MDP（POMDP）"></a>部分可观测MDP（POMDP）</h3><p><strong>定义</strong>：Agent只能观测部分状态信息。</p>
+<p><strong>组成</strong>：</p>
+<ul>
+<li>MDP元素</li>
+<li>观测空间O</li>
+<li>观测概率 $P(o|s)$</li>
+</ul>
+<h2 id="强化学习分类"><a href="#强化学习分类" class="headerlink" title="强化学习分类"></a>强化学习分类</h2><h3 id="基于价值的方法"><a href="#基于价值的方法" class="headerlink" title="基于价值的方法"></a>基于价值的方法</h3><p>学习价值函数，间接推导策略：</p>
+<ul>
+<li>Value Iteration</li>
+<li>Q-Learning</li>
+<li>DQN</li>
+</ul>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>学习V或Q函数</li>
+<li>策略由价值推导</li>
+<li>适合离散动作</li>
+</ul>
+<h3 id="基于策略的方法"><a href="#基于策略的方法" class="headerlink" title="基于策略的方法"></a>基于策略的方法</h3><p>直接学习策略：</p>
+<ul>
+<li>Policy Gradient</li>
+<li>REINFORCE</li>
+<li>PPO</li>
+</ul>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>直接优化策略</li>
+<li>可处理连续动作</li>
+<li>可学习随机策略</li>
+</ul>
+<h3 id="Actor-Critic方法"><a href="#Actor-Critic方法" class="headerlink" title="Actor-Critic方法"></a>Actor-Critic方法</h3><p>结合价值和策略：</p>
+<ul>
+<li>学习价值函数（Critic）</li>
+<li>学习策略（Actor）</li>
+<li>如A2C、A3C</li>
+</ul>
+<h3 id="模型基础分类"><a href="#模型基础分类" class="headerlink" title="模型基础分类"></a>模型基础分类</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Model-based</td>
+<td>学习环境模型</td>
+</tr>
+<tr>
+<td>Model-free</td>
+<td>不学习环境模型</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>代表算法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Model-based Value</td>
+<td>Dyna-Q</td>
+</tr>
+<tr>
+<td>Model-free Value</td>
+<td>Q-Learning, DQN</td>
+</tr>
+<tr>
+<td>Model-free Policy</td>
+<td>REINFORCE, PPO</td>
+</tr>
+<tr>
+<td>Actor-Critic</td>
+<td>A2C, A3C</td>
+</tr>
+</tbody></table>
+<h2 id="探索与利用"><a href="#探索与利用" class="headerlink" title="探索与利用"></a>探索与利用</h2><h3 id="探索-利用困境"><a href="#探索-利用困境" class="headerlink" title="探索-利用困境"></a>探索-利用困境</h3><p><strong>探索（Exploration）</strong>：尝试新行动，发现可能更好的策略。</p>
+<p><strong>利用（Exploitation）</strong>：使用已知最优行动，最大化即时奖励。</p>
+<h3 id="平衡策略"><a href="#平衡策略" class="headerlink" title="平衡策略"></a>平衡策略</h3><table>
+<thead>
+<tr>
+<th>策略</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ε-greedy</td>
+<td>以ε概率随机探索</td>
+</tr>
+<tr>
+<td>Softmax</td>
+<td>按概率探索</td>
+</tr>
+<tr>
+<td>UCB</td>
+<td>不确定性探索</td>
+</tr>
+<tr>
+<td>Thompson采样</td>
+<td>贝叶斯探索</td>
+</tr>
+</tbody></table>
+<h3 id="ε-greedy策略"><a href="#ε-greedy策略" class="headerlink" title="ε-greedy策略"></a>ε-greedy策略</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">epsilon_greedy</span>(<span class="params">q_values, epsilon</span>):</span><br><span class="line">    <span class="keyword">if</span> random.random() &lt; epsilon:</span><br><span class="line">        <span class="keyword">return</span> random.choice(actions)  <span class="comment"># 随机探索</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> argmax(q_values)  <span class="comment"># 利用最优</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="探索衰减"><a href="#探索衰减" class="headerlink" title="探索衰减"></a>探索衰减</h3><p>探索概率随时间衰减：<br>$$\epsilon_t &#x3D; \epsilon_0 \cdot decay^t$$</p>
+<h2 id="强化学习工作流程"><a href="#强化学习工作流程" class="headerlink" title="强化学习工作流程"></a>强化学习工作流程</h2><h3 id="标准流程"><a href="#标准流程" class="headerlink" title="标准流程"></a>标准流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1. 初始化策略/价值函数</span><br><span class="line">2. 循环：</span><br><span class="line">   a. 选择行动（根据策略）</span><br><span class="line">   b. 执行行动，观察奖励和新状态</span><br><span class="line">   c. 更新策略/价值函数</span><br><span class="line">3. 评估策略性能</span><br></pre></td></tr></table></figure>
+
+<h3 id="训练过程"><a href="#训练过程" class="headerlink" title="训练过程"></a>训练过程</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">train_agent</span>(<span class="params">env, agent, episodes</span>):</span><br><span class="line">    <span class="keyword">for</span> episode <span class="keyword">in</span> <span class="built_in">range</span>(episodes):</span><br><span class="line">        state = env.reset()</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            action = agent.select_action(state)</span><br><span class="line">            next_state, reward, done = env.step(action)</span><br><span class="line">            </span><br><span class="line">            agent.update(state, action, reward, next_state)</span><br><span class="line">            </span><br><span class="line">            state = next_state</span><br><span class="line">            <span class="keyword">if</span> done:</span><br><span class="line">                <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="评估指标"><a href="#评估指标" class="headerlink" title="评估指标"></a>评估指标</h3><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>累计奖励</td>
+<td>一轮总奖励</td>
+</tr>
+<tr>
+<td>成功率</td>
+<td>目标达成比例</td>
+</tr>
+<tr>
+<td>学习速度</td>
+<td>达到性能所需轮数</td>
+</tr>
+</tbody></table>
+<h2 id="案例实践"><a href="#案例实践" class="headerlink" title="案例实践"></a>案例实践</h2><h3 id="简单环境实现"><a href="#简单环境实现" class="headerlink" title="简单环境实现"></a>简单环境实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GridWorld</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, size=<span class="number">4</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.size = size</span><br><span class="line">        <span class="variable language_">self</span>.goal = (size-<span class="number">1</span>, size-<span class="number">1</span>)</span><br><span class="line">        <span class="variable language_">self</span>.state = (<span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">reset</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.state = (<span class="number">0</span>, <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.state</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">step</span>(<span class="params">self, action</span>):</span><br><span class="line">        x, y = <span class="variable language_">self</span>.state</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> action == <span class="number">0</span>:  <span class="comment"># up</span></span><br><span class="line">            y = <span class="built_in">min</span>(y + <span class="number">1</span>, <span class="variable language_">self</span>.size - <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">elif</span> action == <span class="number">1</span>:  <span class="comment"># down</span></span><br><span class="line">            y = <span class="built_in">max</span>(y - <span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">elif</span> action == <span class="number">2</span>:  <span class="comment"># left</span></span><br><span class="line">            x = <span class="built_in">max</span>(x - <span class="number">1</span>, <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">elif</span> action == <span class="number">3</span>:  <span class="comment"># right</span></span><br><span class="line">            x = <span class="built_in">min</span>(x + <span class="number">1</span>, <span class="variable language_">self</span>.size - <span class="number">1</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="variable language_">self</span>.state = (x, y)</span><br><span class="line">        </span><br><span class="line">        reward = <span class="number">10</span> <span class="keyword">if</span> <span class="variable language_">self</span>.state == <span class="variable language_">self</span>.goal <span class="keyword">else</span> -<span class="number">1</span></span><br><span class="line">        done = <span class="variable language_">self</span>.state == <span class="variable language_">self</span>.goal</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.state, reward, done</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用</span></span><br><span class="line">env = GridWorld()</span><br><span class="line">state = env.reset()</span><br><span class="line">next_state, reward, done = env.step(<span class="number">3</span>)  <span class="comment"># right</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="简单Agent实现"><a href="#简单Agent实现" class="headerlink" title="简单Agent实现"></a>简单Agent实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RandomAgent</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, n_actions</span>):</span><br><span class="line">        <span class="variable language_">self</span>.n_actions = n_actions</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">select_action</span>(<span class="params">self, state</span>):</span><br><span class="line">        <span class="keyword">return</span> random.randint(<span class="number">0</span>, <span class="variable language_">self</span>.n_actions - <span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update</span>(<span class="params">self, state, action, reward, next_state</span>):</span><br><span class="line">        <span class="comment"># 不学习</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line">agent = RandomAgent(<span class="number">4</span>)</span><br><span class="line">total_reward = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> episode <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    state = env.reset()</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        action = agent.select_action(state)</span><br><span class="line">        next_state, reward, done = env.step(action)</span><br><span class="line">        total_reward += reward</span><br><span class="line">        state = next_state</span><br><span class="line">        <span class="keyword">if</span> done:</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Q表初始化"><a href="#Q表初始化" class="headerlink" title="Q表初始化"></a>Q表初始化</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">QAgent</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, n_states, n_actions</span>):</span><br><span class="line">        <span class="variable language_">self</span>.q_table = np.zeros((n_states, n_actions))</span><br><span class="line">        <span class="variable language_">self</span>.alpha = <span class="number">0.1</span>  <span class="comment"># 学习率</span></span><br><span class="line">        <span class="variable language_">self</span>.gamma = <span class="number">0.99</span>  <span class="comment"># 折扣因子</span></span><br><span class="line">        <span class="variable language_">self</span>.epsilon = <span class="number">0.1</span>  <span class="comment"># 探索率</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">select_action</span>(<span class="params">self, state</span>):</span><br><span class="line">        <span class="keyword">if</span> random.random() &lt; <span class="variable language_">self</span>.epsilon:</span><br><span class="line">            <span class="keyword">return</span> random.randint(<span class="number">0</span>, <span class="variable language_">self</span>.n_actions - <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> np.argmax(<span class="variable language_">self</span>.q_table[state])</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update</span>(<span class="params">self, state, action, reward, next_state</span>):</span><br><span class="line">        <span class="comment"># Q-Learning更新</span></span><br><span class="line">        <span class="variable language_">self</span>.q_table[state, action] += <span class="variable language_">self</span>.alpha * (</span><br><span class="line">            reward + <span class="variable language_">self</span>.gamma * np.<span class="built_in">max</span>(<span class="variable language_">self</span>.q_table[next_state]) - </span><br><span class="line">            <span class="variable language_">self</span>.q_table[state, action]</span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用OpenAI-Gym"><a href="#使用OpenAI-Gym" class="headerlink" title="使用OpenAI Gym"></a>使用OpenAI Gym</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gym</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建环境</span></span><br><span class="line">env = gym.make(<span class="string">&#x27;CartPole-v1&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 观察</span></span><br><span class="line">state = env.reset()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;State space: <span class="subst">&#123;env.observation_space&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Action space: <span class="subst">&#123;env.action_space&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 交互</span></span><br><span class="line"><span class="keyword">for</span> t <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">    action = env.action_space.sample()  <span class="comment"># 随机动作</span></span><br><span class="line">    next_state, reward, done, info = env.step(action)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> done:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">env.close()</span><br></pre></td></tr></table></figure>
+
+<h2 id="强化学习应用领域"><a href="#强化学习应用领域" class="headerlink" title="强化学习应用领域"></a>强化学习应用领域</h2><h3 id="游戏AI"><a href="#游戏AI" class="headerlink" title="游戏AI"></a>游戏AI</h3><table>
+<thead>
+<tr>
+<th>应用</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Atari游戏</td>
+<td>DQN</td>
+</tr>
+<tr>
+<td>围棋</td>
+<td>AlphaGo</td>
+</tr>
+<tr>
+<td>Dota 2</td>
+<td>OpenAI Five</td>
+</tr>
+<tr>
+<td>麻将</td>
+<td>Suphx</td>
+</tr>
+</tbody></table>
+<h3 id="机器人控制"><a href="#机器人控制" class="headerlink" title="机器人控制"></a>机器人控制</h3><table>
+<thead>
+<tr>
+<th>应用</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>运动控制</td>
+<td>步行、跳跃</td>
+</tr>
+<tr>
+<td>操作控制</td>
+<td>抓取、放置</td>
+</tr>
+<tr>
+<td>导航</td>
+<td>路径规划</td>
+</tr>
+</tbody></table>
+<h3 id="自动驾驶"><a href="#自动驾驶" class="headerlink" title="自动驾驶"></a>自动驾驶</h3><table>
+<thead>
+<tr>
+<th>应用</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>车辆控制</td>
+<td>加速、转向</td>
+</tr>
+<tr>
+<td>路径规划</td>
+<td>决策导航</td>
+</tr>
+</tbody></table>
+<h3 id="推荐系统"><a href="#推荐系统" class="headerlink" title="推荐系统"></a>推荐系统</h3><table>
+<thead>
+<tr>
+<th>应用</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内容推荐</td>
+<td>用户交互优化</td>
+</tr>
+<tr>
+<td>广告投放</td>
+<td>点击率优化</td>
+</tr>
+</tbody></table>
+<h3 id="资源管理"><a href="#资源管理" class="headerlink" title="资源管理"></a>资源管理</h3><table>
+<thead>
+<tr>
+<th>应用</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据中心</td>
+<td>能源优化</td>
+</tr>
+<tr>
+<td>网络控制</td>
+<td>流量调度</td>
+</tr>
+</tbody></table>
+<h2 id="强化学习挑战"><a href="#强化学习挑战" class="headerlink" title="强化学习挑战"></a>强化学习挑战</h2><h3 id="样本效率"><a href="#样本效率" class="headerlink" title="样本效率"></a>样本效率</h3><p><strong>问题</strong>：需要大量交互才能学习。</p>
+<p><strong>解决</strong>：</p>
+<ul>
+<li>Model-based方法</li>
+<li>经验回放</li>
+<li>算法改进</li>
+</ul>
+<h3 id="稳定性"><a href="#稳定性" class="headerlink" title="稳定性"></a>稳定性</h3><p><strong>问题</strong>：训练不稳定，性能波动。</p>
+<p><strong>解决</strong>：</p>
+<ul>
+<li>目标网络</li>
+<li>适当的学习率</li>
+<li>正则化</li>
+</ul>
+<h3 id="探索难题"><a href="#探索难题" class="headerlink" title="探索难题"></a>探索难题</h3><p><strong>问题</strong>：稀疏奖励难以探索。</p>
+<p><strong>解决</strong>：</p>
+<ul>
+<li>奖励塑形</li>
+<li>好奇心驱动</li>
+<li>层次化探索</li>
+</ul>
+<h3 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h3><p><strong>问题</strong>：学习过程可能有危险行为。</p>
+<p><strong>解决</strong>：</p>
+<ul>
+<li>安全约束</li>
+<li>模拟训练</li>
+<li>人监督</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>强化学习是通过交互学习的机器学习方法。核心内容包括：</p>
+<ul>
+<li>Agent-Environment模型：交互框架</li>
+<li>状态、动作、奖励：核心要素</li>
+<li>策略与价值函数：决策表示</li>
+<li>MDP：数学框架</li>
+<li>学习类型分类：基于价值、基于策略、Actor-Critic</li>
+<li>探索与利用：平衡困境</li>
+</ul>
+<p>强化学习适合序列决策问题，应用广泛。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-value-based/">基于价值的方法</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-policy-based/">基于策略的方法</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/probability-theory/">概率论基础</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/optimization/">优化理论基础</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-introduction/" data-id="cuidKNAEqeS8PYJqznOIfUpGl" data-title="强化学习基础" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" rel="tag">强化学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/prompt-engineering/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          上下文学习与提示工程
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-policy-based/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">基于策略的方法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGI/" rel="tag">AGI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E4%BC%A6%E7%90%86/" rel="tag">AI伦理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E5%9F%BA%E7%A1%80/" rel="tag">AI基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E6%9E%B6%E6%9E%84/" rel="tag">AI架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AgentBench/" rel="tag">AgentBench</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AutoGen/" rel="tag">AutoGen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boosting/" rel="tag">Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNN/" rel="tag">CNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CoT/" rel="tag">CoT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CrewAI/" rel="tag">CrewAI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DQN/" rel="tag">DQN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decision-Tree/" rel="tag">Decision Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Framework/" rel="tag">Framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Function-Calling/" rel="tag">Function Calling</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GAN/" rel="tag">GAN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GBDT/" rel="tag">GBDT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gradient-Boosting/" rel="tag">Gradient Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KNN/" rel="tag">KNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LSTM/" rel="tag">LSTM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LangChain/" rel="tag">LangChain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LangGraph/" rel="tag">LangGraph</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LightGBM/" rel="tag">LightGBM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Memory/" rel="tag">Memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Microsoft/" rel="tag">Microsoft</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Multi-Agent/" rel="tag">Multi-Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ONNX/" rel="tag">ONNX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PPO/" rel="tag">PPO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Planning/" rel="tag">Planning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Policy-Gradient/" rel="tag">Policy Gradient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prompt-Injection/" rel="tag">Prompt Injection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Q-Learning/" rel="tag">Q-Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RLHF/" rel="tag">RLHF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RNN/" rel="tag">RNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Forest/" rel="tag">Random Forest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReAct/" rel="tag">ReAct</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasoning/" rel="tag">Reasoning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVM/" rel="tag">SVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Semantic-Kernel/" rel="tag">Semantic Kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Stacking/" rel="tag">Stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tool-Use/" rel="tag">Tool Use</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transformer/" rel="tag">Transformer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VAE/" rel="tag">VAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XGBoost/" rel="tag">XGBoost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/" rel="tag">life</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%8A%A9%E6%89%8B/" rel="tag">代码助手</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/" rel="tag">优化理论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" rel="tag">优化算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%A6%E7%90%86/" rel="tag">伦理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2/" rel="tag">信息检索</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%A5%E9%97%A8/" rel="tag">入门</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" rel="tag">决策树</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83/" rel="tag">分布式训练</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB%E7%AE%97%E6%B3%95/" rel="tag">分类算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F/" rel="tag">协作模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" rel="tag">博弈论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" rel="tag">反向传播</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" rel="tag">可视化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">向量数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/" rel="tag">多智能体</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" rel="tag">大模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%A2%E6%9C%8D/" rel="tag">客服</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F/" rel="tag">对话系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B1%82%E6%AC%A1%E5%8C%96%E6%9E%B6%E6%9E%84/" rel="tag">层次化架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" rel="tag">工具调用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/" rel="tag">并行策略</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" rel="tag">开发工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" rel="tag">强化学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag">微服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E8%B0%83/" rel="tag">微调</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%83%B3/" rel="tag">感想</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" rel="tag">扩散模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" rel="tag">损失函数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/" rel="tag">推理优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/" rel="tag">提示工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/" rel="tag">数学基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" rel="tag">数据分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" rel="tag">数据清洗</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/" rel="tag">数据预处理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%BF%97/" rel="tag">日志</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%AA%E6%9D%A5%E8%B6%8B%E5%8A%BF/" rel="tag">未来趋势</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" rel="tag">架构设计</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" rel="tag">梯度提升</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/" rel="tag">概率论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A6%82%E8%BF%B0/" rel="tag">概述</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E5%8E%8B%E7%BC%A9/" rel="tag">模型压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" rel="tag">模型部署</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AD%A3%E5%88%99%E5%8C%96/" rel="tag">正则化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/" rel="tag">注意力机制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" rel="tag">激活函数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" rel="tag">特征工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9/" rel="tag">特征选择</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" rel="tag">生成模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%B4%BB/" rel="tag">生活</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" rel="tag">监督学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" rel="tag">知识蒸馏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A0%94%E7%A9%B6/" rel="tag">研究</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag">神经网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AB%9E%E4%BA%89/" rel="tag">竞争</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E5%8D%8F%E4%BD%9C/" rel="tag">系统协作</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" rel="tag">系统架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" rel="tag">线性代数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" rel="tag">线性回归</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" rel="tag">统计学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E6%B5%8B/" rel="tag">评测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B0%83%E8%AF%95/" rel="tag">调试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" rel="tag">贝叶斯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/" rel="tag">超参数调优</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" rel="tag">软件工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" rel="tag">逻辑回归</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8F%E5%8C%96/" rel="tag">量化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/" rel="tag">随机森林</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/" rel="tag">集成学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A2%84%E8%AE%AD%E7%BB%83/" rel="tag">预训练</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AGI/" style="font-size: 10px;">AGI</a> <a href="/tags/AI%E4%BC%A6%E7%90%86/" style="font-size: 10px;">AI伦理</a> <a href="/tags/AI%E5%9F%BA%E7%A1%80/" style="font-size: 10px;">AI基础</a> <a href="/tags/AI%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">AI架构</a> <a href="/tags/Agent/" style="font-size: 18.89px;">Agent</a> <a href="/tags/AgentBench/" style="font-size: 10px;">AgentBench</a> <a href="/tags/AutoGen/" style="font-size: 11.11px;">AutoGen</a> <a href="/tags/Boosting/" style="font-size: 11.11px;">Boosting</a> <a href="/tags/CNN/" style="font-size: 10px;">CNN</a> <a href="/tags/CoT/" style="font-size: 10px;">CoT</a> <a href="/tags/CrewAI/" style="font-size: 10px;">CrewAI</a> <a href="/tags/DQN/" style="font-size: 10px;">DQN</a> <a href="/tags/Decision-Tree/" style="font-size: 10px;">Decision Tree</a> <a href="/tags/Framework/" style="font-size: 10px;">Framework</a> <a href="/tags/Function-Calling/" style="font-size: 10px;">Function Calling</a> <a href="/tags/GAN/" style="font-size: 10px;">GAN</a> <a href="/tags/GBDT/" style="font-size: 12.22px;">GBDT</a> <a href="/tags/Gradient-Boosting/" style="font-size: 10px;">Gradient Boosting</a> <a href="/tags/KNN/" style="font-size: 10px;">KNN</a> <a href="/tags/LLM/" style="font-size: 14.44px;">LLM</a> <a href="/tags/LSTM/" style="font-size: 10px;">LSTM</a> <a href="/tags/LangChain/" style="font-size: 11.11px;">LangChain</a> <a href="/tags/LangGraph/" style="font-size: 10px;">LangGraph</a> <a href="/tags/LightGBM/" style="font-size: 10px;">LightGBM</a> <a href="/tags/Memory/" style="font-size: 10px;">Memory</a> <a href="/tags/Microsoft/" style="font-size: 10px;">Microsoft</a> <a href="/tags/Multi-Agent/" style="font-size: 15.56px;">Multi-Agent</a> <a href="/tags/ONNX/" style="font-size: 10px;">ONNX</a> <a href="/tags/PPO/" style="font-size: 10px;">PPO</a> <a href="/tags/Planning/" style="font-size: 10px;">Planning</a> <a href="/tags/Policy-Gradient/" style="font-size: 10px;">Policy Gradient</a> <a href="/tags/Prompt-Injection/" style="font-size: 10px;">Prompt Injection</a> <a href="/tags/Q-Learning/" style="font-size: 10px;">Q-Learning</a> <a href="/tags/RLHF/" style="font-size: 10px;">RLHF</a> <a href="/tags/RNN/" style="font-size: 10px;">RNN</a> <a href="/tags/Random-Forest/" style="font-size: 10px;">Random Forest</a> <a href="/tags/ReAct/" style="font-size: 10px;">ReAct</a> <a href="/tags/Reasoning/" style="font-size: 10px;">Reasoning</a> <a href="/tags/SVM/" style="font-size: 10px;">SVM</a> <a href="/tags/Semantic-Kernel/" style="font-size: 10px;">Semantic Kernel</a> <a href="/tags/Stacking/" style="font-size: 10px;">Stacking</a> <a href="/tags/Tool-Use/" style="font-size: 11.11px;">Tool Use</a> <a href="/tags/Transformer/" style="font-size: 10px;">Transformer</a> <a href="/tags/VAE/" style="font-size: 10px;">VAE</a> <a href="/tags/XGBoost/" style="font-size: 12.22px;">XGBoost</a> <a href="/tags/life/" style="font-size: 10px;">life</a> <a href="/tags/thoughts/" style="font-size: 10px;">thoughts</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E5%8A%A9%E6%89%8B/" style="font-size: 10px;">代码助手</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/" style="font-size: 10px;">优化理论</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" style="font-size: 10px;">优化算法</a> <a href="/tags/%E4%BC%A6%E7%90%86/" style="font-size: 10px;">伦理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2/" style="font-size: 10px;">信息检索</a> <a href="/tags/%E5%85%A5%E9%97%A8/" style="font-size: 10px;">入门</a> <a href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" style="font-size: 11.11px;">决策树</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83/" style="font-size: 10px;">分布式训练</a> <a href="/tags/%E5%88%86%E7%B1%BB%E7%AE%97%E6%B3%95/" style="font-size: 14.44px;">分类算法</a> <a href="/tags/%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">协作模式</a> <a href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" style="font-size: 10px;">博弈论</a> <a href="/tags/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" style="font-size: 10px;">反向传播</a> <a href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" style="font-size: 10px;">可视化</a> <a href="/tags/%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 10px;">向量数据库</a> <a href="/tags/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/" style="font-size: 10px;">多智能体</a> <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" style="font-size: 13.33px;">大模型</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 10px;">安全</a> <a href="/tags/%E5%AE%A2%E6%9C%8D/" style="font-size: 10px;">客服</a> <a href="/tags/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">对话系统</a> <a href="/tags/%E5%B1%82%E6%AC%A1%E5%8C%96%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">层次化架构</a> <a href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" style="font-size: 10px;">工具调用</a> <a href="/tags/%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/" style="font-size: 10px;">并行策略</a> <a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">开发工具</a> <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">强化学习</a> <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">微服务</a> <a href="/tags/%E5%BE%AE%E8%B0%83/" style="font-size: 10px;">微调</a> <a href="/tags/%E6%84%9F%E6%83%B3/" style="font-size: 10px;">感想</a> <a href="/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" style="font-size: 10px;">扩散模型</a> <a href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" style="font-size: 10px;">损失函数</a> <a href="/tags/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/" style="font-size: 10px;">推理优化</a> <a href="/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">提示工程</a> <a href="/tags/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/" style="font-size: 13.33px;">数学基础</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" style="font-size: 10px;">数据分析</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" style="font-size: 10px;">数据清洗</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/" style="font-size: 10px;">数据预处理</a> <a href="/tags/%E6%97%A5%E5%BF%97/" style="font-size: 10px;">日志</a> <a href="/tags/%E6%9C%AA%E6%9D%A5%E8%B6%8B%E5%8A%BF/" style="font-size: 10px;">未来趋势</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 20px;">机器学习</a> <a href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" style="font-size: 10px;">架构设计</a> <a href="/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" style="font-size: 10px;">梯度提升</a> <a href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/" style="font-size: 10px;">概率论</a> <a href="/tags/%E6%A6%82%E8%BF%B0/" style="font-size: 10px;">概述</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">模型压缩</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">模型部署</a> <a href="/tags/%E6%AD%A3%E5%88%99%E5%8C%96/" style="font-size: 10px;">正则化</a> <a href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/" style="font-size: 10px;">注意力机制</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 17.78px;">深度学习</a> <a href="/tags/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" style="font-size: 10px;">激活函数</a> <a href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">特征工程</a> <a href="/tags/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9/" style="font-size: 10px;">特征选择</a> <a href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" style="font-size: 12.22px;">生成模型</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">生活</a> <a href="/tags/%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">监督学习</a> <a href="/tags/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" style="font-size: 10px;">知识蒸馏</a> <a href="/tags/%E7%A0%94%E7%A9%B6/" style="font-size: 10px;">研究</a> <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" style="font-size: 16.67px;">神经网络</a> <a href="/tags/%E7%AB%9E%E4%BA%89/" style="font-size: 10px;">竞争</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E5%8D%8F%E4%BD%9C/" style="font-size: 10px;">系统协作</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">系统架构</a> <a href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" style="font-size: 10px;">线性代数</a> <a href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" style="font-size: 10px;">线性回归</a> <a href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" style="font-size: 10px;">统计学</a> <a href="/tags/%E8%AF%84%E6%B5%8B/" style="font-size: 10px;">评测</a> <a href="/tags/%E8%B0%83%E8%AF%95/" style="font-size: 10px;">调试</a> <a href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" style="font-size: 10px;">贝叶斯</a> <a href="/tags/%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/" style="font-size: 10px;">超参数调优</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">软件工程</a> <a href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" style="font-size: 10px;">逻辑回归</a> <a href="/tags/%E9%87%8F%E5%8C%96/" style="font-size: 10px;">量化</a> <a href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/" style="font-size: 11.11px;">随机森林</a> <a href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/" style="font-size: 16.67px;">集成学习</a> <a href="/tags/%E9%A2%84%E8%AE%AD%E7%BB%83/" style="font-size: 10px;">预训练</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-architecture/">Agent 架构模式</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/en/essays/blog-redesign/">After the Blog Redesign</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/llm-and-agent/">LLM 与 Agent 的关系</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/">Agent 入门指南</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

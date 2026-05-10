@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>多 Agent 协作模式 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="协作模式分类多 Agent 协作模式决定了 Agent 如何分工和协作。不同的协作模式适用于不同的任务类型。 主要协作模式   模式 描述 适用场景    顺序 Agent 按顺序处理任务 流程式任务   并行 Agent 同时处理不同子任务 独立子任务   层次 Manager 分配任务给 Worker 大型复杂任务   对话 Agent 通过对话协作 需要讨论的任务   顺序协作模式顺序协作中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多 Agent 协作模式">
+<meta property="og:url" content="https://keeganjin.github.io/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-collaboration/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="协作模式分类多 Agent 协作模式决定了 Agent 如何分工和协作。不同的协作模式适用于不同的任务类型。 主要协作模式   模式 描述 适用场景    顺序 Agent 按顺序处理任务 流程式任务   并行 Agent 同时处理不同子任务 独立子任务   层次 Manager 分配任务给 Worker 大型复杂任务   对话 Agent 通过对话协作 需要讨论的任务   顺序协作模式顺序协作中">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-09T19:03:33.276Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="Multi-Agent">
+<meta property="article:tag" content="协作模式">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Product Docs</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/Agent/multi-agent-collaboration" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-collaboration/" class="article-date">
+  <time class="dt-published" datetime="2026-05-09T16:00:00.000Z" itemprop="datePublished">2026-05-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      多 Agent 协作模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="协作模式分类"><a href="#协作模式分类" class="headerlink" title="协作模式分类"></a>协作模式分类</h2><p>多 Agent 协作模式决定了 Agent 如何分工和协作。不同的协作模式适用于不同的任务类型。</p>
+<h3 id="主要协作模式"><a href="#主要协作模式" class="headerlink" title="主要协作模式"></a>主要协作模式</h3><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>描述</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>顺序</td>
+<td>Agent 按顺序处理任务</td>
+<td>流程式任务</td>
+</tr>
+<tr>
+<td>并行</td>
+<td>Agent 同时处理不同子任务</td>
+<td>独立子任务</td>
+</tr>
+<tr>
+<td>层次</td>
+<td>Manager 分配任务给 Worker</td>
+<td>大型复杂任务</td>
+</tr>
+<tr>
+<td>对话</td>
+<td>Agent 通过对话协作</td>
+<td>需要讨论的任务</td>
+</tr>
+</tbody></table>
+<h2 id="顺序协作模式"><a href="#顺序协作模式" class="headerlink" title="顺序协作模式"></a>顺序协作模式</h2><p>顺序协作中，Agent 按预定顺序处理任务，每个 Agent 处理完成后传递给下一个。</p>
+<h3 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">输入 → Agent A → 结果 A → Agent B → 结果 B → Agent C → 最终输出</span><br></pre></td></tr></table></figure>
+
+<h3 id="工作机制"><a href="#工作机制" class="headerlink" title="工作机制"></a>工作机制</h3><ol>
+<li><strong>任务定义</strong>：确定处理步骤顺序</li>
+<li><strong>Agent 分配</strong>：每步分配对应 Agent</li>
+<li><strong>顺序执行</strong>：Agent 按顺序依次执行</li>
+<li><strong>结果传递</strong>：前一个 Agent 的输出作为下一个的输入</li>
+<li><strong>最终整合</strong>：最后一个 Agent 输出最终结果</li>
+</ol>
+<h3 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h3><p>顺序协作适用于：</p>
+<ul>
+<li>有明确步骤顺序的任务</li>
+<li>每步依赖前一步结果的任务</li>
+<li>流程化处理任务</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<ul>
+<li>内容生产：选题 Agent → 撰写 Agent → 编辑 Agent → 发布 Agent</li>
+<li>数据处理：采集 Agent → 清洗 Agent → 分析 Agent → 报告 Agent</li>
+<li>软件开发：需求 Agent → 设计 Agent → 开发 Agent → 测试 Agent</li>
+</ul>
+<h3 id="顺序协作示例"><a href="#顺序协作示例" class="headerlink" title="顺序协作示例"></a>顺序协作示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SequentialPipeline</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, agents</span>):</span><br><span class="line">        <span class="variable language_">self</span>.agents = agents  <span class="comment"># [agent_a, agent_b, agent_c]</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        result = <span class="built_in">input</span></span><br><span class="line">        <span class="keyword">for</span> agent <span class="keyword">in</span> <span class="variable language_">self</span>.agents:</span><br><span class="line">            result = agent.process(result)</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用示例</span></span><br><span class="line">pipeline = SequentialPipeline([</span><br><span class="line">    ResearchAgent(),      <span class="comment"># 步骤1：研究</span></span><br><span class="line">    WriterAgent(),        <span class="comment"># 步骤2：撰写</span></span><br><span class="line">    EditorAgent()         <span class="comment"># 步骤3：编辑</span></span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">final_report = pipeline.run(<span class="string">&quot;写一篇关于AI Agent的文章&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="优势与局限"><a href="#优势与局限" class="headerlink" title="优势与局限"></a>优势与局限</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>局限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>流程清晰</td>
+<td>无法并行，效率受限</td>
+</tr>
+<tr>
+<td>容易调试</td>
+<td>每步依赖前一步</td>
+</tr>
+<tr>
+<td>可预测结果</td>
+<td>一步失败影响全部</td>
+</tr>
+</tbody></table>
+<h2 id="并行协作模式"><a href="#并行协作模式" class="headerlink" title="并行协作模式"></a>并行协作模式</h2><p>并行协作中，多个 Agent 同时处理不同的子任务，最后汇总结果。</p>
+<h3 id="基本流程-1"><a href="#基本流程-1" class="headerlink" title="基本流程"></a>基本流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">                    ┌─── Agent A ──── 结果 A ───┐</span><br><span class="line">                    │                           │</span><br><span class="line">输入 → 任务分解 → ──┼─── Agent B ──── 结果 B ───┼── 结果汇总 → 最终输出</span><br><span class="line">                    │                           │</span><br><span class="line">                    └─── Agent C ──── 结果 C ───┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="工作机制-1"><a href="#工作机制-1" class="headerlink" title="工作机制"></a>工作机制</h3><ol>
+<li><strong>任务分解</strong>：将大任务分解为独立子任务</li>
+<li><strong>Agent 分配</strong>：每个子任务分配一个 Agent</li>
+<li><strong>并行执行</strong>：所有 Agent 同时开始执行</li>
+<li><strong>等待完成</strong>：等待所有 Agent 完成</li>
+<li><strong>结果汇总</strong>：整合所有 Agent 的结果</li>
+</ol>
+<h3 id="适用场景-1"><a href="#适用场景-1" class="headerlink" title="适用场景"></a>适用场景</h3><p>并行协作适用于：</p>
+<ul>
+<li>可分解为独立子任务的任务</li>
+<li>需要快速完成的大任务</li>
+<li>需要多视角处理的任务</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<ul>
+<li>多源搜索：不同 Agent 搜索不同数据源</li>
+<li>多文件处理：不同 Agent 处理不同文件</li>
+<li>多角度分析：不同 Agent 从不同角度分析</li>
+</ul>
+<h3 id="并行协作示例"><a href="#并行协作示例" class="headerlink" title="并行协作示例"></a>并行协作示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ParallelCoordinator</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, agents</span>):</span><br><span class="line">        <span class="variable language_">self</span>.agents = agents</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self, subtasks</span>):</span><br><span class="line">        <span class="comment"># 分配子任务给不同 Agent</span></span><br><span class="line">        tasks = []</span><br><span class="line">        <span class="keyword">for</span> i, subtask <span class="keyword">in</span> <span class="built_in">enumerate</span>(subtasks):</span><br><span class="line">            agent = <span class="variable language_">self</span>.agents[i % <span class="built_in">len</span>(<span class="variable language_">self</span>.agents)]</span><br><span class="line">            tasks.append(agent.process_async(subtask))</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 并行执行</span></span><br><span class="line">        results = <span class="keyword">await</span> asyncio.gather(*tasks)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 汇总结果</span></span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.aggregate(results)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">aggregate</span>(<span class="params">self, results</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;\n&quot;</span>.join(results)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用示例</span></span><br><span class="line">coordinator = ParallelCoordinator([</span><br><span class="line">    SearchAgent(source=<span class="string">&quot;web&quot;</span>),</span><br><span class="line">    SearchAgent(source=<span class="string">&quot;news&quot;</span>),</span><br><span class="line">    SearchAgent(source=<span class="string">&quot;academic&quot;</span>)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">results = coordinator.run([</span><br><span class="line">    <span class="string">&quot;搜索技术博客&quot;</span>,</span><br><span class="line">    <span class="string">&quot;搜索新闻报道&quot;</span>,</span><br><span class="line">    <span class="string">&quot;搜索学术论文&quot;</span></span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+
+<h3 id="并行执行策略"><a href="#并行执行策略" class="headerlink" title="并行执行策略"></a>并行执行策略</h3><h4 id="全并行"><a href="#全并行" class="headerlink" title="全并行"></a>全并行</h4><p>所有 Agent 同时开始：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">run_all_parallel</span>(<span class="params">agents, inputs</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">await</span> asyncio.gather(*[</span><br><span class="line">        agent.run(<span class="built_in">input</span>) <span class="keyword">for</span> agent, <span class="built_in">input</span> <span class="keyword">in</span> <span class="built_in">zip</span>(agents, inputs)</span><br><span class="line">    ])</span><br></pre></td></tr></table></figure>
+
+<h4 id="分组并行"><a href="#分组并行" class="headerlink" title="分组并行"></a>分组并行</h4><p>Agent 分组并行执行：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">run_grouped_parallel</span>(<span class="params">agent_groups, inputs</span>):</span><br><span class="line">    results = []</span><br><span class="line">    <span class="keyword">for</span> group <span class="keyword">in</span> agent_groups:</span><br><span class="line">        group_results = <span class="keyword">await</span> asyncio.gather(*[</span><br><span class="line">            agent.run(<span class="built_in">input</span>) <span class="keyword">for</span> agent, <span class="built_in">input</span> <span class="keyword">in</span> <span class="built_in">zip</span>(group, inputs)</span><br><span class="line">        ])</span><br><span class="line">        results.extend(group_results)</span><br><span class="line">    <span class="keyword">return</span> results</span><br></pre></td></tr></table></figure>
+
+<h3 id="优势与局限-1"><a href="#优势与局限-1" class="headerlink" title="优势与局限"></a>优势与局限</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>局限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>处理速度快</td>
+<td>需要独立子任务</td>
+</tr>
+<tr>
+<td>利用多资源</td>
+<td>结果汇总复杂</td>
+</tr>
+<tr>
+<td>故障隔离</td>
+<td>协调开销</td>
+</tr>
+</tbody></table>
+<h2 id="层次协作模式"><a href="#层次协作模式" class="headerlink" title="层次协作模式"></a>层次协作模式</h2><p>层次协作中，Manager Agent 负责规划和分配任务，Worker Agent 负责执行。</p>
+<h3 id="基本流程-2"><a href="#基本流程-2" class="headerlink" title="基本流程"></a>基本流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">用户请求 → Manager Agent → 任务分解 → 分配给 Workers</span><br><span class="line">                                    ↓</span><br><span class="line">                            Worker 1 → 执行 → 结果</span><br><span class="line">                            Worker 2 → 执行 → 结果</span><br><span class="line">                            Worker 3 → 执行 → 结果</span><br><span class="line">                                    ↓</span><br><span class="line">                            结果收集 → Manager 整合 → 最终输出</span><br></pre></td></tr></table></figure>
+
+<h3 id="工作机制-2"><a href="#工作机制-2" class="headerlink" title="工作机制"></a>工作机制</h3><h4 id="Manager-Agent-职责"><a href="#Manager-Agent-职责" class="headerlink" title="Manager Agent 职责"></a>Manager Agent 职责</h4><ol>
+<li><strong>接收任务</strong>：接收用户的原始任务</li>
+<li><strong>理解任务</strong>：分析任务需求和目标</li>
+<li><strong>分解任务</strong>：将任务分解为子任务</li>
+<li><strong>分配任务</strong>：将子任务分配给合适的 Worker</li>
+<li><strong>监控进度</strong>：跟踪 Worker 执行状态</li>
+<li><strong>收集结果</strong>：汇总 Worker 的执行结果</li>
+<li><strong>整合输出</strong>：整合结果并返回用户</li>
+</ol>
+<h4 id="Worker-Agent-职责"><a href="#Worker-Agent-职责" class="headerlink" title="Worker Agent 职责"></a>Worker Agent 职责</h4><ol>
+<li><strong>接收分配</strong>：接收 Manager 分配的子任务</li>
+<li><strong>执行任务</strong>：执行具体子任务</li>
+<li><strong>返回结果</strong>：向 Manager 返回执行结果</li>
+</ol>
+<h3 id="适用场景-2"><a href="#适用场景-2" class="headerlink" title="适用场景"></a>适用场景</h3><p>层次协作适用于：</p>
+<ul>
+<li>大型复杂任务</li>
+<li>需要集中管理的任务</li>
+<li>任务结构不确定的任务</li>
+</ul>
+<p><strong>示例</strong>：</p>
+<ul>
+<li>软件项目：Manager 分配需求分析、设计、开发、测试给不同 Worker</li>
+<li>企业运营：Manager 分配销售、市场、运营任务给专业 Worker</li>
+<li>研究项目：Manager 分配文献检索、数据分析、报告撰写给不同 Worker</li>
+</ul>
+<h3 id="层次协作示例"><a href="#层次协作示例" class="headerlink" title="层次协作示例"></a>层次协作示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">HierarchicalManager</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, workers</span>):</span><br><span class="line">        <span class="variable language_">self</span>.workers = workers</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self, task</span>):</span><br><span class="line">        <span class="comment"># 分解任务</span></span><br><span class="line">        subtasks = <span class="variable language_">self</span>.decompose(task)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 分配任务</span></span><br><span class="line">        assignments = <span class="variable language_">self</span>.assign(subtasks)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 执行并收集结果</span></span><br><span class="line">        results = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> worker_id, subtask <span class="keyword">in</span> assignments.items():</span><br><span class="line">            worker = <span class="variable language_">self</span>.workers[worker_id]</span><br><span class="line">            results[worker_id] = worker.execute(subtask)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 整合结果</span></span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.integrate(results)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">decompose</span>(<span class="params">self, task</span>):</span><br><span class="line">        prompt = <span class="string">f&quot;将以下任务分解为子任务：<span class="subst">&#123;task&#125;</span>&quot;</span></span><br><span class="line">        <span class="keyword">return</span> llm.generate(prompt)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">assign</span>(<span class="params">self, subtasks</span>):</span><br><span class="line">        <span class="comment"># 根据能力分配</span></span><br><span class="line">        assignments = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> subtask <span class="keyword">in</span> subtasks:</span><br><span class="line">            best_worker = <span class="variable language_">self</span>.find_best_worker(subtask)</span><br><span class="line">            assignments[best_worker.<span class="built_in">id</span>] = subtask</span><br><span class="line">        <span class="keyword">return</span> assignments</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">integrate</span>(<span class="params">self, results</span>):</span><br><span class="line">        prompt = <span class="string">f&quot;整合以下结果：<span class="subst">&#123;results&#125;</span>&quot;</span></span><br><span class="line">        <span class="keyword">return</span> llm.generate(prompt)</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Worker</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, <span class="built_in">id</span>, capabilities</span>):</span><br><span class="line">        <span class="variable language_">self</span>.<span class="built_in">id</span> = <span class="built_in">id</span></span><br><span class="line">        <span class="variable language_">self</span>.capabilities = capabilities</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">execute</span>(<span class="params">self, subtask</span>):</span><br><span class="line">        <span class="keyword">return</span> process_subtask(subtask)</span><br></pre></td></tr></table></figure>
+
+<h3 id="多层层次结构"><a href="#多层层次结构" class="headerlink" title="多层层次结构"></a>多层层次结构</h3><p>可以有多层 Manager：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">       Top Manager</span><br><span class="line">            ↓</span><br><span class="line">   ┌────────┼────────┐</span><br><span class="line">   ↓        ↓        ↓</span><br><span class="line">Manager1 Manager2 Manager3</span><br><span class="line">   ↓        ↓        ↓</span><br><span class="line">Workers   Workers   Workers</span><br></pre></td></tr></table></figure>
+
+<h3 id="优势与局限-2"><a href="#优势与局限-2" class="headerlink" title="优势与局限"></a>优势与局限</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>局限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>处理大型任务</td>
+<td>Manager 瓶颈风险</td>
+</tr>
+<tr>
+<td>集中管理</td>
+<td>层级延迟</td>
+</tr>
+<tr>
+<td>专业化分工</td>
+<td>信息传递损失</td>
+</tr>
+</tbody></table>
+<h2 id="对话协作模式"><a href="#对话协作模式" class="headerlink" title="对话协作模式"></a>对话协作模式</h2><p>对话协作中，Agent 通过对话交流信息、讨论方案、达成共识。</p>
+<h3 id="基本流程-3"><a href="#基本流程-3" class="headerlink" title="基本流程"></a>基本流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Agent A: 我建议方案 X</span><br><span class="line">    ↓</span><br><span class="line">Agent B: 我同意，但建议补充 Y</span><br><span class="line">    ↓</span><br><span class="line">Agent A: 好建议，修改为 X+Y</span><br><span class="line">    ↓</span><br><span class="line">Agent C: 我验证了 X+Y，可行</span><br><span class="line">    ↓</span><br><span class="line">共识达成 → 执行</span><br></pre></td></tr></table></figure>
+
+<h3 id="工作机制-3"><a href="#工作机制-3" class="headerlink" title="工作机制"></a>工作机制</h3><ol>
+<li><strong>发起讨论</strong>：某个 Agent 提出初始方案</li>
+<li><strong>轮流发言</strong>：Agent 按顺序发言讨论</li>
+<li><strong>观点交换</strong>：Agent 提出观点、质疑、补充</li>
+<li><strong>达成共识</strong>：通过讨论达成一致意见</li>
+<li><strong>执行方案</strong>：按共识方案执行</li>
+</ol>
+<h3 id="适用场景-3"><a href="#适用场景-3" class="headerlink" title="适用场景"></a>适用场景</h3><p>对话协作适用于：</p>
+<ul>
+<li>需要讨论的任务（如方案设计）</li>
+<li>需要多方视角的任务（如评审）</li>
+<li>不确定性高的任务（如复杂问题求解）</li>
+</ul>
+<h3 id="对话协作示例（AutoGen-GroupChat）"><a href="#对话协作示例（AutoGen-GroupChat）" class="headerlink" title="对话协作示例（AutoGen GroupChat）"></a>对话协作示例（AutoGen GroupChat）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> autogen <span class="keyword">import</span> AssistantAgent, UserProxyAgent, GroupChat, GroupChatManager</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义 Agent</span></span><br><span class="line">researcher = AssistantAgent(</span><br><span class="line">    name=<span class="string">&quot;Researcher&quot;</span>,</span><br><span class="line">    system_message=<span class="string">&quot;你是一个研究Agent，负责收集和分析信息。&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">writer = AssistantAgent(</span><br><span class="line">    name=<span class="string">&quot;Writer&quot;</span>,</span><br><span class="line">    system_message=<span class="string">&quot;你是一个写作Agent，负责撰写内容。&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">editor = AssistantAgent(</span><br><span class="line">    name=<span class="string">&quot;Editor&quot;</span>,</span><br><span class="line">    system_message=<span class="string">&quot;你是一个编辑Agent，负责审核和修改内容。&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">user = UserProxyAgent(</span><br><span class="line">    name=<span class="string">&quot;User&quot;</span>,</span><br><span class="line">    human_input_mode=<span class="string">&quot;NEVER&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建群聊</span></span><br><span class="line">groupchat = GroupChat(</span><br><span class="line">    agents=[researcher, writer, editor, user],</span><br><span class="line">    messages=[]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">manager = GroupChatManager(</span><br><span class="line">    groupchat=groupchat</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动对话</span></span><br><span class="line">user.initiate_chat(</span><br><span class="line">    manager,</span><br><span class="line">    message=<span class="string">&quot;写一篇关于AI Agent的文章，请协作完成。&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="对话控制机制"><a href="#对话控制机制" class="headerlink" title="对话控制机制"></a>对话控制机制</h3><h4 id="自由对话"><a href="#自由对话" class="headerlink" title="自由对话"></a>自由对话</h4><p>Agent 自由发言：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">free_conversation</span>(<span class="params">agents, topic</span>):</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">not</span> reached_consensus():</span><br><span class="line">        speaker = select_next_speaker(agents)</span><br><span class="line">        response = speaker.generate_response(context)</span><br><span class="line">        context.append(response)</span><br><span class="line">    <span class="keyword">return</span> consensus</span><br></pre></td></tr></table></figure>
+
+<h4 id="主持对话"><a href="#主持对话" class="headerlink" title="主持对话"></a>主持对话</h4><p>有一个主持 Agent 控制：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">moderated_conversation</span>(<span class="params">moderator, agents, topic</span>):</span><br><span class="line">    moderator.open_discussion(topic)</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">not</span> reached_consensus():</span><br><span class="line">        next_agent = moderator.select_speaker(agents)</span><br><span class="line">        response = next_agent.speak(context)</span><br><span class="line">        moderator.evaluate(response)</span><br><span class="line">    <span class="keyword">return</span> moderator.conclude()</span><br></pre></td></tr></table></figure>
+
+<h4 id="结构化对话"><a href="#结构化对话" class="headerlink" title="结构化对话"></a>结构化对话</h4><p>按预定结构对话：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">structured_conversation</span>(<span class="params">agents, structure</span>):</span><br><span class="line">    <span class="keyword">for</span> stage <span class="keyword">in</span> structure:</span><br><span class="line">        <span class="keyword">for</span> agent <span class="keyword">in</span> agents:</span><br><span class="line">            response = agent.respond(stage, context)</span><br><span class="line">            context.append(response)</span><br><span class="line">    <span class="keyword">return</span> finalize(context)</span><br></pre></td></tr></table></figure>
+
+<h3 id="优势与局限-3"><a href="#优势与局限-3" class="headerlink" title="优势与局限"></a>优势与局限</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>局限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>处理不确定性</td>
+<td>对话轮次多</td>
+</tr>
+<tr>
+<td>多视角综合</td>
+<td>成本高</td>
+</tr>
+<tr>
+<td>质量高</td>
+<td>时间长</td>
+</tr>
+</tbody></table>
+<h2 id="Agent-间通信机制"><a href="#Agent-间通信机制" class="headerlink" title="Agent 间通信机制"></a>Agent 间通信机制</h2><h3 id="通信方式"><a href="#通信方式" class="headerlink" title="通信方式"></a>通信方式</h3><h4 id="直接消息"><a href="#直接消息" class="headerlink" title="直接消息"></a>直接消息</h4><p>Agent 直接发送消息：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Agent</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">send_message</span>(<span class="params">self, target_agent, message</span>):</span><br><span class="line">        target_agent.receive(message)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">receive</span>(<span class="params">self, message</span>):</span><br><span class="line">        <span class="variable language_">self</span>.process_message(message)</span><br></pre></td></tr></table></figure>
+
+<h4 id="共享黑板"><a href="#共享黑板" class="headerlink" title="共享黑板"></a>共享黑板</h4><p>Agent 共享数据区域：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Blackboard</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.data = &#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">write</span>(<span class="params">self, key, value, agent_id</span>):</span><br><span class="line">        <span class="variable language_">self</span>.data[key] = &#123;<span class="string">&quot;value&quot;</span>: value, <span class="string">&quot;writer&quot;</span>: agent_id&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read</span>(<span class="params">self, key</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.data.get(key)</span><br></pre></td></tr></table></figure>
+
+<h4 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h4><p>通过队列传递消息：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> queue</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MessageQueue</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.queues = &#123;&#125;  <span class="comment"># &#123;agent_id: Queue&#125;</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">send</span>(<span class="params">self, target_id, message</span>):</span><br><span class="line">        <span class="keyword">if</span> target_id <span class="keyword">not</span> <span class="keyword">in</span> <span class="variable language_">self</span>.queues:</span><br><span class="line">            <span class="variable language_">self</span>.queues[target_id] = queue.Queue()</span><br><span class="line">        <span class="variable language_">self</span>.queues[target_id].put(message)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">receive</span>(<span class="params">self, agent_id</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.queues[agent_id].get()</span><br></pre></td></tr></table></figure>
+
+<h3 id="消息格式"><a href="#消息格式" class="headerlink" title="消息格式"></a>消息格式</h3><p>标准化消息格式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">AgentMessage</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, sender, receiver, content, msg_type</span>):</span><br><span class="line">        <span class="variable language_">self</span>.sender = sender</span><br><span class="line">        <span class="variable language_">self</span>.receiver = receiver</span><br><span class="line">        <span class="variable language_">self</span>.content = content</span><br><span class="line">        <span class="variable language_">self</span>.<span class="built_in">type</span> = msg_type  <span class="comment"># request/response/info/command</span></span><br><span class="line">        <span class="variable language_">self</span>.timestamp = datetime.now()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">to_dict</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&quot;sender&quot;</span>: <span class="variable language_">self</span>.sender,</span><br><span class="line">            <span class="string">&quot;receiver&quot;</span>: <span class="variable language_">self</span>.receiver,</span><br><span class="line">            <span class="string">&quot;content&quot;</span>: <span class="variable language_">self</span>.content,</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="variable language_">self</span>.<span class="built_in">type</span>,</span><br><span class="line">            <span class="string">&quot;timestamp&quot;</span>: <span class="variable language_">self</span>.timestamp.isoformat()</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="任务分配策略"><a href="#任务分配策略" class="headerlink" title="任务分配策略"></a>任务分配策略</h2><h3 id="能力匹配"><a href="#能力匹配" class="headerlink" title="能力匹配"></a>能力匹配</h3><p>根据 Agent 能力分配：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">assign_by_capability</span>(<span class="params">subtasks, agents</span>):</span><br><span class="line">    assignments = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> subtask <span class="keyword">in</span> subtasks:</span><br><span class="line">        best_agent = <span class="built_in">max</span>(agents, key=<span class="keyword">lambda</span> a: capability_match(a, subtask))</span><br><span class="line">        assignments[best_agent.<span class="built_in">id</span>] = subtask</span><br><span class="line">    <span class="keyword">return</span> assignments</span><br></pre></td></tr></table></figure>
+
+<h3 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h3><p>平衡 Agent 负载：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">assign_by_load</span>(<span class="params">subtasks, agents</span>):</span><br><span class="line">    assignments = &#123;&#125;</span><br><span class="line">    agent_loads = &#123;a.<span class="built_in">id</span>: <span class="number">0</span> <span class="keyword">for</span> a <span class="keyword">in</span> agents&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> subtask <span class="keyword">in</span> <span class="built_in">sorted</span>(subtasks, key=<span class="keyword">lambda</span> t: t.complexity, reverse=<span class="literal">True</span>):</span><br><span class="line">        <span class="comment"># 选择负载最低的 Agent</span></span><br><span class="line">        best_agent = <span class="built_in">min</span>(agents, key=<span class="keyword">lambda</span> a: agent_loads[a.<span class="built_in">id</span>])</span><br><span class="line">        assignments[best_agent.<span class="built_in">id</span>] = subtask</span><br><span class="line">        agent_loads[best_agent.<span class="built_in">id</span>] += subtask.complexity</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> assignments</span><br></pre></td></tr></table></figure>
+
+<h3 id="动态分配"><a href="#动态分配" class="headerlink" title="动态分配"></a>动态分配</h3><p>根据执行情况动态分配：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">dynamic_assign</span>(<span class="params">subtasks, agents, current_status</span>):</span><br><span class="line">    <span class="comment"># 考虑当前执行状态</span></span><br><span class="line">    pending = [t <span class="keyword">for</span> t <span class="keyword">in</span> subtasks <span class="keyword">if</span> t.status == <span class="string">&quot;pending&quot;</span>]</span><br><span class="line">    available = [a <span class="keyword">for</span> a <span class="keyword">in</span> agents <span class="keyword">if</span> a.status == <span class="string">&quot;idle&quot;</span>]</span><br><span class="line">    </span><br><span class="line">    assignments = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> subtask <span class="keyword">in</span> pending:</span><br><span class="line">        <span class="keyword">if</span> available:</span><br><span class="line">            agent = select_best_agent(subtask, available)</span><br><span class="line">            assignments[agent.<span class="built_in">id</span>] = subtask</span><br><span class="line">            available.remove(agent)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> assignments</span><br></pre></td></tr></table></figure>
+
+<h2 id="结果聚合方法"><a href="#结果聚合方法" class="headerlink" title="结果聚合方法"></a>结果聚合方法</h2><h3 id="直接拼接"><a href="#直接拼接" class="headerlink" title="直接拼接"></a>直接拼接</h3><p>简单拼接各 Agent 结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">concatenate_results</span>(<span class="params">results</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;\n\n&quot;</span>.join([r.content <span class="keyword">for</span> r <span class="keyword">in</span> results])</span><br></pre></td></tr></table></figure>
+
+<h3 id="结构化整合"><a href="#结构化整合" class="headerlink" title="结构化整合"></a>结构化整合</h3><p>按结构整合：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">structured_integrate</span>(<span class="params">results, template</span>):</span><br><span class="line">    integrated = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> key <span class="keyword">in</span> template.keys():</span><br><span class="line">        integrated[key] = [r.get(key) <span class="keyword">for</span> r <span class="keyword">in</span> results <span class="keyword">if</span> r.has(key)]</span><br><span class="line">    <span class="keyword">return</span> integrated</span><br></pre></td></tr></table></figure>
+
+<h3 id="LLM-整合"><a href="#LLM-整合" class="headerlink" title="LLM 整合"></a>LLM 整合</h3><p>用 LLM 整合多 Agent 结果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">llm_integrate</span>(<span class="params">results, task</span>):</span><br><span class="line">    prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    任务：<span class="subst">&#123;task&#125;</span></span></span><br><span class="line"><span class="string">    以下是多Agent的结果：</span></span><br><span class="line"><span class="string">    <span class="subst">&#123;format_results(results)&#125;</span></span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    请整合以上结果，生成最终输出。</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> llm.generate(prompt)</span><br></pre></td></tr></table></figure>
+
+<h2 id="冲突检测与解决"><a href="#冲突检测与解决" class="headerlink" title="冲突检测与解决"></a>冲突检测与解决</h2><h3 id="冲突类型"><a href="#冲突类型" class="headerlink" title="冲突类型"></a>冲突类型</h3><table>
+<thead>
+<tr>
+<th>册突类型</th>
+<th>描述</th>
+<th>解决方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>资源冲突</td>
+<td>多 Agent 竞争同一资源</td>
+<td>分配&#x2F;排队</td>
+</tr>
+<tr>
+<td>结果冲突</td>
+<td>Agent 结果不一致</td>
+<td>仲裁&#x2F;投票</td>
+</tr>
+<tr>
+<td>依赖冲突</td>
+<td>执行顺序冲突</td>
+<td>重排序</td>
+</tr>
+<tr>
+<td>目标冲突</td>
+<td>Agent 目标不一致</td>
+<td>协调&#x2F;优先级</td>
+</tr>
+</tbody></table>
+<h3 id="册突检测"><a href="#册突检测" class="headerlink" title="册突检测"></a>册突检测</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">detect_conflicts</span>(<span class="params">results</span>):</span><br><span class="line">    conflicts = []</span><br><span class="line">    <span class="keyword">for</span> i, r1 <span class="keyword">in</span> <span class="built_in">enumerate</span>(results):</span><br><span class="line">        <span class="keyword">for</span> r2 <span class="keyword">in</span> results[i+<span class="number">1</span>:]:</span><br><span class="line">            <span class="keyword">if</span> is_conflicting(r1, r2):</span><br><span class="line">                conflicts.append((r1, r2))</span><br><span class="line">    <span class="keyword">return</span> conflicts</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">is_conflicting</span>(<span class="params">r1, r2</span>):</span><br><span class="line">    <span class="comment"># 检查内容是否冲突</span></span><br><span class="line">    <span class="keyword">if</span> r1.conclusion != r2.conclusion:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="册突解决"><a href="#册突解决" class="headerlink" title="册突解决"></a>册突解决</h3><h4 id="仲裁机制"><a href="#仲裁机制" class="headerlink" title="仲裁机制"></a>仲裁机制</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">arbitration</span>(<span class="params">conflicts, arbitrator_agent</span>):</span><br><span class="line">    resolutions = []</span><br><span class="line">    <span class="keyword">for</span> r1, r2 <span class="keyword">in</span> conflicts:</span><br><span class="line">        decision = arbitrator_agent.arbitrate(r1, r2)</span><br><span class="line">        resolutions.append(decision)</span><br><span class="line">    <span class="keyword">return</span> resolutions</span><br></pre></td></tr></table></figure>
+
+<h4 id="投票机制"><a href="#投票机制" class="headerlink" title="投票机制"></a>投票机制</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">voting</span>(<span class="params">results</span>):</span><br><span class="line">    <span class="comment"># 多数投票</span></span><br><span class="line">    counts = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> r <span class="keyword">in</span> results:</span><br><span class="line">        key = r.conclusion</span><br><span class="line">        counts[key] = counts.get(key, <span class="number">0</span>) + <span class="number">1</span></span><br><span class="line">    </span><br><span class="line">    winner = <span class="built_in">max</span>(counts, key=counts.get)</span><br><span class="line">    <span class="keyword">return</span> winner</span><br></pre></td></tr></table></figure>
+
+<h4 id="协商机制"><a href="#协商机制" class="headerlink" title="协商机制"></a>协商机制</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">negotiate</span>(<span class="params">agents, conflict</span>):</span><br><span class="line">    <span class="comment"># Agent 协商解决</span></span><br><span class="line">    context = [conflict.r1, conflict.r2]</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">not</span> consensus:</span><br><span class="line">        proposal = random.choice(agents).propose(context)</span><br><span class="line">        others = [a <span class="keyword">for</span> a <span class="keyword">in</span> agents <span class="keyword">if</span> a != proposer]</span><br><span class="line">        votes = [a.vote(proposal) <span class="keyword">for</span> a <span class="keyword">in</span> others]</span><br><span class="line">        <span class="keyword">if</span> majority_approve(votes):</span><br><span class="line">            consensus = proposal</span><br><span class="line">    <span class="keyword">return</span> consensus</span><br></pre></td></tr></table></figure>
+
+<h2 id="协作协议设计"><a href="#协作协议设计" class="headerlink" title="协作协议设计"></a>协作协议设计</h2><h3 id="协议要素"><a href="#协议要素" class="headerlink" title="协议要素"></a>协议要素</h3><p>好的协作协议应包含：</p>
+<ul>
+<li><strong>角色定义</strong>：每个 Agent 的职责</li>
+<li><strong>消息格式</strong>：标准化的消息结构</li>
+<li><strong>交互顺序</strong>：Agent 的发言顺序</li>
+<li><strong>决策规则</strong>：如何做出决策</li>
+<li><strong>异常处理</strong>：失败时的处理方式</li>
+</ul>
+<h3 id="协议示例"><a href="#协议示例" class="headerlink" title="协议示例"></a>协议示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CollaborationProtocol</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.roles = &#123;</span><br><span class="line">            <span class="string">&quot;leader&quot;</span>: <span class="string">&quot;负责协调和决策&quot;</span>,</span><br><span class="line">            <span class="string">&quot;executor&quot;</span>: <span class="string">&quot;负责执行具体任务&quot;</span>,</span><br><span class="line">            <span class="string">&quot;reviewer&quot;</span>: <span class="string">&quot;负责审核结果&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable language_">self</span>.message_format = &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: [<span class="string">&quot;proposal&quot;</span>, <span class="string">&quot;response&quot;</span>, <span class="string">&quot;review&quot;</span>, <span class="string">&quot;decision&quot;</span>],</span><br><span class="line">            <span class="string">&quot;content&quot;</span>: <span class="string">&quot;str&quot;</span>,</span><br><span class="line">            <span class="string">&quot;metadata&quot;</span>: <span class="string">&quot;dict&quot;</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="variable language_">self</span>.interaction_order = [<span class="string">&quot;leader&quot;</span>, <span class="string">&quot;executor&quot;</span>, <span class="string">&quot;reviewer&quot;</span>, <span class="string">&quot;leader&quot;</span>]</span><br><span class="line">        <span class="variable language_">self</span>.decision_rule = <span class="string">&quot;majority_vote&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>多 Agent 协作模式包括顺序、并行、层次、对话四种主要模式。每种模式适用于不同类型的任务。设计协作系统需要考虑：任务分配策略、结果聚合方法、冲突检测与解决、协作协议设计。</p>
+<p>选择协作模式时，应根据任务特点（是否可并行、是否有依赖、复杂度）和系统需求（效率、成本、质量）综合考量。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-intro/">多 Agent 系统概述</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/hierarchical-agent/">层次化 Agent 系统</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-competition/">多 Agent 竞争与博弈</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-frameworks/">Agent 框架概览</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-collaboration/" data-id="cuidh7SCxc9WzDd6wOxlHTCaI" data-title="多 Agent 协作模式" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Multi-Agent/" rel="tag">Multi-Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F/" rel="tag">协作模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/hierarchical-agent/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          层次化 Agent 系统
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-intro/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">多 Agent 系统概述</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGI/" rel="tag">AGI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E4%BC%A6%E7%90%86/" rel="tag">AI伦理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E5%9F%BA%E7%A1%80/" rel="tag">AI基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E6%9E%B6%E6%9E%84/" rel="tag">AI架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AgentBench/" rel="tag">AgentBench</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AutoGen/" rel="tag">AutoGen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boosting/" rel="tag">Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNN/" rel="tag">CNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CoT/" rel="tag">CoT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CrewAI/" rel="tag">CrewAI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DQN/" rel="tag">DQN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decision-Tree/" rel="tag">Decision Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Framework/" rel="tag">Framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Function-Calling/" rel="tag">Function Calling</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GAN/" rel="tag">GAN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GBDT/" rel="tag">GBDT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gradient-Boosting/" rel="tag">Gradient Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KNN/" rel="tag">KNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LSTM/" rel="tag">LSTM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LangChain/" rel="tag">LangChain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LangGraph/" rel="tag">LangGraph</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LightGBM/" rel="tag">LightGBM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Memory/" rel="tag">Memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Microsoft/" rel="tag">Microsoft</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Multi-Agent/" rel="tag">Multi-Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ONNX/" rel="tag">ONNX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PPO/" rel="tag">PPO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Planning/" rel="tag">Planning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Policy-Gradient/" rel="tag">Policy Gradient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prompt-Injection/" rel="tag">Prompt Injection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Q-Learning/" rel="tag">Q-Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RLHF/" rel="tag">RLHF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RNN/" rel="tag">RNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Forest/" rel="tag">Random Forest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReAct/" rel="tag">ReAct</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasoning/" rel="tag">Reasoning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVM/" rel="tag">SVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Semantic-Kernel/" rel="tag">Semantic Kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Stacking/" rel="tag">Stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tool-Use/" rel="tag">Tool Use</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transformer/" rel="tag">Transformer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VAE/" rel="tag">VAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XGBoost/" rel="tag">XGBoost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/" rel="tag">life</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%8A%A9%E6%89%8B/" rel="tag">代码助手</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/" rel="tag">优化理论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" rel="tag">优化算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%A6%E7%90%86/" rel="tag">伦理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2/" rel="tag">信息检索</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%A5%E9%97%A8/" rel="tag">入门</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" rel="tag">决策树</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83/" rel="tag">分布式训练</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB%E7%AE%97%E6%B3%95/" rel="tag">分类算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F/" rel="tag">协作模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" rel="tag">博弈论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" rel="tag">反向传播</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" rel="tag">可视化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">向量数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/" rel="tag">多智能体</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" rel="tag">大模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%A2%E6%9C%8D/" rel="tag">客服</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F/" rel="tag">对话系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B1%82%E6%AC%A1%E5%8C%96%E6%9E%B6%E6%9E%84/" rel="tag">层次化架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" rel="tag">工具调用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/" rel="tag">并行策略</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" rel="tag">开发工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" rel="tag">强化学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag">微服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E8%B0%83/" rel="tag">微调</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%83%B3/" rel="tag">感想</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" rel="tag">扩散模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" rel="tag">损失函数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/" rel="tag">推理优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/" rel="tag">提示工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/" rel="tag">数学基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" rel="tag">数据分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" rel="tag">数据清洗</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/" rel="tag">数据预处理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%BF%97/" rel="tag">日志</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%AA%E6%9D%A5%E8%B6%8B%E5%8A%BF/" rel="tag">未来趋势</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" rel="tag">架构设计</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" rel="tag">梯度提升</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/" rel="tag">概率论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A6%82%E8%BF%B0/" rel="tag">概述</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E5%8E%8B%E7%BC%A9/" rel="tag">模型压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" rel="tag">模型部署</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AD%A3%E5%88%99%E5%8C%96/" rel="tag">正则化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/" rel="tag">注意力机制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" rel="tag">激活函数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" rel="tag">特征工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9/" rel="tag">特征选择</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" rel="tag">生成模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%B4%BB/" rel="tag">生活</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" rel="tag">监督学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" rel="tag">知识蒸馏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A0%94%E7%A9%B6/" rel="tag">研究</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag">神经网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AB%9E%E4%BA%89/" rel="tag">竞争</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E5%8D%8F%E4%BD%9C/" rel="tag">系统协作</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" rel="tag">系统架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" rel="tag">线性代数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" rel="tag">线性回归</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" rel="tag">统计学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E6%B5%8B/" rel="tag">评测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B0%83%E8%AF%95/" rel="tag">调试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" rel="tag">贝叶斯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/" rel="tag">超参数调优</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" rel="tag">软件工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" rel="tag">逻辑回归</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8F%E5%8C%96/" rel="tag">量化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/" rel="tag">随机森林</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/" rel="tag">集成学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A2%84%E8%AE%AD%E7%BB%83/" rel="tag">预训练</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AGI/" style="font-size: 10px;">AGI</a> <a href="/tags/AI%E4%BC%A6%E7%90%86/" style="font-size: 10px;">AI伦理</a> <a href="/tags/AI%E5%9F%BA%E7%A1%80/" style="font-size: 10px;">AI基础</a> <a href="/tags/AI%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">AI架构</a> <a href="/tags/Agent/" style="font-size: 18.89px;">Agent</a> <a href="/tags/AgentBench/" style="font-size: 10px;">AgentBench</a> <a href="/tags/AutoGen/" style="font-size: 11.11px;">AutoGen</a> <a href="/tags/Boosting/" style="font-size: 11.11px;">Boosting</a> <a href="/tags/CNN/" style="font-size: 10px;">CNN</a> <a href="/tags/CoT/" style="font-size: 10px;">CoT</a> <a href="/tags/CrewAI/" style="font-size: 10px;">CrewAI</a> <a href="/tags/DQN/" style="font-size: 10px;">DQN</a> <a href="/tags/Decision-Tree/" style="font-size: 10px;">Decision Tree</a> <a href="/tags/Framework/" style="font-size: 10px;">Framework</a> <a href="/tags/Function-Calling/" style="font-size: 10px;">Function Calling</a> <a href="/tags/GAN/" style="font-size: 10px;">GAN</a> <a href="/tags/GBDT/" style="font-size: 12.22px;">GBDT</a> <a href="/tags/Gradient-Boosting/" style="font-size: 10px;">Gradient Boosting</a> <a href="/tags/KNN/" style="font-size: 10px;">KNN</a> <a href="/tags/LLM/" style="font-size: 14.44px;">LLM</a> <a href="/tags/LSTM/" style="font-size: 10px;">LSTM</a> <a href="/tags/LangChain/" style="font-size: 11.11px;">LangChain</a> <a href="/tags/LangGraph/" style="font-size: 10px;">LangGraph</a> <a href="/tags/LightGBM/" style="font-size: 10px;">LightGBM</a> <a href="/tags/Memory/" style="font-size: 10px;">Memory</a> <a href="/tags/Microsoft/" style="font-size: 10px;">Microsoft</a> <a href="/tags/Multi-Agent/" style="font-size: 15.56px;">Multi-Agent</a> <a href="/tags/ONNX/" style="font-size: 10px;">ONNX</a> <a href="/tags/PPO/" style="font-size: 10px;">PPO</a> <a href="/tags/Planning/" style="font-size: 10px;">Planning</a> <a href="/tags/Policy-Gradient/" style="font-size: 10px;">Policy Gradient</a> <a href="/tags/Prompt-Injection/" style="font-size: 10px;">Prompt Injection</a> <a href="/tags/Q-Learning/" style="font-size: 10px;">Q-Learning</a> <a href="/tags/RLHF/" style="font-size: 10px;">RLHF</a> <a href="/tags/RNN/" style="font-size: 10px;">RNN</a> <a href="/tags/Random-Forest/" style="font-size: 10px;">Random Forest</a> <a href="/tags/ReAct/" style="font-size: 10px;">ReAct</a> <a href="/tags/Reasoning/" style="font-size: 10px;">Reasoning</a> <a href="/tags/SVM/" style="font-size: 10px;">SVM</a> <a href="/tags/Semantic-Kernel/" style="font-size: 10px;">Semantic Kernel</a> <a href="/tags/Stacking/" style="font-size: 10px;">Stacking</a> <a href="/tags/Tool-Use/" style="font-size: 11.11px;">Tool Use</a> <a href="/tags/Transformer/" style="font-size: 10px;">Transformer</a> <a href="/tags/VAE/" style="font-size: 10px;">VAE</a> <a href="/tags/XGBoost/" style="font-size: 12.22px;">XGBoost</a> <a href="/tags/life/" style="font-size: 10px;">life</a> <a href="/tags/thoughts/" style="font-size: 10px;">thoughts</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E5%8A%A9%E6%89%8B/" style="font-size: 10px;">代码助手</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/" style="font-size: 10px;">优化理论</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" style="font-size: 10px;">优化算法</a> <a href="/tags/%E4%BC%A6%E7%90%86/" style="font-size: 10px;">伦理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2/" style="font-size: 10px;">信息检索</a> <a href="/tags/%E5%85%A5%E9%97%A8/" style="font-size: 10px;">入门</a> <a href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" style="font-size: 11.11px;">决策树</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83/" style="font-size: 10px;">分布式训练</a> <a href="/tags/%E5%88%86%E7%B1%BB%E7%AE%97%E6%B3%95/" style="font-size: 14.44px;">分类算法</a> <a href="/tags/%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">协作模式</a> <a href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" style="font-size: 10px;">博弈论</a> <a href="/tags/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" style="font-size: 10px;">反向传播</a> <a href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" style="font-size: 10px;">可视化</a> <a href="/tags/%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 10px;">向量数据库</a> <a href="/tags/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/" style="font-size: 10px;">多智能体</a> <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" style="font-size: 13.33px;">大模型</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 10px;">安全</a> <a href="/tags/%E5%AE%A2%E6%9C%8D/" style="font-size: 10px;">客服</a> <a href="/tags/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">对话系统</a> <a href="/tags/%E5%B1%82%E6%AC%A1%E5%8C%96%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">层次化架构</a> <a href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" style="font-size: 10px;">工具调用</a> <a href="/tags/%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/" style="font-size: 10px;">并行策略</a> <a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">开发工具</a> <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">强化学习</a> <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">微服务</a> <a href="/tags/%E5%BE%AE%E8%B0%83/" style="font-size: 10px;">微调</a> <a href="/tags/%E6%84%9F%E6%83%B3/" style="font-size: 10px;">感想</a> <a href="/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" style="font-size: 10px;">扩散模型</a> <a href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" style="font-size: 10px;">损失函数</a> <a href="/tags/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/" style="font-size: 10px;">推理优化</a> <a href="/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">提示工程</a> <a href="/tags/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/" style="font-size: 13.33px;">数学基础</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" style="font-size: 10px;">数据分析</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" style="font-size: 10px;">数据清洗</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/" style="font-size: 10px;">数据预处理</a> <a href="/tags/%E6%97%A5%E5%BF%97/" style="font-size: 10px;">日志</a> <a href="/tags/%E6%9C%AA%E6%9D%A5%E8%B6%8B%E5%8A%BF/" style="font-size: 10px;">未来趋势</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 20px;">机器学习</a> <a href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" style="font-size: 10px;">架构设计</a> <a href="/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" style="font-size: 10px;">梯度提升</a> <a href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/" style="font-size: 10px;">概率论</a> <a href="/tags/%E6%A6%82%E8%BF%B0/" style="font-size: 10px;">概述</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">模型压缩</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">模型部署</a> <a href="/tags/%E6%AD%A3%E5%88%99%E5%8C%96/" style="font-size: 10px;">正则化</a> <a href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/" style="font-size: 10px;">注意力机制</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 17.78px;">深度学习</a> <a href="/tags/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" style="font-size: 10px;">激活函数</a> <a href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">特征工程</a> <a href="/tags/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9/" style="font-size: 10px;">特征选择</a> <a href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" style="font-size: 12.22px;">生成模型</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">生活</a> <a href="/tags/%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">监督学习</a> <a href="/tags/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" style="font-size: 10px;">知识蒸馏</a> <a href="/tags/%E7%A0%94%E7%A9%B6/" style="font-size: 10px;">研究</a> <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" style="font-size: 16.67px;">神经网络</a> <a href="/tags/%E7%AB%9E%E4%BA%89/" style="font-size: 10px;">竞争</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E5%8D%8F%E4%BD%9C/" style="font-size: 10px;">系统协作</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">系统架构</a> <a href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" style="font-size: 10px;">线性代数</a> <a href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" style="font-size: 10px;">线性回归</a> <a href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" style="font-size: 10px;">统计学</a> <a href="/tags/%E8%AF%84%E6%B5%8B/" style="font-size: 10px;">评测</a> <a href="/tags/%E8%B0%83%E8%AF%95/" style="font-size: 10px;">调试</a> <a href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" style="font-size: 10px;">贝叶斯</a> <a href="/tags/%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/" style="font-size: 10px;">超参数调优</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">软件工程</a> <a href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" style="font-size: 10px;">逻辑回归</a> <a href="/tags/%E9%87%8F%E5%8C%96/" style="font-size: 10px;">量化</a> <a href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/" style="font-size: 11.11px;">随机森林</a> <a href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/" style="font-size: 16.67px;">集成学习</a> <a href="/tags/%E9%A2%84%E8%AE%AD%E7%BB%83/" style="font-size: 10px;">预训练</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-architecture/">Agent 架构模式</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/en/essays/blog-redesign/">After the Blog Redesign</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/llm-and-agent/">LLM 与 Agent 的关系</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/">Agent 入门指南</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>统计学基础 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="统计量与统计推断统计学的任务统计学主要解决两类问题：  描述统计：描述数据特征 推断统计：从样本推断总体  常用统计量集中趋势统计量   统计量 公式 描述    均值 $\bar{x} &#x3D; \frac{1}{n}\sum_{i&#x3D;1}^{n} x_i$ 平均值   中位数 排序后中间值 抗异常值   众数 出现最多的值 分类数据适用   离散程度统计量   统计量 公式 描述">
+<meta property="og:type" content="article">
+<meta property="og:title" content="统计学基础">
+<meta property="og:url" content="https://keeganjin.github.io/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/statistics/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="统计量与统计推断统计学的任务统计学主要解决两类问题：  描述统计：描述数据特征 推断统计：从样本推断总体  常用统计量集中趋势统计量   统计量 公式 描述    均值 $\bar{x} &#x3D; \frac{1}{n}\sum_{i&#x3D;1}^{n} x_i$ 平均值   中位数 排序后中间值 抗异常值   众数 出现最多的值 分类数据适用   离散程度统计量   统计量 公式 描述">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-10T04:45:18.234Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="数学基础">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="统计学">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Product Docs</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/机器学习/statistics" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/statistics/" class="article-date">
+  <time class="dt-published" datetime="2026-05-09T16:00:00.000Z" itemprop="datePublished">2026-05-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      统计学基础
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="统计量与统计推断"><a href="#统计量与统计推断" class="headerlink" title="统计量与统计推断"></a>统计量与统计推断</h2><h3 id="统计学的任务"><a href="#统计学的任务" class="headerlink" title="统计学的任务"></a>统计学的任务</h3><p>统计学主要解决两类问题：</p>
+<ol>
+<li><strong>描述统计</strong>：描述数据特征</li>
+<li><strong>推断统计</strong>：从样本推断总体</li>
+</ol>
+<h3 id="常用统计量"><a href="#常用统计量" class="headerlink" title="常用统计量"></a>常用统计量</h3><h4 id="集中趋势统计量"><a href="#集中趋势统计量" class="headerlink" title="集中趋势统计量"></a>集中趋势统计量</h4><table>
+<thead>
+<tr>
+<th>统计量</th>
+<th>公式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>均值</td>
+<td>$\bar{x} &#x3D; \frac{1}{n}\sum_{i&#x3D;1}^{n} x_i$</td>
+<td>平均值</td>
+</tr>
+<tr>
+<td>中位数</td>
+<td>排序后中间值</td>
+<td>抗异常值</td>
+</tr>
+<tr>
+<td>众数</td>
+<td>出现最多的值</td>
+<td>分类数据适用</td>
+</tr>
+</tbody></table>
+<h4 id="离散程度统计量"><a href="#离散程度统计量" class="headerlink" title="离散程度统计量"></a>离散程度统计量</h4><table>
+<thead>
+<tr>
+<th>统计量</th>
+<th>公式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>方差</td>
+<td>$s^2 &#x3D; \frac{1}{n-1}\sum_{i&#x3D;1}^{n}(x_i - \bar{x})^2$</td>
+<td>数据离散程度</td>
+</tr>
+<tr>
+<td>标准差</td>
+<td>$s &#x3D; \sqrt{s^2}$</td>
+<td>方差的平方根</td>
+</tr>
+<tr>
+<td>极差</td>
+<td>$R &#x3D; x_{max} - x_{min}$</td>
+<td>最大值减最小值</td>
+</tr>
+<tr>
+<td>四分位距</td>
+<td>$IQR &#x3D; Q_3 - Q_1$</td>
+<td>中间50%数据范围</td>
+</tr>
+</tbody></table>
+<h4 id="形状统计量"><a href="#形状统计量" class="headerlink" title="形状统计量"></a>形状统计量</h4><p><strong>偏度</strong>：衡量分布的不对称性<br>$$Skewness &#x3D; \frac{\sum_{i&#x3D;1}^{n}(x_i - \bar{x})^3}{(n-1)s^3}$$</p>
+<ul>
+<li>偏度 &gt; 0：右偏（正偏）</li>
+<li>偏度 &lt; 0：左偏（负偏）</li>
+<li>偏度 &#x3D; 0：对称</li>
+</ul>
+<p><strong>峰度</strong>：衡量分布的尖锐程度<br>$$Kurtosis &#x3D; \frac{\sum_{i&#x3D;1}^{n}(x_i - \bar{x})^4}{(n-1)s^4} - 3$$</p>
+<ul>
+<li>峰度 &gt; 0：比正态分布更尖锐</li>
+<li>峰度 &lt; 0：比正态分布更平坦</li>
+<li>峰度 &#x3D; 0：与正态分布相同</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> stats</span><br><span class="line"></span><br><span class="line">data = np.random.normal(<span class="number">0</span>, <span class="number">1</span>, <span class="number">1000</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 统计量计算</span></span><br><span class="line">mean = np.mean(data)</span><br><span class="line">median = np.median(data)</span><br><span class="line">var = np.var(data)</span><br><span class="line">std = np.std(data)</span><br><span class="line">skew = stats.skew(data)</span><br><span class="line">kurt = stats.kurtosis(data)</span><br></pre></td></tr></table></figure>
+
+<h2 id="点估计与区间估计"><a href="#点估计与区间估计" class="headerlink" title="点估计与区间估计"></a>点估计与区间估计</h2><h3 id="点估计"><a href="#点估计" class="headerlink" title="点估计"></a>点估计</h3><p>从样本估计总体参数的单个值。</p>
+<h4 id="估计量性质"><a href="#估计量性质" class="headerlink" title="估计量性质"></a>估计量性质</h4><table>
+<thead>
+<tr>
+<th>性质</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>无偏性</td>
+<td>$E[\hat{\theta}] &#x3D; \theta$</td>
+</tr>
+<tr>
+<td>有效性</td>
+<td>方差最小</td>
+</tr>
+<tr>
+<td>一致性</td>
+<td>$n \to \infty$ 时收敛于真值</td>
+</tr>
+</tbody></table>
+<h4 id="常见点估计"><a href="#常见点估计" class="headerlink" title="常见点估计"></a>常见点估计</h4><p><strong>均值估计</strong>：<br>$$\hat{\mu} &#x3D; \bar{x} &#x3D; \frac{1}{n}\sum_{i&#x3D;1}^{n} x_i$$</p>
+<p><strong>方差估计</strong>（无偏）：<br>$$\hat{\sigma^2} &#x3D; s^2 &#x3D; \frac{1}{n-1}\sum_{i&#x3D;1}^{n}(x_i - \bar{x})^2$$</p>
+<h3 id="区间估计"><a href="#区间估计" class="headerlink" title="区间估计"></a>区间估计</h3><p>给出参数估计的范围和置信度。</p>
+<h4 id="置信区间"><a href="#置信区间" class="headerlink" title="置信区间"></a>置信区间</h4><p>$$P(\hat{\theta}_L \leq \theta \leq \hat{\theta}_U) &#x3D; 1 - \alpha$$</p>
+<p>$1-\alpha$ 是置信水平（如95%）。</p>
+<h4 id="均值的置信区间"><a href="#均值的置信区间" class="headerlink" title="均值的置信区间"></a>均值的置信区间</h4><p>当总体方差已知：<br>$$\bar{x} \pm z_{\alpha&#x2F;2} \frac{\sigma}{\sqrt{n}}$$</p>
+<p>当总体方差未知（用样本方差）：<br>$$\bar{x} \pm t_{\alpha&#x2F;2}(n-1) \frac{s}{\sqrt{n}}$$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> stats</span><br><span class="line"></span><br><span class="line"><span class="comment"># 样本数据</span></span><br><span class="line">data = np.random.normal(<span class="number">50</span>, <span class="number">10</span>, <span class="number">100</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 均值的95%置信区间</span></span><br><span class="line">mean = np.mean(data)</span><br><span class="line">std = np.std(data, ddof=<span class="number">1</span>)</span><br><span class="line">n = <span class="built_in">len</span>(data)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用t分布（方差未知）</span></span><br><span class="line">t_value = stats.t.ppf(<span class="number">0.975</span>, n-<span class="number">1</span>)</span><br><span class="line">ci_lower = mean - t_value * std / np.sqrt(n)</span><br><span class="line">ci_upper = mean + t_value * std / np.sqrt(n)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;置信区间: [<span class="subst">&#123;ci_lower:<span class="number">.2</span>f&#125;</span>, <span class="subst">&#123;ci_upper:<span class="number">.2</span>f&#125;</span>]&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="假设检验"><a href="#假设检验" class="headerlink" title="假设检验"></a>假设检验</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p><strong>假设检验</strong>：根据样本判断关于总体的假设是否成立。</p>
+<p><strong>步骤</strong>：</p>
+<ol>
+<li>建立假设（原假设 $H_0$ 和备择假设 $H_1$）</li>
+<li>选择检验统计量</li>
+<li>确定显著性水平 $\alpha$</li>
+<li>计算p值或临界值</li>
+<li>做出决策</li>
+</ol>
+<h3 id="常见假设检验"><a href="#常见假设检验" class="headerlink" title="常见假设检验"></a>常见假设检验</h3><h4 id="t检验（均值检验）"><a href="#t检验（均值检验）" class="headerlink" title="t检验（均值检验）"></a>t检验（均值检验）</h4><p><strong>单样本t检验</strong>：检验样本均值是否等于某值<br>$$t &#x3D; \frac{\bar{x} - \mu_0}{s&#x2F;\sqrt{n}}$$</p>
+<p><strong>双样本t检验</strong>：检验两组均值是否相等<br>$$t &#x3D; \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{s_1^2&#x2F;n_1 + s_2^2&#x2F;n_2}}$$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scipy <span class="keyword">import</span> stats</span><br><span class="line"></span><br><span class="line"><span class="comment"># 单样本t检验</span></span><br><span class="line">data = np.random.normal(<span class="number">50</span>, <span class="number">10</span>, <span class="number">100</span>)</span><br><span class="line">t_stat, p_value = stats.ttest_1samp(data, <span class="number">50</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 双样本t检验</span></span><br><span class="line">group1 = np.random.normal(<span class="number">50</span>, <span class="number">10</span>, <span class="number">50</span>)</span><br><span class="line">group2 = np.random.normal(<span class="number">55</span>, <span class="number">10</span>, <span class="number">50</span>)</span><br><span class="line">t_stat, p_value = stats.ttest_ind(group1, group2)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;p值: <span class="subst">&#123;p_value&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;结论: <span class="subst">&#123;<span class="string">&#x27;拒绝H0&#x27;</span> <span class="keyword">if</span> p_value &lt; <span class="number">0.05</span> <span class="keyword">else</span> <span class="string">&#x27;接受H0&#x27;</span>&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="卡方检验（分类变量）"><a href="#卡方检验（分类变量）" class="headerlink" title="卡方检验（分类变量）"></a>卡方检验（分类变量）</h4><p>检验分类变量的独立性或分布拟合。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 卡方检验</span></span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> chi2_contingency</span><br><span class="line"></span><br><span class="line"><span class="comment"># 观测频数表</span></span><br><span class="line">observed = np.array([[<span class="number">10</span>, <span class="number">20</span>], [<span class="number">30</span>, <span class="number">40</span>]])</span><br><span class="line">chi2, p_value, dof, expected = chi2_contingency(observed)</span><br></pre></td></tr></table></figure>
+
+<h4 id="F检验（方差比较）"><a href="#F检验（方差比较）" class="headerlink" title="F检验（方差比较）"></a>F检验（方差比较）</h4><p>检验两组方差是否相等。</p>
+<h3 id="p值解读"><a href="#p值解读" class="headerlink" title="p值解读"></a>p值解读</h3><table>
+<thead>
+<tr>
+<th>p值</th>
+<th>结论</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>p &lt; 0.01</td>
+<td>强证据拒绝H0</td>
+</tr>
+<tr>
+<td>p &lt; 0.05</td>
+<td>中等证据拒绝H0</td>
+</tr>
+<tr>
+<td>p &lt; 0.1</td>
+<td>弱证据拒绝H0</td>
+</tr>
+<tr>
+<td>p &gt; 0.1</td>
+<td>无足够证据拒绝H0</td>
+</tr>
+</tbody></table>
+<h3 id="检验错误"><a href="#检验错误" class="headerlink" title="检验错误"></a>检验错误</h3><table>
+<thead>
+<tr>
+<th>错误类型</th>
+<th>描述</th>
+<th>概率</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>第一类错误</td>
+<td>H0真但拒绝</td>
+<td>$\alpha$</td>
+</tr>
+<tr>
+<td>第二类错误</td>
+<td>H0假但接受</td>
+<td>$\beta$</td>
+</tr>
+<tr>
+<td>检验功效</td>
+<td>H0假时正确拒绝</td>
+<td>$1-\beta$</td>
+</tr>
+</tbody></table>
+<h2 id="参数估计方法（MLE、MAP）"><a href="#参数估计方法（MLE、MAP）" class="headerlink" title="参数估计方法（MLE、MAP）"></a>参数估计方法（MLE、MAP）</h2><h3 id="最大似然估计（MLE）"><a href="#最大似然估计（MLE）" class="headerlink" title="最大似然估计（MLE）"></a>最大似然估计（MLE）</h3><p>找到使似然函数最大的参数值。</p>
+<p><strong>似然函数</strong>：<br>$$L(\theta) &#x3D; P(X|\theta) &#x3D; \prod_{i&#x3D;1}^{n} P(x_i|\theta)$$</p>
+<p><strong>对数似然</strong>（更易计算）：<br>$$\ln L(\theta) &#x3D; \sum_{i&#x3D;1}^{n} \ln P(x_i|\theta)$$</p>
+<p><strong>MLE求解</strong>：<br>$$\hat{\theta}<em>{MLE} &#x3D; \arg\max</em>\theta L(\theta)$$</p>
+<h4 id="MLE示例：正态分布参数"><a href="#MLE示例：正态分布参数" class="headerlink" title="MLE示例：正态分布参数"></a>MLE示例：正态分布参数</h4><p>对于正态分布样本：<br>$$L(\mu, \sigma) &#x3D; \prod_{i&#x3D;1}^{n} \frac{1}{\sqrt{2\pi\sigma^2}} e^{-\frac{(x_i-\mu)^2}{2\sigma^2}}$$</p>
+<p>求解得：</p>
+<ul>
+<li>$\hat{\mu}_{MLE} &#x3D; \bar{x}$（样本均值）</li>
+<li>$\hat{\sigma^2}_{MLE} &#x3D; \frac{1}{n}\sum(x_i - \bar{x})^2$（样本方差）</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">mle_normal</span>(<span class="params">data</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;正态分布MLE&quot;&quot;&quot;</span></span><br><span class="line">    mu = np.mean(data)</span><br><span class="line">    sigma2 = np.var(data)  <span class="comment"># MLE方差（不是无偏估计）</span></span><br><span class="line">    <span class="keyword">return</span> mu, np.sqrt(sigma2)</span><br><span class="line"></span><br><span class="line">data = np.random.normal(<span class="number">5</span>, <span class="number">2</span>, <span class="number">1000</span>)</span><br><span class="line">mu_mle, sigma_mle = mle_normal(data)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;MLE估计: mu=<span class="subst">&#123;mu_mle:<span class="number">.2</span>f&#125;</span>, sigma=<span class="subst">&#123;sigma_mle:<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="最大后验估计（MAP）"><a href="#最大后验估计（MAP）" class="headerlink" title="最大后验估计（MAP）"></a>最大后验估计（MAP）</h3><p>考虑参数的先验分布。</p>
+<p><strong>贝叶斯公式</strong>：<br>$$P(\theta|X) &#x3D; \frac{P(X|\theta) P(\theta)}{P(X)}$$</p>
+<p><strong>MAP估计</strong>：<br>$$\hat{\theta}<em>{MAP} &#x3D; \arg\max</em>\theta P(\theta|X) &#x3D; \arg\max_\theta P(X|\theta) P(\theta)$$</p>
+<p>MAP &#x3D; MLE + 先验</p>
+<h4 id="MAP示例：正态分布均值"><a href="#MAP示例：正态分布均值" class="headerlink" title="MAP示例：正态分布均值"></a>MAP示例：正态分布均值</h4><p>假设 $\mu$ 的先验为 $N(\mu_0, \sigma_0^2)$：<br>$$\hat{\mu}_{MAP} &#x3D; \frac{\sigma^2}{\sigma^2 + n\sigma_0^2}\mu_0 + \frac{n\sigma_0^2}{\sigma^2 + n\sigma_0^2}\bar{x}$$</p>
+<p>当 $n \to \infty$，MAP趋近于MLE。</p>
+<h3 id="MLE-vs-MAP-vs-贝叶斯估计"><a href="#MLE-vs-MAP-vs-贝叶斯估计" class="headerlink" title="MLE vs MAP vs 贝叶斯估计"></a>MLE vs MAP vs 贝叶斯估计</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>MLE</td>
+<td>不使用先验，只看数据</td>
+</tr>
+<tr>
+<td>MAP</td>
+<td>使用先验，给出单点估计</td>
+</tr>
+<tr>
+<td>贝叶斯估计</td>
+<td>使用先验，给出参数分布</td>
+</tr>
+</tbody></table>
+<h2 id="贝叶斯统计简介"><a href="#贝叶斯统计简介" class="headerlink" title="贝叶斯统计简介"></a>贝叶斯统计简介</h2><h3 id="贝叶斯框架"><a href="#贝叶斯框架" class="headerlink" title="贝叶斯框架"></a>贝叶斯框架</h3><p><strong>贝叶斯统计</strong>将参数视为随机变量，有概率分布。</p>
+<p>$$P(\theta|X) &#x3D; \frac{P(X|\theta) P(\theta)}{P(X)}$$</p>
+<ul>
+<li>$P(\theta)$：先验分布</li>
+<li>$P(X|\theta)$：似然</li>
+<li>$P(\theta|X)$：后验分布</li>
+</ul>
+<h3 id="贝叶斯推断流程"><a href="#贝叶斯推断流程" class="headerlink" title="贝叶斯推断流程"></a>贝叶斯推断流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">先验 P(θ) → 观察数据 X → 后验 P(θ|X)</span><br><span class="line">              ↑</span><br><span class="line">              似然 P(X|θ)</span><br></pre></td></tr></table></figure>
+
+<h3 id="贝叶斯估计"><a href="#贝叶斯估计" class="headerlink" title="贝叶斯估计"></a>贝叶斯估计</h3><p>贝叶斯估计使用后验分布：</p>
+<ul>
+<li><strong>后验均值</strong>：$\hat{\theta} &#x3D; E[\theta|X]$</li>
+<li><strong>后验中位数</strong>：后验分布的中位数</li>
+<li><strong>后验众数</strong>：后验分布最大值（等于MAP）</li>
+</ul>
+<h3 id="贝叶斯预测"><a href="#贝叶斯预测" class="headerlink" title="贝叶斯预测"></a>贝叶斯预测</h3><p>预测新数据：<br>$$P(x_{new}|X) &#x3D; \int P(x_{new}|\theta) P(\theta|X) d\theta$$</p>
+<h2 id="统计学在机器学习中的应用"><a href="#统计学在机器学习中的应用" class="headerlink" title="统计学在机器学习中的应用"></a>统计学在机器学习中的应用</h2><h3 id="模型评估"><a href="#模型评估" class="headerlink" title="模型评估"></a>模型评估</h3><ul>
+<li>交叉验证的统计解释</li>
+<li>模型比较的统计检验</li>
+<li>A&#x2F;B测试</li>
+</ul>
+<h3 id="参数估计"><a href="#参数估计" class="headerlink" title="参数估计"></a>参数估计</h3><ul>
+<li>模型参数的MLE估计</li>
+<li>贝叶斯模型的MAP估计</li>
+<li>概率模型的参数推断</li>
+</ul>
+<h3 id="不确定性量化"><a href="#不确定性量化" class="headerlink" title="不确定性量化"></a>不确定性量化</h3><ul>
+<li>参数估计的置信区间</li>
+<li>预测的不确定性</li>
+<li>贝叶斯神经网络</li>
+</ul>
+<h3 id="特征选择"><a href="#特征选择" class="headerlink" title="特征选择"></a>特征选择</h3><ul>
+<li>特征显著性检验</li>
+<li>相关性检验</li>
+<li>统计特征选择方法</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>统计学是机器学习的理论基础之一。核心内容包括：统计量与统计推断、点估计与区间估计、假设检验、参数估计方法（MLE&#x2F;MAP）、贝叶斯统计。</p>
+<p>MLE是最常用的参数估计方法，MAP考虑先验知识。贝叶斯统计将参数视为随机变量，提供更完整的概率框架。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/probability-theory/">概率论基础</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/bayesian-classifier/">贝叶斯分类器</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/hyperparameter-tuning/">超参数调优</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/statistics/" data-id="cuidHY3tuydmDK_UVIYYqNFK4" data-title="统计学基础" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/" rel="tag">数学基础</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" rel="tag">统计学</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-value-based/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          基于价值的方法
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/svm/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">支持向量机（SVM）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGI/" rel="tag">AGI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E4%BC%A6%E7%90%86/" rel="tag">AI伦理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E5%9F%BA%E7%A1%80/" rel="tag">AI基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E6%9E%B6%E6%9E%84/" rel="tag">AI架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AgentBench/" rel="tag">AgentBench</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AutoGen/" rel="tag">AutoGen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boosting/" rel="tag">Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNN/" rel="tag">CNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CoT/" rel="tag">CoT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CrewAI/" rel="tag">CrewAI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DQN/" rel="tag">DQN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decision-Tree/" rel="tag">Decision Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Framework/" rel="tag">Framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Function-Calling/" rel="tag">Function Calling</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GAN/" rel="tag">GAN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GBDT/" rel="tag">GBDT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gradient-Boosting/" rel="tag">Gradient Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KNN/" rel="tag">KNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LSTM/" rel="tag">LSTM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LangChain/" rel="tag">LangChain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LangGraph/" rel="tag">LangGraph</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LightGBM/" rel="tag">LightGBM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Memory/" rel="tag">Memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Microsoft/" rel="tag">Microsoft</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Multi-Agent/" rel="tag">Multi-Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ONNX/" rel="tag">ONNX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PPO/" rel="tag">PPO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Planning/" rel="tag">Planning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Policy-Gradient/" rel="tag">Policy Gradient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prompt-Injection/" rel="tag">Prompt Injection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Q-Learning/" rel="tag">Q-Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RLHF/" rel="tag">RLHF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RNN/" rel="tag">RNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Forest/" rel="tag">Random Forest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReAct/" rel="tag">ReAct</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasoning/" rel="tag">Reasoning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVM/" rel="tag">SVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Semantic-Kernel/" rel="tag">Semantic Kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Stacking/" rel="tag">Stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tool-Use/" rel="tag">Tool Use</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transformer/" rel="tag">Transformer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VAE/" rel="tag">VAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XGBoost/" rel="tag">XGBoost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/" rel="tag">life</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%8A%A9%E6%89%8B/" rel="tag">代码助手</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/" rel="tag">优化理论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" rel="tag">优化算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%A6%E7%90%86/" rel="tag">伦理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2/" rel="tag">信息检索</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%A5%E9%97%A8/" rel="tag">入门</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" rel="tag">决策树</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83/" rel="tag">分布式训练</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB%E7%AE%97%E6%B3%95/" rel="tag">分类算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F/" rel="tag">协作模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" rel="tag">博弈论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" rel="tag">反向传播</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" rel="tag">可视化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">向量数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/" rel="tag">多智能体</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" rel="tag">大模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%A2%E6%9C%8D/" rel="tag">客服</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F/" rel="tag">对话系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B1%82%E6%AC%A1%E5%8C%96%E6%9E%B6%E6%9E%84/" rel="tag">层次化架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" rel="tag">工具调用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/" rel="tag">并行策略</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" rel="tag">开发工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" rel="tag">强化学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag">微服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E8%B0%83/" rel="tag">微调</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%83%B3/" rel="tag">感想</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" rel="tag">扩散模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" rel="tag">损失函数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/" rel="tag">推理优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/" rel="tag">提示工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/" rel="tag">数学基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" rel="tag">数据分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" rel="tag">数据清洗</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/" rel="tag">数据预处理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%BF%97/" rel="tag">日志</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%AA%E6%9D%A5%E8%B6%8B%E5%8A%BF/" rel="tag">未来趋势</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" rel="tag">架构设计</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" rel="tag">梯度提升</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/" rel="tag">概率论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A6%82%E8%BF%B0/" rel="tag">概述</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E5%8E%8B%E7%BC%A9/" rel="tag">模型压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" rel="tag">模型部署</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AD%A3%E5%88%99%E5%8C%96/" rel="tag">正则化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/" rel="tag">注意力机制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" rel="tag">激活函数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" rel="tag">特征工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9/" rel="tag">特征选择</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" rel="tag">生成模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%B4%BB/" rel="tag">生活</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" rel="tag">监督学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" rel="tag">知识蒸馏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A0%94%E7%A9%B6/" rel="tag">研究</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag">神经网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AB%9E%E4%BA%89/" rel="tag">竞争</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E5%8D%8F%E4%BD%9C/" rel="tag">系统协作</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" rel="tag">系统架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" rel="tag">线性代数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" rel="tag">线性回归</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" rel="tag">统计学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E6%B5%8B/" rel="tag">评测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B0%83%E8%AF%95/" rel="tag">调试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" rel="tag">贝叶斯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/" rel="tag">超参数调优</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" rel="tag">软件工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" rel="tag">逻辑回归</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8F%E5%8C%96/" rel="tag">量化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/" rel="tag">随机森林</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/" rel="tag">集成学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A2%84%E8%AE%AD%E7%BB%83/" rel="tag">预训练</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AGI/" style="font-size: 10px;">AGI</a> <a href="/tags/AI%E4%BC%A6%E7%90%86/" style="font-size: 10px;">AI伦理</a> <a href="/tags/AI%E5%9F%BA%E7%A1%80/" style="font-size: 10px;">AI基础</a> <a href="/tags/AI%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">AI架构</a> <a href="/tags/Agent/" style="font-size: 18.89px;">Agent</a> <a href="/tags/AgentBench/" style="font-size: 10px;">AgentBench</a> <a href="/tags/AutoGen/" style="font-size: 11.11px;">AutoGen</a> <a href="/tags/Boosting/" style="font-size: 11.11px;">Boosting</a> <a href="/tags/CNN/" style="font-size: 10px;">CNN</a> <a href="/tags/CoT/" style="font-size: 10px;">CoT</a> <a href="/tags/CrewAI/" style="font-size: 10px;">CrewAI</a> <a href="/tags/DQN/" style="font-size: 10px;">DQN</a> <a href="/tags/Decision-Tree/" style="font-size: 10px;">Decision Tree</a> <a href="/tags/Framework/" style="font-size: 10px;">Framework</a> <a href="/tags/Function-Calling/" style="font-size: 10px;">Function Calling</a> <a href="/tags/GAN/" style="font-size: 10px;">GAN</a> <a href="/tags/GBDT/" style="font-size: 12.22px;">GBDT</a> <a href="/tags/Gradient-Boosting/" style="font-size: 10px;">Gradient Boosting</a> <a href="/tags/KNN/" style="font-size: 10px;">KNN</a> <a href="/tags/LLM/" style="font-size: 14.44px;">LLM</a> <a href="/tags/LSTM/" style="font-size: 10px;">LSTM</a> <a href="/tags/LangChain/" style="font-size: 11.11px;">LangChain</a> <a href="/tags/LangGraph/" style="font-size: 10px;">LangGraph</a> <a href="/tags/LightGBM/" style="font-size: 10px;">LightGBM</a> <a href="/tags/Memory/" style="font-size: 10px;">Memory</a> <a href="/tags/Microsoft/" style="font-size: 10px;">Microsoft</a> <a href="/tags/Multi-Agent/" style="font-size: 15.56px;">Multi-Agent</a> <a href="/tags/ONNX/" style="font-size: 10px;">ONNX</a> <a href="/tags/PPO/" style="font-size: 10px;">PPO</a> <a href="/tags/Planning/" style="font-size: 10px;">Planning</a> <a href="/tags/Policy-Gradient/" style="font-size: 10px;">Policy Gradient</a> <a href="/tags/Prompt-Injection/" style="font-size: 10px;">Prompt Injection</a> <a href="/tags/Q-Learning/" style="font-size: 10px;">Q-Learning</a> <a href="/tags/RLHF/" style="font-size: 10px;">RLHF</a> <a href="/tags/RNN/" style="font-size: 10px;">RNN</a> <a href="/tags/Random-Forest/" style="font-size: 10px;">Random Forest</a> <a href="/tags/ReAct/" style="font-size: 10px;">ReAct</a> <a href="/tags/Reasoning/" style="font-size: 10px;">Reasoning</a> <a href="/tags/SVM/" style="font-size: 10px;">SVM</a> <a href="/tags/Semantic-Kernel/" style="font-size: 10px;">Semantic Kernel</a> <a href="/tags/Stacking/" style="font-size: 10px;">Stacking</a> <a href="/tags/Tool-Use/" style="font-size: 11.11px;">Tool Use</a> <a href="/tags/Transformer/" style="font-size: 10px;">Transformer</a> <a href="/tags/VAE/" style="font-size: 10px;">VAE</a> <a href="/tags/XGBoost/" style="font-size: 12.22px;">XGBoost</a> <a href="/tags/life/" style="font-size: 10px;">life</a> <a href="/tags/thoughts/" style="font-size: 10px;">thoughts</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E5%8A%A9%E6%89%8B/" style="font-size: 10px;">代码助手</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/" style="font-size: 10px;">优化理论</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" style="font-size: 10px;">优化算法</a> <a href="/tags/%E4%BC%A6%E7%90%86/" style="font-size: 10px;">伦理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2/" style="font-size: 10px;">信息检索</a> <a href="/tags/%E5%85%A5%E9%97%A8/" style="font-size: 10px;">入门</a> <a href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" style="font-size: 11.11px;">决策树</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83/" style="font-size: 10px;">分布式训练</a> <a href="/tags/%E5%88%86%E7%B1%BB%E7%AE%97%E6%B3%95/" style="font-size: 14.44px;">分类算法</a> <a href="/tags/%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">协作模式</a> <a href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" style="font-size: 10px;">博弈论</a> <a href="/tags/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" style="font-size: 10px;">反向传播</a> <a href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" style="font-size: 10px;">可视化</a> <a href="/tags/%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 10px;">向量数据库</a> <a href="/tags/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/" style="font-size: 10px;">多智能体</a> <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" style="font-size: 13.33px;">大模型</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 10px;">安全</a> <a href="/tags/%E5%AE%A2%E6%9C%8D/" style="font-size: 10px;">客服</a> <a href="/tags/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">对话系统</a> <a href="/tags/%E5%B1%82%E6%AC%A1%E5%8C%96%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">层次化架构</a> <a href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" style="font-size: 10px;">工具调用</a> <a href="/tags/%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/" style="font-size: 10px;">并行策略</a> <a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">开发工具</a> <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">强化学习</a> <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">微服务</a> <a href="/tags/%E5%BE%AE%E8%B0%83/" style="font-size: 10px;">微调</a> <a href="/tags/%E6%84%9F%E6%83%B3/" style="font-size: 10px;">感想</a> <a href="/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" style="font-size: 10px;">扩散模型</a> <a href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" style="font-size: 10px;">损失函数</a> <a href="/tags/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/" style="font-size: 10px;">推理优化</a> <a href="/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">提示工程</a> <a href="/tags/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/" style="font-size: 13.33px;">数学基础</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" style="font-size: 10px;">数据分析</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" style="font-size: 10px;">数据清洗</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/" style="font-size: 10px;">数据预处理</a> <a href="/tags/%E6%97%A5%E5%BF%97/" style="font-size: 10px;">日志</a> <a href="/tags/%E6%9C%AA%E6%9D%A5%E8%B6%8B%E5%8A%BF/" style="font-size: 10px;">未来趋势</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 20px;">机器学习</a> <a href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" style="font-size: 10px;">架构设计</a> <a href="/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" style="font-size: 10px;">梯度提升</a> <a href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/" style="font-size: 10px;">概率论</a> <a href="/tags/%E6%A6%82%E8%BF%B0/" style="font-size: 10px;">概述</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">模型压缩</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">模型部署</a> <a href="/tags/%E6%AD%A3%E5%88%99%E5%8C%96/" style="font-size: 10px;">正则化</a> <a href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/" style="font-size: 10px;">注意力机制</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 17.78px;">深度学习</a> <a href="/tags/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" style="font-size: 10px;">激活函数</a> <a href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">特征工程</a> <a href="/tags/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9/" style="font-size: 10px;">特征选择</a> <a href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" style="font-size: 12.22px;">生成模型</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">生活</a> <a href="/tags/%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">监督学习</a> <a href="/tags/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" style="font-size: 10px;">知识蒸馏</a> <a href="/tags/%E7%A0%94%E7%A9%B6/" style="font-size: 10px;">研究</a> <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" style="font-size: 16.67px;">神经网络</a> <a href="/tags/%E7%AB%9E%E4%BA%89/" style="font-size: 10px;">竞争</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E5%8D%8F%E4%BD%9C/" style="font-size: 10px;">系统协作</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">系统架构</a> <a href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" style="font-size: 10px;">线性代数</a> <a href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" style="font-size: 10px;">线性回归</a> <a href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" style="font-size: 10px;">统计学</a> <a href="/tags/%E8%AF%84%E6%B5%8B/" style="font-size: 10px;">评测</a> <a href="/tags/%E8%B0%83%E8%AF%95/" style="font-size: 10px;">调试</a> <a href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" style="font-size: 10px;">贝叶斯</a> <a href="/tags/%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/" style="font-size: 10px;">超参数调优</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">软件工程</a> <a href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" style="font-size: 10px;">逻辑回归</a> <a href="/tags/%E9%87%8F%E5%8C%96/" style="font-size: 10px;">量化</a> <a href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/" style="font-size: 11.11px;">随机森林</a> <a href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/" style="font-size: 16.67px;">集成学习</a> <a href="/tags/%E9%A2%84%E8%AE%AD%E7%BB%83/" style="font-size: 10px;">预训练</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-architecture/">Agent 架构模式</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/en/essays/blog-redesign/">After the Blog Redesign</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/llm-and-agent/">LLM 与 Agent 的关系</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/">Agent 入门指南</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

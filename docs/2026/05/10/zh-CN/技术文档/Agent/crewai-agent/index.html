@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>CrewAI Agent 实践 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="CrewAI 核心概念CrewAI 是一个角色扮演式的多 Agent 框架，将 Agent 组织为一个”团队”（Crew）完成任务。 三要素模型CrewAI 的核心是三个概念： 123Agent: 角色 Agent，代表一个专业角色Task: 任务定义，描述具体需要完成的工作Crew: Agent 团队，组织多个 Agent 完成任务  CrewAI 设计理念 角色扮演：每个 Agent 是一个专">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CrewAI Agent 实践">
+<meta property="og:url" content="https://keeganjin.github.io/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/crewai-agent/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="CrewAI 核心概念CrewAI 是一个角色扮演式的多 Agent 框架，将 Agent 组织为一个”团队”（Crew）完成任务。 三要素模型CrewAI 的核心是三个概念： 123Agent: 角色 Agent，代表一个专业角色Task: 任务定义，描述具体需要完成的工作Crew: Agent 团队，组织多个 Agent 完成任务  CrewAI 设计理念 角色扮演：每个 Agent 是一个专">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-09T19:08:27.337Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="CrewAI">
+<meta property="article:tag" content="Multi-Agent">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Product Docs</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/Agent/crewai-agent" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/crewai-agent/" class="article-date">
+  <time class="dt-published" datetime="2026-05-09T16:00:00.000Z" itemprop="datePublished">2026-05-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      CrewAI Agent 实践
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="CrewAI-核心概念"><a href="#CrewAI-核心概念" class="headerlink" title="CrewAI 核心概念"></a>CrewAI 核心概念</h2><p>CrewAI 是一个角色扮演式的多 Agent 框架，将 Agent 组织为一个”团队”（Crew）完成任务。</p>
+<h3 id="三要素模型"><a href="#三要素模型" class="headerlink" title="三要素模型"></a>三要素模型</h3><p>CrewAI 的核心是三个概念：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Agent: 角色 Agent，代表一个专业角色</span><br><span class="line">Task: 任务定义，描述具体需要完成的工作</span><br><span class="line">Crew: Agent 团队，组织多个 Agent 完成任务</span><br></pre></td></tr></table></figure>
+
+<h3 id="CrewAI-设计理念"><a href="#CrewAI-设计理念" class="headerlink" title="CrewAI 设计理念"></a>CrewAI 设计理念</h3><ul>
+<li><strong>角色扮演</strong>：每个 Agent 是一个专业角色</li>
+<li><strong>任务驱动</strong>：明确的任务定义驱动执行</li>
+<li><strong>团队协作</strong>：Agent 组成团队协同工作</li>
+<li><strong>流程控制</strong>：Sequential 或 Hierarchical 流程</li>
+</ul>
+<h2 id="Agent、Task、Crew-三要素"><a href="#Agent、Task、Crew-三要素" class="headerlink" title="Agent、Task、Crew 三要素"></a>Agent、Task、Crew 三要素</h2><h3 id="Agent-定义"><a href="#Agent-定义" class="headerlink" title="Agent 定义"></a>Agent 定义</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> crewai <span class="keyword">import</span> Agent</span><br><span class="line"></span><br><span class="line">agent = Agent(</span><br><span class="line">    role=<span class="string">&quot;研究员&quot;</span>,               <span class="comment"># 角色</span></span><br><span class="line">    goal=<span class="string">&quot;收集和分析信息&quot;</span>,        <span class="comment"># 目标</span></span><br><span class="line">    backstory=<span class="string">&quot;专业研究员...&quot;</span>,    <span class="comment"># 背景故事</span></span><br><span class="line">    verbose=<span class="literal">True</span>,                <span class="comment"># 详细输出</span></span><br><span class="line">    allow_delegation=<span class="literal">False</span>,      <span class="comment"># 是否允许委派</span></span><br><span class="line">    tools=[search_tool],         <span class="comment"># 工具列表</span></span><br><span class="line">    llm=<span class="string">&quot;gpt-4&quot;</span>                  <span class="comment"># LLM 配置</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Agent-属性详解"><a href="#Agent-属性详解" class="headerlink" title="Agent 属性详解"></a>Agent 属性详解</h3><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>role</td>
+<td>Agent 的角色名称</td>
+</tr>
+<tr>
+<td>goal</td>
+<td>Agent 的目标</td>
+</tr>
+<tr>
+<td>backstory</td>
+<td>Agent 的背景故事（影响行为风格）</td>
+</tr>
+<tr>
+<td>verbose</td>
+<td>是否显示详细执行过程</td>
+</tr>
+<tr>
+<td>allow_delegation</td>
+<td>是否允许将任务委派给其他 Agent</td>
+</tr>
+<tr>
+<td>tools</td>
+<td>Agent 可使用的工具</td>
+</tr>
+<tr>
+<td>llm</td>
+<td>Agent 使用的 LLM</td>
+</tr>
+</tbody></table>
+<h3 id="Task-定义"><a href="#Task-定义" class="headerlink" title="Task 定义"></a>Task 定义</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> crewai <span class="keyword">import</span> Task</span><br><span class="line"></span><br><span class="line">task = Task(</span><br><span class="line">    description=<span class="string">&quot;研究 AI Agent 技术的最新进展&quot;</span>,  <span class="comment"># 任务描述</span></span><br><span class="line">    expected_output=<span class="string">&quot;一份详细的研究报告&quot;</span>,       <span class="comment"># 预期输出</span></span><br><span class="line">    agent=researcher,                           <span class="comment"># 负责的 Agent</span></span><br><span class="line">    tools=[search_tool, web_tool],              <span class="comment"># 可用工具</span></span><br><span class="line">    context=[previous_task],                    <span class="comment"># 上下文（依赖的任务）</span></span><br><span class="line">    async_execution=<span class="literal">False</span>                       <span class="comment"># 是否异步执行</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Task-属性详解"><a href="#Task-属性详解" class="headerlink" title="Task 属性详解"></a>Task 属性详解</h3><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>description</td>
+<td>任务详细描述</td>
+</tr>
+<tr>
+<td>expected_output</td>
+<td>预期的输出格式和内容</td>
+</tr>
+<tr>
+<td>agent</td>
+<td>负责此任务的 Agent</td>
+</tr>
+<tr>
+<td>tools</td>
+<td>任务可用的工具（可选）</td>
+</tr>
+<tr>
+<td>context</td>
+<td>此任务依赖的其他任务</td>
+</tr>
+<tr>
+<td>async_execution</td>
+<td>是否异步执行（并行任务）</td>
+</tr>
+<tr>
+<td>output_file</td>
+<td>输出文件路径（可选）</td>
+</tr>
+</tbody></table>
+<h3 id="Crew-定义"><a href="#Crew-定义" class="headerlink" title="Crew 定义"></a>Crew 定义</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> crewai <span class="keyword">import</span> Crew, Process</span><br><span class="line"></span><br><span class="line">crew = Crew(</span><br><span class="line">    agents=[researcher, writer, editor],  <span class="comment"># Agent 列表</span></span><br><span class="line">    tasks=[research_task, write_task, edit_task],  <span class="comment"># 任务列表</span></span><br><span class="line">    process=Process.sequential,           <span class="comment"># 流程类型</span></span><br><span class="line">    verbose=<span class="literal">True</span>                          <span class="comment"># 详细输出</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行</span></span><br><span class="line">result = crew.kickoff()</span><br></pre></td></tr></table></figure>
+
+<h3 id="Crew-属性详解"><a href="#Crew-属性详解" class="headerlink" title="Crew 属性详解"></a>Crew 属性详解</h3><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>agents</td>
+<td>团队中的 Agent 列表</td>
+</tr>
+<tr>
+<td>tasks</td>
+<td>团队需要完成的任务列表</td>
+</tr>
+<tr>
+<td>process</td>
+<td>流程类型：sequential 或 hierarchical</td>
+</tr>
+<tr>
+<td>verbose</td>
+<td>是否显示详细过程</td>
+</tr>
+<tr>
+<td>memory</td>
+<td>是否启用记忆系统</td>
+</tr>
+<tr>
+<td>manager_llm</td>
+<td>Manager Agent 的 LLM（hierarchical 流程）</td>
+</tr>
+</tbody></table>
+<h2 id="流程类型：Sequential、Hierarchical"><a href="#流程类型：Sequential、Hierarchical" class="headerlink" title="流程类型：Sequential、Hierarchical"></a>流程类型：Sequential、Hierarchical</h2><h3 id="Sequential-流程（顺序流程）"><a href="#Sequential-流程（顺序流程）" class="headerlink" title="Sequential 流程（顺序流程）"></a>Sequential 流程（顺序流程）</h3><p>任务按顺序依次执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Task1 → Task2 → Task3 → 最终结果</span><br></pre></td></tr></table></figure>
+
+<h4 id="顺序流程示例"><a href="#顺序流程示例" class="headerlink" title="顺序流程示例"></a>顺序流程示例</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> crewai <span class="keyword">import</span> Agent, Task, Crew, Process</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义 Agent</span></span><br><span class="line">researcher = Agent(</span><br><span class="line">    role=<span class="string">&quot;研究员&quot;</span>,</span><br><span class="line">    goal=<span class="string">&quot;收集研究信息&quot;</span>,</span><br><span class="line">    backstory=<span class="string">&quot;资深研究员，擅长信息收集和分析&quot;</span>,</span><br><span class="line">    verbose=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">writer = Agent(</span><br><span class="line">    role=<span class="string">&quot;作家&quot;</span>,</span><br><span class="line">    goal=<span class="string">&quot;撰写高质量内容&quot;</span>,</span><br><span class="line">    backstory=<span class="string">&quot;专业作家，擅长内容创作&quot;</span>,</span><br><span class="line">    verbose=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">editor = Agent(</span><br><span class="line">    role=<span class="string">&quot;编辑&quot;</span>,</span><br><span class="line">    goal=<span class="string">&quot;审核和优化内容&quot;</span>,</span><br><span class="line">    backstory=<span class="string">&quot;资深编辑，注重质量&quot;</span>,</span><br><span class="line">    verbose=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义任务</span></span><br><span class="line">research_task = Task(</span><br><span class="line">    description=<span class="string">&quot;研究 AI Agent 技术趋势&quot;</span>,</span><br><span class="line">    expected_output=<span class="string">&quot;研究摘要，包含关键发现&quot;</span>,</span><br><span class="line">    agent=researcher</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">write_task = Task(</span><br><span class="line">    description=<span class="string">&quot;基于研究结果撰写文章&quot;</span>,</span><br><span class="line">    expected_output=<span class="string">&quot;完整的文章草稿&quot;</span>,</span><br><span class="line">    agent=writer,</span><br><span class="line">    context=[research_task]  <span class="comment"># 依赖研究任务的结果</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">edit_task = Task(</span><br><span class="line">    description=<span class="string">&quot;审核和修改文章&quot;</span>,</span><br><span class="line">    expected_output=<span class="string">&quot;最终完善的文章&quot;</span>,</span><br><span class="line">    agent=editor,</span><br><span class="line">    context=[write_task]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Crew（顺序流程）</span></span><br><span class="line">crew = Crew(</span><br><span class="line">    agents=[researcher, writer, editor],</span><br><span class="line">    tasks=[research_task, write_task, edit_task],</span><br><span class="line">    process=Process.sequential,</span><br><span class="line">    verbose=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行</span></span><br><span class="line">result = crew.kickoff()</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Hierarchical-流程（层次流程）"><a href="#Hierarchical-流程（层次流程）" class="headerlink" title="Hierarchical 流程（层次流程）"></a>Hierarchical 流程（层次流程）</h3><p>Manager Agent 负责分配任务：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Manager Agent</span><br><span class="line">     ↓ 分析任务，分配给 Worker</span><br><span class="line">Worker Agents 执行</span><br><span class="line">     ↓ 返回结果</span><br><span class="line">Manager 整合结果</span><br></pre></td></tr></table></figure>
+
+<h4 id="层次流程示例"><a href="#层次流程示例" class="headerlink" title="层次流程示例"></a>层次流程示例</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> crewai <span class="keyword">import</span> Agent, Task, Crew, Process</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义 Manager Agent</span></span><br><span class="line">manager = Agent(</span><br><span class="line">    role=<span class="string">&quot;项目经理&quot;</span>,</span><br><span class="line">    goal=<span class="string">&quot;协调团队完成项目&quot;</span>,</span><br><span class="line">    backstory=<span class="string">&quot;经验丰富的项目经理&quot;</span>,</span><br><span class="line">    allow_delegation=<span class="literal">True</span>  <span class="comment"># 允许委派</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义 Worker Agents</span></span><br><span class="line">researcher = Agent(</span><br><span class="line">    role=<span class="string">&quot;研究员&quot;</span>,</span><br><span class="line">    goal=<span class="string">&quot;收集信息&quot;</span>,</span><br><span class="line">    backstory=<span class="string">&quot;专业研究员&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">writer = Agent(</span><br><span class="line">    role=<span class="string">&quot;作家&quot;</span>,</span><br><span class="line">    goal=<span class="string">&quot;撰写内容&quot;</span>,</span><br><span class="line">    backstory=<span class="string">&quot;专业作家&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义任务（不指定 Agent，由 Manager 分配）</span></span><br><span class="line">main_task = Task(</span><br><span class="line">    description=<span class="string">&quot;撰写一篇关于 AI Agent 的文章&quot;</span>,</span><br><span class="line">    expected_output=<span class="string">&quot;高质量的文章&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Crew（层次流程）</span></span><br><span class="line">crew = Crew(</span><br><span class="line">    agents=[manager, researcher, writer],</span><br><span class="line">    tasks=[main_task],</span><br><span class="line">    process=Process.hierarchical,</span><br><span class="line">    manager_llm=<span class="string">&quot;gpt-4&quot;</span>,  <span class="comment"># Manager 的 LLM</span></span><br><span class="line">    verbose=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行</span></span><br><span class="line">result = crew.kickoff()</span><br></pre></td></tr></table></figure>
+
+<h3 id="流程对比"><a href="#流程对比" class="headerlink" title="流程对比"></a>流程对比</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Sequential</th>
+<th>Hierarchical</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>执行顺序</td>
+<td>固定顺序</td>
+<td>Manager 动态分配</td>
+</tr>
+<tr>
+<td>任务分配</td>
+<td>每个任务指定 Agent</td>
+<td>Manager 决定</td>
+</tr>
+<tr>
+<td>灵活性</td>
+<td>低，任务顺序固定</td>
+<td>高，可动态调整</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>流程明确的任务</td>
+<td>复杂不确定的任务</td>
+</tr>
+</tbody></table>
+<h2 id="Tools-与知识集成"><a href="#Tools-与知识集成" class="headerlink" title="Tools 与知识集成"></a>Tools 与知识集成</h2><h3 id="工具定义"><a href="#工具定义" class="headerlink" title="工具定义"></a>工具定义</h3><p>CrewAI 使用 LangChain 工具：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> crewai_tools <span class="keyword">import</span> tool</span><br><span class="line"><span class="keyword">from</span> langchain.tools <span class="keyword">import</span> Tool</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 @tool 装饰器</span></span><br><span class="line"><span class="meta">@tool(<span class="params"><span class="string">&quot;搜索互联网&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">search_web</span>(<span class="params">query: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;搜索互联网获取信息&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> search_api(query)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或使用 LangChain Tool</span></span><br><span class="line">search_tool = Tool(</span><br><span class="line">    name=<span class="string">&quot;search&quot;</span>,</span><br><span class="line">    description=<span class="string">&quot;搜索互联网&quot;</span>,</span><br><span class="line">    func=search_web</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Agent-工具绑定"><a href="#Agent-工具绑定" class="headerlink" title="Agent 工具绑定"></a>Agent 工具绑定</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">researcher = Agent(</span><br><span class="line">    role=<span class="string">&quot;研究员&quot;</span>,</span><br><span class="line">    goal=<span class="string">&quot;收集信息&quot;</span>,</span><br><span class="line">    backstory=<span class="string">&quot;专业研究员&quot;</span>,</span><br><span class="line">    tools=[search_tool, web_scraper_tool]  <span class="comment"># 绑定工具</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="CrewAI-内置工具"><a href="#CrewAI-内置工具" class="headerlink" title="CrewAI 内置工具"></a>CrewAI 内置工具</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> crewai_tools <span class="keyword">import</span> (</span><br><span class="line">    SerperDevTool,       <span class="comment"># Google 搜索</span></span><br><span class="line">    ScrapeWebsiteTool,   <span class="comment"># 网页抓取</span></span><br><span class="line">    FileReadTool,        <span class="comment"># 文件读取</span></span><br><span class="line">    DirectoryReadTool,   <span class="comment"># 目录读取</span></span><br><span class="line">    CodeInterpreterTool  <span class="comment"># 代码执行</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用内置工具</span></span><br><span class="line">search = SerperDevTool()</span><br><span class="line">scraper = ScrapeWebsiteTool()</span><br><span class="line"></span><br><span class="line">researcher = Agent(</span><br><span class="line">    role=<span class="string">&quot;研究员&quot;</span>,</span><br><span class="line">    tools=[search, scraper]</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="知识集成"><a href="#知识集成" class="headerlink" title="知识集成"></a>知识集成</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> crewai <span class="keyword">import</span> Knowledge</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义知识源</span></span><br><span class="line">knowledge = Knowledge(</span><br><span class="line">    sources=[</span><br><span class="line">        &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;file&quot;</span>, <span class="string">&quot;path&quot;</span>: <span class="string">&quot;knowledge.pdf&quot;</span>&#125;,</span><br><span class="line">        &#123;<span class="string">&quot;type&quot;</span>: <span class="string">&quot;web&quot;</span>, <span class="string">&quot;url&quot;</span>: <span class="string">&quot;https://example.com/docs&quot;</span>&#125;</span><br><span class="line">    ]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Agent 使用知识</span></span><br><span class="line">researcher = Agent(</span><br><span class="line">    role=<span class="string">&quot;研究员&quot;</span>,</span><br><span class="line">    knowledge=knowledge</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h2 id="实战案例：内容创作-Agent-团队"><a href="#实战案例：内容创作-Agent-团队" class="headerlink" title="实战案例：内容创作 Agent 团队"></a>实战案例：内容创作 Agent 团队</h2><h3 id="定义目标"><a href="#定义目标" class="headerlink" title="定义目标"></a>定义目标</h3><p>创建一个内容创作团队：</p>
+<ul>
+<li><strong>研究员</strong>：研究主题，收集素材</li>
+<li><strong>策划师</strong>：制定内容大纲</li>
+<li><strong>作家</strong>：撰写内容</li>
+<li><strong>编辑</strong>：审核修改</li>
+</ul>
+<h3 id="完整实现"><a href="#完整实现" class="headerlink" title="完整实现"></a>完整实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> crewai <span class="keyword">import</span> Agent, Task, Crew, Process</span><br><span class="line"><span class="keyword">from</span> crewai_tools <span class="keyword">import</span> SerperDevTool, ScrapeWebsiteTool</span><br><span class="line"></span><br><span class="line"><span class="comment"># 工具</span></span><br><span class="line">search_tool = SerperDevTool()</span><br><span class="line">scraper_tool = ScrapeWebsiteTool()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义 Agent</span></span><br><span class="line">researcher = Agent(</span><br><span class="line">    role=<span class="string">&quot;内容研究员&quot;</span>,</span><br><span class="line">    goal=<span class="string">&quot;深入研究主题，收集高质量素材&quot;</span>,</span><br><span class="line">    backstory=<span class="string">&quot;&quot;&quot;你是一位专业的内容研究员。</span></span><br><span class="line"><span class="string">    你擅长：</span></span><br><span class="line"><span class="string">    - 搜索和收集相关信息</span></span><br><span class="line"><span class="string">    - 分析和提炼关键观点</span></span><br><span class="line"><span class="string">    - 整理素材供后续使用&quot;&quot;&quot;</span>,</span><br><span class="line">    verbose=<span class="literal">True</span>,</span><br><span class="line">    tools=[search_tool, scraper_tool]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">planner = Agent(</span><br><span class="line">    role=<span class="string">&quot;内容策划师&quot;</span>,</span><br><span class="line">    goal=<span class="string">&quot;制定内容大纲和结构&quot;</span>,</span><br><span class="line">    backstory=<span class="string">&quot;&quot;&quot;你是一位资深内容策划师。</span></span><br><span class="line"><span class="string">    你擅长：</span></span><br><span class="line"><span class="string">    - 分析素材，提炼要点</span></span><br><span class="line"><span class="string">    - 设计内容结构和逻辑</span></span><br><span class="line"><span class="string">    - 制定写作大纲&quot;&quot;&quot;</span>,</span><br><span class="line">    verbose=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">writer = Agent(</span><br><span class="line">    role=<span class="string">&quot;内容作家&quot;</span>,</span><br><span class="line">    goal=<span class="string">&quot;撰写高质量的内容&quot;</span>,</span><br><span class="line">    backstory=<span class="string">&quot;&quot;&quot;你是一位专业作家。</span></span><br><span class="line"><span class="string">    你擅长：</span></span><br><span class="line"><span class="string">    - 根据大纲撰写内容</span></span><br><span class="line"><span class="string">    - 语言表达流畅</span></span><br><span class="line"><span class="string">    - 内容逻辑清晰&quot;&quot;&quot;</span>,</span><br><span class="line">    verbose=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">editor = Agent(</span><br><span class="line">    role=<span class="string">&quot;内容编辑&quot;</span>,</span><br><span class="line">    goal=<span class="string">&quot;审核和优化内容质量&quot;</span>,</span><br><span class="line">    backstory=<span class="string">&quot;&quot;&quot;你是一位资深编辑。</span></span><br><span class="line"><span class="string">    你擅长：</span></span><br><span class="line"><span class="string">    - 内容审核和质量把控</span></span><br><span class="line"><span class="string">    - 语言优化和润色</span></span><br><span class="line"><span class="string">    - 确保内容专业准确&quot;&quot;&quot;</span>,</span><br><span class="line">    verbose=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义任务</span></span><br><span class="line">research_task = Task(</span><br><span class="line">    description=<span class="string">&quot;&quot;&quot;研究 AI Agent 技术的最新进展。</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    要求：</span></span><br><span class="line"><span class="string">    1. 搜索最新的技术文章和报告</span></span><br><span class="line"><span class="string">    2. 收集关键技术趋势</span></span><br><span class="line"><span class="string">    3. 提取重要观点和数据&quot;&quot;&quot;</span>,</span><br><span class="line">    expected_output=<span class="string">&quot;一份详细的研究摘要，包含关键发现和素材&quot;</span>,</span><br><span class="line">    agent=researcher</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">plan_task = Task(</span><br><span class="line">    description=<span class="string">&quot;&quot;&quot;基于研究结果制定文章大纲。</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    要求：</span></span><br><span class="line"><span class="string">    1. 分析研究素材</span></span><br><span class="line"><span class="string">    2. 设计文章结构</span></span><br><span class="line"><span class="string">    3. 明确每个章节要点&quot;&quot;&quot;</span>,</span><br><span class="line">    expected_output=<span class="string">&quot;完整的文章大纲，包含章节结构&quot;</span>,</span><br><span class="line">    agent=planner,</span><br><span class="line">    context=[research_task]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">write_task = Task(</span><br><span class="line">    description=<span class="string">&quot;&quot;&quot;根据大纲撰写文章。</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    要求：</span></span><br><span class="line"><span class="string">    1. 遵循大纲结构</span></span><br><span class="line"><span class="string">    2. 内容详实准确</span></span><br><span class="line"><span class="string">    3. 语言流畅专业&quot;&quot;&quot;</span>,</span><br><span class="line">    expected_output=<span class="string">&quot;完整的文章草稿&quot;</span>,</span><br><span class="line">    agent=writer,</span><br><span class="line">    context=[plan_task]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">edit_task = Task(</span><br><span class="line">    description=<span class="string">&quot;&quot;&quot;审核和修改文章。</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    要求：</span></span><br><span class="line"><span class="string">    1. 检查内容准确性</span></span><br><span class="line"><span class="string">    2. 优化语言表达</span></span><br><span class="line"><span class="string">    3. 确保逻辑连贯&quot;&quot;&quot;</span>,</span><br><span class="line">    expected_output=<span class="string">&quot;最终完善的文章&quot;</span>,</span><br><span class="line">    agent=editor,</span><br><span class="line">    context=[write_task]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Crew</span></span><br><span class="line">crew = Crew(</span><br><span class="line">    agents=[researcher, planner, writer, editor],</span><br><span class="line">    tasks=[research_task, plan_task, write_task, edit_task],</span><br><span class="line">    process=Process.sequential,</span><br><span class="line">    verbose=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行</span></span><br><span class="line">result = crew.kickoff()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;=== 最终文章 ===&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(result)</span><br></pre></td></tr></table></figure>
+
+<h3 id="执行流程"><a href="#执行流程" class="headerlink" title="执行流程"></a>执行流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. Researcher: 搜索资料 → 生成研究摘要</span><br><span class="line">2. Planner: 分析素材 → 制定大纲</span><br><span class="line">3. Writer: 根据大纲 → 撰写文章</span><br><span class="line">4. Editor: 审核 → 输出最终文章</span><br></pre></td></tr></table></figure>
+
+<h3 id="并行任务示例"><a href="#并行任务示例" class="headerlink" title="并行任务示例"></a>并行任务示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 多个研究任务并行执行</span></span><br><span class="line">research_task1 = Task(</span><br><span class="line">    description=<span class="string">&quot;研究 Agent 架构&quot;</span>,</span><br><span class="line">    agent=researcher1,</span><br><span class="line">    async_execution=<span class="literal">True</span>  <span class="comment"># 异步执行</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">research_task2 = Task(</span><br><span class="line">    description=<span class="string">&quot;研究 Agent 框架&quot;</span>,</span><br><span class="line">    agent=researcher2,</span><br><span class="line">    async_execution=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 整合任务依赖并行任务</span></span><br><span class="line">synthesize_task = Task(</span><br><span class="line">    description=<span class="string">&quot;整合研究结果&quot;</span>,</span><br><span class="line">    agent=planner,</span><br><span class="line">    context=[research_task1, research_task2]  <span class="comment"># 依赖并行任务</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">crew = Crew(</span><br><span class="line">    agents=[researcher1, researcher2, planner],</span><br><span class="line">    tasks=[research_task1, research_task2, synthesize_task],</span><br><span class="line">    process=Process.sequential</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h2 id="CrewAI-进阶用法"><a href="#CrewAI-进阶用法" class="headerlink" title="CrewAI 进阶用法"></a>CrewAI 进阶用法</h2><h3 id="任务输出保存"><a href="#任务输出保存" class="headerlink" title="任务输出保存"></a>任务输出保存</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">task = Task(</span><br><span class="line">    description=<span class="string">&quot;撰写文章&quot;</span>,</span><br><span class="line">    expected_output=<span class="string">&quot;文章内容&quot;</span>,</span><br><span class="line">    agent=writer,</span><br><span class="line">    output_file=<span class="string">&quot;output/article.md&quot;</span>  <span class="comment"># 输出到文件</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">crew.kickoff()</span><br><span class="line"><span class="comment"># 结果保存到 output/article.md</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="记忆系统"><a href="#记忆系统" class="headerlink" title="记忆系统"></a>记忆系统</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">crew = Crew(</span><br><span class="line">    agents=[agent1, agent2],</span><br><span class="line">    tasks=[task1, task2],</span><br><span class="line">    process=Process.sequential,</span><br><span class="line">    memory=<span class="literal">True</span>  <span class="comment"># 启用记忆系统</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 记忆系统会记录任务结果，供后续任务使用</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="回调函数"><a href="#回调函数" class="headerlink" title="回调函数"></a>回调函数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">task_callback</span>(<span class="params">task_output</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;任务完成回调&quot;&quot;&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;任务完成: <span class="subst">&#123;task_output.task_description&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;结果: <span class="subst">&#123;task_output.raw&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">task = Task(</span><br><span class="line">    description=<span class="string">&quot;...&quot;</span>,</span><br><span class="line">    callback=task_callback  <span class="comment"># 设置回调</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="人机交互"><a href="#人机交互" class="headerlink" title="人机交互"></a>人机交互</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在任务中请求人工输入</span></span><br><span class="line">human_input_task = Task(</span><br><span class="line">    description=<span class="string">&quot;请用户确认内容方向&quot;</span>,</span><br><span class="line">    agent=researcher,</span><br><span class="line">    human_input=<span class="literal">True</span>  <span class="comment"># 等待人工输入</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h2 id="CrewAI-最佳实践"><a href="#CrewAI-最佳实践" class="headerlink" title="CrewAI 最佳实践"></a>CrewAI 最佳实践</h2><h3 id="Agent-设计"><a href="#Agent-设计" class="headerlink" title="Agent 设计"></a>Agent 设计</h3><ol>
+<li><strong>角色明确</strong>：role 和 goal 清晰定义</li>
+<li><strong>背景丰富</strong>：backstory 影响行为风格</li>
+<li><strong>工具匹配</strong>：工具与角色能力匹配</li>
+<li><strong>避免重叠</strong>：Agent 职责不重叠</li>
+</ol>
+<h3 id="Task-设计"><a href="#Task-设计" class="headerlink" title="Task 设计"></a>Task 设计</h3><ol>
+<li><strong>描述详细</strong>：任务描述包含具体要求</li>
+<li><strong>输出明确</strong>：expected_output 明确格式</li>
+<li><strong>依赖正确</strong>：context 设置任务依赖</li>
+<li><strong>合理分配</strong>：任务与 Agent 能力匹配</li>
+</ol>
+<h3 id="Crew-设计"><a href="#Crew-设计" class="headerlink" title="Crew 设计"></a>Crew 设计</h3><ol>
+<li><strong>流程选择</strong>：根据任务选择 sequential 或 hierarchical</li>
+<li><strong>数量控制</strong>：Agent 和任务数量适中</li>
+<li><strong>成本控制</strong>：verbose&#x3D;False 减少输出成本</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>CrewAI 以 Agent-Task-Crew 三要素构建多 Agent 系统。Sequential 流程按固定顺序执行，Hierarchical 流程由 Manager 动态分配。工具集成使用 LangChain 工具，知识源支持文件和网页。</p>
+<p>CrewAI API 简洁直观，适合角色分工明确、流程清晰的任务。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-frameworks/">Agent 框架概览</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-collaboration/">多 Agent 协作模式</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/hierarchical-agent/">层次化 Agent 系统</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/autogen-agent/">AutoGen 多 Agent 实践</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/crewai-agent/" data-id="cuid3Qg59Z6V_ibiDR7cc7Yqn" data-title="CrewAI Agent 实践" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CrewAI/" rel="tag">CrewAI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Multi-Agent/" rel="tag">Multi-Agent</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/data-analysis-agent/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          数据分析 Agent
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/code-assistant-agent/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">代码助手 Agent</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGI/" rel="tag">AGI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E4%BC%A6%E7%90%86/" rel="tag">AI伦理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E5%9F%BA%E7%A1%80/" rel="tag">AI基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E6%9E%B6%E6%9E%84/" rel="tag">AI架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AgentBench/" rel="tag">AgentBench</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AutoGen/" rel="tag">AutoGen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boosting/" rel="tag">Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNN/" rel="tag">CNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CoT/" rel="tag">CoT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CrewAI/" rel="tag">CrewAI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DQN/" rel="tag">DQN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decision-Tree/" rel="tag">Decision Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Framework/" rel="tag">Framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Function-Calling/" rel="tag">Function Calling</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GAN/" rel="tag">GAN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GBDT/" rel="tag">GBDT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gradient-Boosting/" rel="tag">Gradient Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KNN/" rel="tag">KNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LSTM/" rel="tag">LSTM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LangChain/" rel="tag">LangChain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LangGraph/" rel="tag">LangGraph</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LightGBM/" rel="tag">LightGBM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Memory/" rel="tag">Memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Microsoft/" rel="tag">Microsoft</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Multi-Agent/" rel="tag">Multi-Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ONNX/" rel="tag">ONNX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PPO/" rel="tag">PPO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Planning/" rel="tag">Planning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Policy-Gradient/" rel="tag">Policy Gradient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prompt-Injection/" rel="tag">Prompt Injection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Q-Learning/" rel="tag">Q-Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RLHF/" rel="tag">RLHF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RNN/" rel="tag">RNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Forest/" rel="tag">Random Forest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReAct/" rel="tag">ReAct</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasoning/" rel="tag">Reasoning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVM/" rel="tag">SVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Semantic-Kernel/" rel="tag">Semantic Kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Stacking/" rel="tag">Stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tool-Use/" rel="tag">Tool Use</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transformer/" rel="tag">Transformer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VAE/" rel="tag">VAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XGBoost/" rel="tag">XGBoost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/" rel="tag">life</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%8A%A9%E6%89%8B/" rel="tag">代码助手</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/" rel="tag">优化理论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" rel="tag">优化算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%A6%E7%90%86/" rel="tag">伦理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2/" rel="tag">信息检索</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%A5%E9%97%A8/" rel="tag">入门</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" rel="tag">决策树</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83/" rel="tag">分布式训练</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB%E7%AE%97%E6%B3%95/" rel="tag">分类算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F/" rel="tag">协作模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" rel="tag">博弈论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" rel="tag">反向传播</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" rel="tag">可视化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">向量数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/" rel="tag">多智能体</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" rel="tag">大模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%A2%E6%9C%8D/" rel="tag">客服</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F/" rel="tag">对话系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B1%82%E6%AC%A1%E5%8C%96%E6%9E%B6%E6%9E%84/" rel="tag">层次化架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" rel="tag">工具调用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/" rel="tag">并行策略</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" rel="tag">开发工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" rel="tag">强化学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag">微服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E8%B0%83/" rel="tag">微调</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%83%B3/" rel="tag">感想</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" rel="tag">扩散模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" rel="tag">损失函数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/" rel="tag">推理优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/" rel="tag">提示工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/" rel="tag">数学基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" rel="tag">数据分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" rel="tag">数据清洗</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/" rel="tag">数据预处理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%BF%97/" rel="tag">日志</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%AA%E6%9D%A5%E8%B6%8B%E5%8A%BF/" rel="tag">未来趋势</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" rel="tag">架构设计</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" rel="tag">梯度提升</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/" rel="tag">概率论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A6%82%E8%BF%B0/" rel="tag">概述</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E5%8E%8B%E7%BC%A9/" rel="tag">模型压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" rel="tag">模型部署</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AD%A3%E5%88%99%E5%8C%96/" rel="tag">正则化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/" rel="tag">注意力机制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" rel="tag">激活函数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" rel="tag">特征工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9/" rel="tag">特征选择</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" rel="tag">生成模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%B4%BB/" rel="tag">生活</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" rel="tag">监督学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" rel="tag">知识蒸馏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A0%94%E7%A9%B6/" rel="tag">研究</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag">神经网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AB%9E%E4%BA%89/" rel="tag">竞争</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E5%8D%8F%E4%BD%9C/" rel="tag">系统协作</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" rel="tag">系统架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" rel="tag">线性代数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" rel="tag">线性回归</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" rel="tag">统计学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E6%B5%8B/" rel="tag">评测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B0%83%E8%AF%95/" rel="tag">调试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" rel="tag">贝叶斯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/" rel="tag">超参数调优</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" rel="tag">软件工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" rel="tag">逻辑回归</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8F%E5%8C%96/" rel="tag">量化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/" rel="tag">随机森林</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/" rel="tag">集成学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A2%84%E8%AE%AD%E7%BB%83/" rel="tag">预训练</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AGI/" style="font-size: 10px;">AGI</a> <a href="/tags/AI%E4%BC%A6%E7%90%86/" style="font-size: 10px;">AI伦理</a> <a href="/tags/AI%E5%9F%BA%E7%A1%80/" style="font-size: 10px;">AI基础</a> <a href="/tags/AI%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">AI架构</a> <a href="/tags/Agent/" style="font-size: 18.89px;">Agent</a> <a href="/tags/AgentBench/" style="font-size: 10px;">AgentBench</a> <a href="/tags/AutoGen/" style="font-size: 11.11px;">AutoGen</a> <a href="/tags/Boosting/" style="font-size: 11.11px;">Boosting</a> <a href="/tags/CNN/" style="font-size: 10px;">CNN</a> <a href="/tags/CoT/" style="font-size: 10px;">CoT</a> <a href="/tags/CrewAI/" style="font-size: 10px;">CrewAI</a> <a href="/tags/DQN/" style="font-size: 10px;">DQN</a> <a href="/tags/Decision-Tree/" style="font-size: 10px;">Decision Tree</a> <a href="/tags/Framework/" style="font-size: 10px;">Framework</a> <a href="/tags/Function-Calling/" style="font-size: 10px;">Function Calling</a> <a href="/tags/GAN/" style="font-size: 10px;">GAN</a> <a href="/tags/GBDT/" style="font-size: 12.22px;">GBDT</a> <a href="/tags/Gradient-Boosting/" style="font-size: 10px;">Gradient Boosting</a> <a href="/tags/KNN/" style="font-size: 10px;">KNN</a> <a href="/tags/LLM/" style="font-size: 14.44px;">LLM</a> <a href="/tags/LSTM/" style="font-size: 10px;">LSTM</a> <a href="/tags/LangChain/" style="font-size: 11.11px;">LangChain</a> <a href="/tags/LangGraph/" style="font-size: 10px;">LangGraph</a> <a href="/tags/LightGBM/" style="font-size: 10px;">LightGBM</a> <a href="/tags/Memory/" style="font-size: 10px;">Memory</a> <a href="/tags/Microsoft/" style="font-size: 10px;">Microsoft</a> <a href="/tags/Multi-Agent/" style="font-size: 15.56px;">Multi-Agent</a> <a href="/tags/ONNX/" style="font-size: 10px;">ONNX</a> <a href="/tags/PPO/" style="font-size: 10px;">PPO</a> <a href="/tags/Planning/" style="font-size: 10px;">Planning</a> <a href="/tags/Policy-Gradient/" style="font-size: 10px;">Policy Gradient</a> <a href="/tags/Prompt-Injection/" style="font-size: 10px;">Prompt Injection</a> <a href="/tags/Q-Learning/" style="font-size: 10px;">Q-Learning</a> <a href="/tags/RLHF/" style="font-size: 10px;">RLHF</a> <a href="/tags/RNN/" style="font-size: 10px;">RNN</a> <a href="/tags/Random-Forest/" style="font-size: 10px;">Random Forest</a> <a href="/tags/ReAct/" style="font-size: 10px;">ReAct</a> <a href="/tags/Reasoning/" style="font-size: 10px;">Reasoning</a> <a href="/tags/SVM/" style="font-size: 10px;">SVM</a> <a href="/tags/Semantic-Kernel/" style="font-size: 10px;">Semantic Kernel</a> <a href="/tags/Stacking/" style="font-size: 10px;">Stacking</a> <a href="/tags/Tool-Use/" style="font-size: 11.11px;">Tool Use</a> <a href="/tags/Transformer/" style="font-size: 10px;">Transformer</a> <a href="/tags/VAE/" style="font-size: 10px;">VAE</a> <a href="/tags/XGBoost/" style="font-size: 12.22px;">XGBoost</a> <a href="/tags/life/" style="font-size: 10px;">life</a> <a href="/tags/thoughts/" style="font-size: 10px;">thoughts</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E5%8A%A9%E6%89%8B/" style="font-size: 10px;">代码助手</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/" style="font-size: 10px;">优化理论</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" style="font-size: 10px;">优化算法</a> <a href="/tags/%E4%BC%A6%E7%90%86/" style="font-size: 10px;">伦理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2/" style="font-size: 10px;">信息检索</a> <a href="/tags/%E5%85%A5%E9%97%A8/" style="font-size: 10px;">入门</a> <a href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" style="font-size: 11.11px;">决策树</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83/" style="font-size: 10px;">分布式训练</a> <a href="/tags/%E5%88%86%E7%B1%BB%E7%AE%97%E6%B3%95/" style="font-size: 14.44px;">分类算法</a> <a href="/tags/%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">协作模式</a> <a href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" style="font-size: 10px;">博弈论</a> <a href="/tags/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" style="font-size: 10px;">反向传播</a> <a href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" style="font-size: 10px;">可视化</a> <a href="/tags/%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 10px;">向量数据库</a> <a href="/tags/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/" style="font-size: 10px;">多智能体</a> <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" style="font-size: 13.33px;">大模型</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 10px;">安全</a> <a href="/tags/%E5%AE%A2%E6%9C%8D/" style="font-size: 10px;">客服</a> <a href="/tags/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">对话系统</a> <a href="/tags/%E5%B1%82%E6%AC%A1%E5%8C%96%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">层次化架构</a> <a href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" style="font-size: 10px;">工具调用</a> <a href="/tags/%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/" style="font-size: 10px;">并行策略</a> <a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">开发工具</a> <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">强化学习</a> <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">微服务</a> <a href="/tags/%E5%BE%AE%E8%B0%83/" style="font-size: 10px;">微调</a> <a href="/tags/%E6%84%9F%E6%83%B3/" style="font-size: 10px;">感想</a> <a href="/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" style="font-size: 10px;">扩散模型</a> <a href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" style="font-size: 10px;">损失函数</a> <a href="/tags/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/" style="font-size: 10px;">推理优化</a> <a href="/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">提示工程</a> <a href="/tags/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/" style="font-size: 13.33px;">数学基础</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" style="font-size: 10px;">数据分析</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" style="font-size: 10px;">数据清洗</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/" style="font-size: 10px;">数据预处理</a> <a href="/tags/%E6%97%A5%E5%BF%97/" style="font-size: 10px;">日志</a> <a href="/tags/%E6%9C%AA%E6%9D%A5%E8%B6%8B%E5%8A%BF/" style="font-size: 10px;">未来趋势</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 20px;">机器学习</a> <a href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" style="font-size: 10px;">架构设计</a> <a href="/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" style="font-size: 10px;">梯度提升</a> <a href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/" style="font-size: 10px;">概率论</a> <a href="/tags/%E6%A6%82%E8%BF%B0/" style="font-size: 10px;">概述</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">模型压缩</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">模型部署</a> <a href="/tags/%E6%AD%A3%E5%88%99%E5%8C%96/" style="font-size: 10px;">正则化</a> <a href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/" style="font-size: 10px;">注意力机制</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 17.78px;">深度学习</a> <a href="/tags/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" style="font-size: 10px;">激活函数</a> <a href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">特征工程</a> <a href="/tags/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9/" style="font-size: 10px;">特征选择</a> <a href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" style="font-size: 12.22px;">生成模型</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">生活</a> <a href="/tags/%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">监督学习</a> <a href="/tags/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" style="font-size: 10px;">知识蒸馏</a> <a href="/tags/%E7%A0%94%E7%A9%B6/" style="font-size: 10px;">研究</a> <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" style="font-size: 16.67px;">神经网络</a> <a href="/tags/%E7%AB%9E%E4%BA%89/" style="font-size: 10px;">竞争</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E5%8D%8F%E4%BD%9C/" style="font-size: 10px;">系统协作</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">系统架构</a> <a href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" style="font-size: 10px;">线性代数</a> <a href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" style="font-size: 10px;">线性回归</a> <a href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" style="font-size: 10px;">统计学</a> <a href="/tags/%E8%AF%84%E6%B5%8B/" style="font-size: 10px;">评测</a> <a href="/tags/%E8%B0%83%E8%AF%95/" style="font-size: 10px;">调试</a> <a href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" style="font-size: 10px;">贝叶斯</a> <a href="/tags/%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/" style="font-size: 10px;">超参数调优</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">软件工程</a> <a href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" style="font-size: 10px;">逻辑回归</a> <a href="/tags/%E9%87%8F%E5%8C%96/" style="font-size: 10px;">量化</a> <a href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/" style="font-size: 11.11px;">随机森林</a> <a href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/" style="font-size: 16.67px;">集成学习</a> <a href="/tags/%E9%A2%84%E8%AE%AD%E7%BB%83/" style="font-size: 10px;">预训练</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-architecture/">Agent 架构模式</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/en/essays/blog-redesign/">After the Blog Redesign</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/llm-and-agent/">LLM 与 Agent 的关系</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/">Agent 入门指南</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

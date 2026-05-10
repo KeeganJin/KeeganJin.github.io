@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>LSTM与GRU | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="LSTM门控机制详解LSTM的提出长短期记忆网络（Long Short-Term Memory, LSTM）由Hochreiter和Schmidhuber于1997年提出，解决RNN的梯度消失问题。 核心创新：门控机制控制信息流动。 LSTM的结构三个门：  遗忘门：决定丢弃多少信息 输入门：决定写入多少信息 输出门：决定输出多少信息  两个状态：  细胞状态（Cell State）：长期记忆 隐">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LSTM与GRU">
+<meta property="og:url" content="https://keeganjin.github.io/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/lstm-gru/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="LSTM门控机制详解LSTM的提出长短期记忆网络（Long Short-Term Memory, LSTM）由Hochreiter和Schmidhuber于1997年提出，解决RNN的梯度消失问题。 核心创新：门控机制控制信息流动。 LSTM的结构三个门：  遗忘门：决定丢弃多少信息 输入门：决定写入多少信息 输出门：决定输出多少信息  两个状态：  细胞状态（Cell State）：长期记忆 隐">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-10T05:18:18.843Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="LSTM">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+<meta name="generator" content="Hexo 8.1.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Product Docs</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/机器学习/lstm-gru" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/lstm-gru/" class="article-date">
+  <time class="dt-published" datetime="2026-05-09T16:00:00.000Z" itemprop="datePublished">2026-05-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      LSTM与GRU
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="LSTM门控机制详解"><a href="#LSTM门控机制详解" class="headerlink" title="LSTM门控机制详解"></a>LSTM门控机制详解</h2><h3 id="LSTM的提出"><a href="#LSTM的提出" class="headerlink" title="LSTM的提出"></a>LSTM的提出</h3><p>长短期记忆网络（Long Short-Term Memory, LSTM）由Hochreiter和Schmidhuber于1997年提出，解决RNN的梯度消失问题。</p>
+<p><strong>核心创新</strong>：门控机制控制信息流动。</p>
+<h3 id="LSTM的结构"><a href="#LSTM的结构" class="headerlink" title="LSTM的结构"></a>LSTM的结构</h3><p><strong>三个门</strong>：</p>
+<ul>
+<li>遗忘门：决定丢弃多少信息</li>
+<li>输入门：决定写入多少信息</li>
+<li>输出门：决定输出多少信息</li>
+</ul>
+<p><strong>两个状态</strong>：</p>
+<ul>
+<li>细胞状态（Cell State）：长期记忆</li>
+<li>隐藏状态：短期输出</li>
+</ul>
+<h3 id="LSTM的数学公式"><a href="#LSTM的数学公式" class="headerlink" title="LSTM的数学公式"></a>LSTM的数学公式</h3><p><strong>遗忘门</strong>：<br>$$f_t &#x3D; \sigma(W_f [h_{t-1}, x_t] + b_f)$$</p>
+<p>决定从细胞状态丢弃多少信息（0完全遗忘，1完全保留）。</p>
+<p><strong>输入门</strong>：<br>$$i_t &#x3D; \sigma(W_i [h_{t-1}, x_t] + b_i)$$<br>$$\tilde{C}<em>t &#x3D; \tanh(W_C [h</em>{t-1}, x_t] + b_C)$$</p>
+<p>决定写入多少新信息。</p>
+<p><strong>更新细胞状态</strong>：<br>$$C_t &#x3D; f_t \cdot C_{t-1} + i_t \cdot \tilde{C}_t$$</p>
+<p><strong>输出门</strong>：<br>$$o_t &#x3D; \sigma(W_o [h_{t-1}, x_t] + b_o)$$<br>$$h_t &#x3D; o_t \cdot \tanh(C_t)$$</p>
+<h3 id="LSTM的工作流程"><a href="#LSTM的工作流程" class="headerlink" title="LSTM的工作流程"></a>LSTM的工作流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">输入 x_t 和 h_&#123;t-1&#125;</span><br><span class="line">    ↓</span><br><span class="line">遗忘门 → 决定遗忘多少 C_&#123;t-1&#125;</span><br><span class="line">    ↓</span><br><span class="line">输入门 → 决定写入多少新信息</span><br><span class="line">    ↓</span><br><span class="line">候选细胞状态 → tanh 生成候选值</span><br><span class="line">    ↓</span><br><span class="line">更新细胞状态 C_t = f·C_&#123;t-1&#125; + i·C̃</span><br><span class="line">    ↓</span><br><span class="line">输出门 → 决定输出多少</span><br><span class="line">    ↓</span><br><span class="line">隐藏状态 h_t = o·tanh(C_t)</span><br></pre></td></tr></table></figure>
+
+<h3 id="LSTM门的作用详解"><a href="#LSTM门的作用详解" class="headerlink" title="LSTM门的作用详解"></a>LSTM门的作用详解</h3><table>
+<thead>
+<tr>
+<th>门</th>
+<th>作用</th>
+<th>值范围</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>遗忘门</td>
+<td>清理旧记忆</td>
+<td>0-1</td>
+</tr>
+<tr>
+<td>输入门</td>
+<td>添加新记忆</td>
+<td>0-1</td>
+</tr>
+<tr>
+<td>输出门</td>
+<td>控制输出</td>
+<td>0-1</td>
+</tr>
+</tbody></table>
+<h3 id="LSTM解决梯度消失"><a href="#LSTM解决梯度消失" class="headerlink" title="LSTM解决梯度消失"></a>LSTM解决梯度消失</h3><p><strong>关键</strong>：细胞状态更新是加法操作，而非乘法。</p>
+<p>$$C_t &#x3D; f_t \cdot C_{t-1} + i_t \cdot \tilde{C}_t$$</p>
+<p>梯度：<br>$$\frac{\partial C_t}{\partial C_{t-1}} &#x3D; f_t$$</p>
+<p>只要 $f_t$ 接近1，梯度可以保持传递。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LSTM</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_size, hidden_size</span>):</span><br><span class="line">        <span class="variable language_">self</span>.hidden_size = hidden_size</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 初始化权重</span></span><br><span class="line">        <span class="variable language_">self</span>.W_f = np.random.randn(hidden_size, input_size + hidden_size) * <span class="number">0.01</span></span><br><span class="line">        <span class="variable language_">self</span>.W_i = np.random.randn(hidden_size, input_size + hidden_size) * <span class="number">0.01</span></span><br><span class="line">        <span class="variable language_">self</span>.W_C = np.random.randn(hidden_size, input_size + hidden_size) * <span class="number">0.01</span></span><br><span class="line">        <span class="variable language_">self</span>.W_o = np.random.randn(hidden_size, input_size + hidden_size) * <span class="number">0.01</span></span><br><span class="line">        </span><br><span class="line">        <span class="variable language_">self</span>.b_f = np.zeros(hidden_size)</span><br><span class="line">        <span class="variable language_">self</span>.b_i = np.zeros(hidden_size)</span><br><span class="line">        <span class="variable language_">self</span>.b_C = np.zeros(hidden_size)</span><br><span class="line">        <span class="variable language_">self</span>.b_o = np.zeros(hidden_size)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x, h_prev, C_prev</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;前向传播&quot;&quot;&quot;</span></span><br><span class="line">        concat = np.concatenate([h_prev, x])</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 遗忘门</span></span><br><span class="line">        f = sigmoid(np.dot(<span class="variable language_">self</span>.W_f, concat) + <span class="variable language_">self</span>.b_f)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 输入门</span></span><br><span class="line">        i = sigmoid(np.dot(<span class="variable language_">self</span>.W_i, concat) + <span class="variable language_">self</span>.b_i)</span><br><span class="line">        C_tilde = tanh(np.dot(<span class="variable language_">self</span>.W_C, concat) + <span class="variable language_">self</span>.b_C)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 更新细胞状态</span></span><br><span class="line">        C = f * C_prev + i * C_tilde</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 输出门</span></span><br><span class="line">        o = sigmoid(np.dot(<span class="variable language_">self</span>.W_o, concat) + <span class="variable language_">self</span>.b_o)</span><br><span class="line">        h = o * tanh(C)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> h, C, f, i, C_tilde, o</span><br></pre></td></tr></table></figure>
+
+<h2 id="LSTM解决梯度问题"><a href="#LSTM解决梯度问题" class="headerlink" title="LSTM解决梯度问题"></a>LSTM解决梯度问题</h2><h3 id="为什么LSTM能解决梯度消失"><a href="#为什么LSTM能解决梯度消失" class="headerlink" title="为什么LSTM能解决梯度消失"></a>为什么LSTM能解决梯度消失</h3><p><strong>原因分析</strong>：</p>
+<ol>
+<li><strong>加法更新</strong>：细胞状态更新是加法，梯度直接传递</li>
+<li><strong>门控调节</strong>：遗忘门可以保持梯度接近1</li>
+<li><strong>线性路径</strong>：细胞状态提供线性梯度路径</li>
+</ol>
+<h3 id="梯度传播路径"><a href="#梯度传播路径" class="headerlink" title="梯度传播路径"></a>梯度传播路径</h3><p>RNN：$h_t &#x3D; \tanh(W h_{t-1})$ → 梯度乘以 $\tanh’$ → 衰减</p>
+<p>LSTM：$C_t &#x3D; f_t C_{t-1} + …$ → 梯度乘以 $f_t$ → 可控制</p>
+<h3 id="训练LSTM的注意事项"><a href="#训练LSTM的注意事项" class="headerlink" title="训练LSTM的注意事项"></a>训练LSTM的注意事项</h3><table>
+<thead>
+<tr>
+<th>注意点</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>初始化</td>
+<td>遗忘门初始偏向1</td>
+</tr>
+<tr>
+<td>学习率</td>
+<td>适当调整</td>
+</tr>
+<tr>
+<td>梯度裁剪</td>
+<td>仍可能梯度爆炸</td>
+</tr>
+</tbody></table>
+<h2 id="GRU简化设计"><a href="#GRU简化设计" class="headerlink" title="GRU简化设计"></a>GRU简化设计</h2><h3 id="GRU的提出"><a href="#GRU的提出" class="headerlink" title="GRU的提出"></a>GRU的提出</h3><p>门控循环单元（Gated Recurrent Unit, GRU）是LSTM的简化版本，由Cho等人于2014年提出。</p>
+<p><strong>简化</strong>：只有两个门，无细胞状态。</p>
+<h3 id="GRU的结构"><a href="#GRU的结构" class="headerlink" title="GRU的结构"></a>GRU的结构</h3><p><strong>两个门</strong>：</p>
+<ul>
+<li>重置门：决定忽略多少过去信息</li>
+<li>更新门：决定保留多少过去信息</li>
+</ul>
+<h3 id="GRU的数学公式"><a href="#GRU的数学公式" class="headerlink" title="GRU的数学公式"></a>GRU的数学公式</h3><p><strong>重置门</strong>：<br>$$r_t &#x3D; \sigma(W_r [h_{t-1}, x_t])$$</p>
+<p><strong>更新门</strong>：<br>$$z_t &#x3D; \sigma(W_z [h_{t-1}, x_t])$$</p>
+<p><strong>候选隐藏状态</strong>：<br>$$\tilde{h}<em>t &#x3D; \tanh(W [r_t \cdot h</em>{t-1}, x_t])$$</p>
+<p><strong>更新隐藏状态</strong>：<br>$$h_t &#x3D; (1 - z_t) \cdot h_{t-1} + z_t \cdot \tilde{h}_t$$</p>
+<h3 id="GRU的工作流程"><a href="#GRU的工作流程" class="headerlink" title="GRU的工作流程"></a>GRU的工作流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">输入 x_t 和 h_&#123;t-1&#125;</span><br><span class="line">    ↓</span><br><span class="line">重置门 → 决定重置多少 h_&#123;t-1&#125;</span><br><span class="line">    ↓</span><br><span class="line">候选状态 → tanh 生成候选值</span><br><span class="line">    ↓</span><br><span class="line">更新门 → 决定新旧状态比例</span><br><span class="line">    ↓</span><br><span class="line">隐藏状态 h_t = (1-z)·h_&#123;t-1&#125; + z·h̃</span><br></pre></td></tr></table></figure>
+
+<h3 id="GRU门的作用"><a href="#GRU门的作用" class="headerlink" title="GRU门的作用"></a>GRU门的作用</h3><table>
+<thead>
+<tr>
+<th>门</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>重置门</td>
+<td>控制过去信息的使用</td>
+</tr>
+<tr>
+<td>更新门</td>
+<td>控制新旧信息的混合</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">GRU</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_size, hidden_size</span>):</span><br><span class="line">        <span class="variable language_">self</span>.hidden_size = hidden_size</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 初始化权重</span></span><br><span class="line">        <span class="variable language_">self</span>.W_r = np.random.randn(hidden_size, input_size + hidden_size) * <span class="number">0.01</span></span><br><span class="line">        <span class="variable language_">self</span>.W_z = np.random.randn(hidden_size, input_size + hidden_size) * <span class="number">0.01</span></span><br><span class="line">        <span class="variable language_">self</span>.W = np.random.randn(hidden_size, input_size + hidden_size) * <span class="number">0.01</span></span><br><span class="line">        </span><br><span class="line">        <span class="variable language_">self</span>.b_r = np.zeros(hidden_size)</span><br><span class="line">        <span class="variable language_">self</span>.b_z = np.zeros(hidden_size)</span><br><span class="line">        <span class="variable language_">self</span>.b = np.zeros(hidden_size)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x, h_prev</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;前向传播&quot;&quot;&quot;</span></span><br><span class="line">        concat = np.concatenate([h_prev, x])</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 重置门</span></span><br><span class="line">        r = sigmoid(np.dot(<span class="variable language_">self</span>.W_r, concat) + <span class="variable language_">self</span>.b_r)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 更新门</span></span><br><span class="line">        z = sigmoid(np.dot(<span class="variable language_">self</span>.W_z, concat) + <span class="variable language_">self</span>.b_z)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 候选隐藏状态</span></span><br><span class="line">        h_tilde = tanh(np.dot(<span class="variable language_">self</span>.W, np.concatenate([r * h_prev, x])) + <span class="variable language_">self</span>.b)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 更新隐藏状态</span></span><br><span class="line">        h = (<span class="number">1</span> - z) * h_prev + z * h_tilde</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> h, r, z, h_tilde</span><br></pre></td></tr></table></figure>
+
+<h2 id="LSTM与GRU对比"><a href="#LSTM与GRU对比" class="headerlink" title="LSTM与GRU对比"></a>LSTM与GRU对比</h2><h3 id="结构对比"><a href="#结构对比" class="headerlink" title="结构对比"></a>结构对比</h3><table>
+<thead>
+<tr>
+<th>方面</th>
+<th>LSTM</th>
+<th>GRU</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>门数量</td>
+<td>3</td>
+<td>2</td>
+</tr>
+<tr>
+<td>状态数量</td>
+<td>2（细胞+隐藏）</td>
+<td>1（隐藏）</td>
+</tr>
+<tr>
+<td>参数数量</td>
+<td>多</td>
+<td>少</td>
+</tr>
+<tr>
+<td>计算复杂度</td>
+<td>高</td>
+<td>低</td>
+</tr>
+</tbody></table>
+<h3 id="性能对比"><a href="#性能对比" class="headerlink" title="性能对比"></a>性能对比</h3><table>
+<thead>
+<tr>
+<th>方面</th>
+<th>LSTM</th>
+<th>GRU</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>长序列能力</td>
+<td>强</td>
+<td>略弱</td>
+</tr>
+<tr>
+<td>训练速度</td>
+<td>较慢</td>
+<td>较快</td>
+</tr>
+<tr>
+<td>参数效率</td>
+<td>低</td>
+<td>高</td>
+</tr>
+<tr>
+<td>表达能力</td>
+<td>高</td>
+<td>中等</td>
+</tr>
+</tbody></table>
+<h3 id="选择建议"><a href="#选择建议" class="headerlink" title="选择建议"></a>选择建议</h3><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>长序列</td>
+<td>LSTM</td>
+</tr>
+<tr>
+<td>计算资源有限</td>
+<td>GRU</td>
+</tr>
+<tr>
+<td>数据量小</td>
+<td>GRU</td>
+</tr>
+<tr>
+<td>复杂任务</td>
+<td>LSTM</td>
+</tr>
+</tbody></table>
+<h3 id="实际性能差异"><a href="#实际性能差异" class="headerlink" title="实际性能差异"></a>实际性能差异</h3><p>实践中两者性能相近，GRU更简单高效：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"><span class="comment"># LSTM</span></span><br><span class="line">lstm = nn.LSTM(input_size, hidden_size, num_layers=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># GRU</span></span><br><span class="line">gru = nn.GRU(input_size, hidden_size, num_layers=<span class="number">2</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="双向LSTM"><a href="#双向LSTM" class="headerlink" title="双向LSTM"></a>双向LSTM</h2><h3 id="BiLSTM原理"><a href="#BiLSTM原理" class="headerlink" title="BiLSTM原理"></a>BiLSTM原理</h3><p>双向LSTM同时处理正向和反向序列：</p>
+<p><strong>正向LSTM</strong>：从 $t&#x3D;1$ 到 $t&#x3D;T$<br><strong>反向LSTM</strong>：从 $t&#x3D;T$ 到 $t&#x3D;1$</p>
+<p><strong>输出组合</strong>：<br>$$h_t &#x3D; [h_t^{forward}; h_t^{backward}]$$</p>
+<h3 id="BiLSTM的优势"><a href="#BiLSTM的优势" class="headerlink" title="BiLSTM的优势"></a>BiLSTM的优势</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>全局信息</td>
+<td>同时看到前后文</td>
+</tr>
+<tr>
+<td>更好理解</td>
+<td>结合正反信息</td>
+</tr>
+<tr>
+<td>适合NLP</td>
+<td>语言理解任务</td>
+</tr>
+</tbody></table>
+<h3 id="BiLSTM应用场景"><a href="#BiLSTM应用场景" class="headerlink" title="BiLSTM应用场景"></a>BiLSTM应用场景</h3><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>语言理解</td>
+<td>理解完整句子</td>
+</tr>
+<tr>
+<td>机器翻译</td>
+<td>编码器使用</td>
+</tr>
+<tr>
+<td>文本分类</td>
+<td>分类任务</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"><span class="comment"># 双向LSTM</span></span><br><span class="line">bi_lstm = nn.LSTM(input_size, hidden_size, bidirectional=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出维度加倍</span></span><br><span class="line"><span class="comment"># hidden_size * 2</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="案例实践：序列预测"><a href="#案例实践：序列预测" class="headerlink" title="案例实践：序列预测"></a>案例实践：序列预测</h2><h3 id="LSTM序列预测示例"><a href="#LSTM序列预测示例" class="headerlink" title="LSTM序列预测示例"></a>LSTM序列预测示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LSTMModel</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_size, hidden_size, output_size, num_layers=<span class="number">2</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="variable language_">self</span>.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=<span class="literal">True</span>)</span><br><span class="line">        <span class="variable language_">self</span>.fc = nn.Linear(hidden_size, output_size)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x, hidden=<span class="literal">None</span></span>):</span><br><span class="line">        output, hidden = <span class="variable language_">self</span>.lstm(x, hidden)</span><br><span class="line">        output = <span class="variable language_">self</span>.fc(output[:, -<span class="number">1</span>, :])  <span class="comment"># 使用最后一步</span></span><br><span class="line">        <span class="keyword">return</span> output, hidden</span><br><span class="line"></span><br><span class="line"><span class="comment"># 时间序列预测</span></span><br><span class="line">model = LSTMModel(input_size=<span class="number">1</span>, hidden_size=<span class="number">64</span>, output_size=<span class="number">1</span>)</span><br><span class="line">criterion = nn.MSELoss()</span><br><span class="line">optimizer = torch.optim.Adam(model.parameters())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练</span></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(epochs):</span><br><span class="line">    <span class="keyword">for</span> seq, target <span class="keyword">in</span> train_data:</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        output, _ = model(seq)</span><br><span class="line">        loss = criterion(output, target)</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br></pre></td></tr></table></figure>
+
+<h3 id="文本生成LSTM"><a href="#文本生成LSTM" class="headerlink" title="文本生成LSTM"></a>文本生成LSTM</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">model = tf.keras.Sequential([</span><br><span class="line">    tf.keras.layers.Embedding(vocab_size, <span class="number">128</span>),</span><br><span class="line">    tf.keras.layers.LSTM(<span class="number">256</span>, return_sequences=<span class="literal">True</span>),</span><br><span class="line">    tf.keras.layers.LSTM(<span class="number">256</span>),</span><br><span class="line">    tf.keras.layers.Dense(vocab_size, activation=<span class="string">&#x27;softmax&#x27;</span>)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">model.<span class="built_in">compile</span>(optimizer=<span class="string">&#x27;adam&#x27;</span>, loss=<span class="string">&#x27;sparse_categorical_crossentropy&#x27;</span>)</span><br><span class="line">model.fit(X_train, y_train, epochs=<span class="number">20</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成文本</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_text</span>(<span class="params">model, seed_text, length</span>):</span><br><span class="line">    text = seed_text</span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(length):</span><br><span class="line">        x = encode_text(text[-sequence_length:])</span><br><span class="line">        pred = model.predict(x)</span><br><span class="line">        next_char = decode_prediction(pred)</span><br><span class="line">        text += next_char</span><br><span class="line">    <span class="keyword">return</span> text</span><br></pre></td></tr></table></figure>
+
+<h3 id="GRU文本分类"><a href="#GRU文本分类" class="headerlink" title="GRU文本分类"></a>GRU文本分类</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">TextClassifier</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, vocab_size, embedding_size, hidden_size, num_classes</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="variable language_">self</span>.embedding = nn.Embedding(vocab_size, embedding_size)</span><br><span class="line">        <span class="variable language_">self</span>.gru = nn.GRU(embedding_size, hidden_size, batch_first=<span class="literal">True</span>, bidirectional=<span class="literal">True</span>)</span><br><span class="line">        <span class="variable language_">self</span>.fc = nn.Linear(hidden_size * <span class="number">2</span>, num_classes)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        embedded = <span class="variable language_">self</span>.embedding(x)</span><br><span class="line">        output, hidden = <span class="variable language_">self</span>.gru(embedded)</span><br><span class="line">        <span class="comment"># 组合双向隐藏状态</span></span><br><span class="line">        hidden = torch.cat([hidden[-<span class="number">2</span>], hidden[-<span class="number">1</span>]], dim=<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.fc(hidden)</span><br><span class="line"></span><br><span class="line">model = TextClassifier(vocab_size, <span class="number">128</span>, <span class="number">256</span>, num_classes=<span class="number">5</span>)</span><br><span class="line">criterion = nn.CrossEntropyLoss()</span><br><span class="line">optimizer = torch.optim.Adam(model.parameters())</span><br></pre></td></tr></table></figure>
+
+<h3 id="情感分析示例"><a href="#情感分析示例" class="headerlink" title="情感分析示例"></a>情感分析示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"></span><br><span class="line">model = tf.keras.Sequential([</span><br><span class="line">    tf.keras.layers.Embedding(vocab_size, <span class="number">128</span>),</span><br><span class="line">    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(<span class="number">64</span>)),</span><br><span class="line">    tf.keras.layers.Dense(<span class="number">64</span>, activation=<span class="string">&#x27;relu&#x27;</span>),</span><br><span class="line">    tf.keras.layers.Dense(<span class="number">1</span>, activation=<span class="string">&#x27;sigmoid&#x27;</span>)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">model.<span class="built_in">compile</span>(optimizer=<span class="string">&#x27;adam&#x27;</span>, loss=<span class="string">&#x27;binary_crossentropy&#x27;</span>, metrics=[<span class="string">&#x27;accuracy&#x27;</span>])</span><br><span class="line">model.fit(X_train, y_train, epochs=<span class="number">10</span>, validation_split=<span class="number">0.2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 评估</span></span><br><span class="line">test_loss, test_acc = model.evaluate(X_test, y_test)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;测试准确率: <span class="subst">&#123;test_acc:<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="股票价格预测"><a href="#股票价格预测" class="headerlink" title="股票价格预测"></a>股票价格预测</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">StockPredictor</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, input_size, hidden_size, num_layers</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="variable language_">self</span>.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=<span class="literal">True</span>)</span><br><span class="line">        <span class="variable language_">self</span>.fc = nn.Linear(hidden_size, <span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        output, _ = <span class="variable language_">self</span>.lstm(x)</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.fc(output[:, -<span class="number">1</span>, :])</span><br><span class="line"></span><br><span class="line">model = StockPredictor(input_size=<span class="number">5</span>, hidden_size=<span class="number">64</span>, num_layers=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 准备数据：使用滑动窗口</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">prepare_sequences</span>(<span class="params">data, window_size</span>):</span><br><span class="line">    sequences = []</span><br><span class="line">    targets = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(data) - window_size):</span><br><span class="line">        sequences.append(data[i:i+window_size])</span><br><span class="line">        targets.append(data[i+window_size])</span><br><span class="line">    <span class="keyword">return</span> np.array(sequences), np.array(targets)</span><br><span class="line"></span><br><span class="line">X, y = prepare_sequences(stock_prices, window_size=<span class="number">30</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="LSTM-GRU训练技巧"><a href="#LSTM-GRU训练技巧" class="headerlink" title="LSTM&#x2F;GRU训练技巧"></a>LSTM&#x2F;GRU训练技巧</h2><h3 id="遗忘门初始化"><a href="#遗忘门初始化" class="headerlink" title="遗忘门初始化"></a>遗忘门初始化</h3><p><strong>建议</strong>：遗忘门偏置初始化为正值（如1），使初始遗忘门接近1。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># PyTorch设置遗忘门偏置</span></span><br><span class="line"><span class="keyword">for</span> name, param <span class="keyword">in</span> lstm.named_parameters():</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;bias&#x27;</span> <span class="keyword">in</span> name:</span><br><span class="line">        n = param.size(<span class="number">0</span>)</span><br><span class="line">        param.data[n//<span class="number">4</span>:n//<span class="number">2</span>].fill_(<span class="number">1</span>)  <span class="comment"># 遗忘门偏置</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="梯度裁剪"><a href="#梯度裁剪" class="headerlink" title="梯度裁剪"></a>梯度裁剪</h3><p>LSTM仍可能梯度爆炸，需要梯度裁剪：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=<span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="学习率选择"><a href="#学习率选择" class="headerlink" title="学习率选择"></a>学习率选择</h3><table>
+<thead>
+<tr>
+<th>建议</th>
+<th>学习率</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LSTM</td>
+<td>0.001-0.01</td>
+</tr>
+<tr>
+<td>GRU</td>
+<td>类似</td>
+</tr>
+</tbody></table>
+<h3 id="批量大小"><a href="#批量大小" class="headerlink" title="批量大小"></a>批量大小</h3><p>序列任务通常使用较小批量：</p>
+<ul>
+<li>批量大小：32-128</li>
+<li>序列长度固定或使用填充</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>LSTM和GRU是解决RNN梯度问题的门控网络。核心内容包括：</p>
+<ul>
+<li>LSTM门控机制：遗忘门、输入门、输出门</li>
+<li>LSTM解决梯度消失：细胞状态加法更新</li>
+<li>GRU简化设计：重置门、更新门</li>
+<li>LSTM与GRU对比：LSTM更强大，GRU更高效</li>
+<li>双向LSTM：同时处理正反向序列</li>
+</ul>
+<p>LSTM适合长序列复杂任务，GRU适合计算资源有限场景。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rnn/">循环神经网络</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/backpropagation/">反向传播算法详解</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/transformer/">Transformer架构详解</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/attention-mechanism/">注意力机制详解</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/lstm-gru/" data-id="cuidhVpwCxKnglvYKc4LjtHb-" data-title="LSTM与GRU" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LSTM/" rel="tag">LSTM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/loss-functions/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          损失函数详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/model-compression/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">模型压缩与加速</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AGI/" rel="tag">AGI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E4%BC%A6%E7%90%86/" rel="tag">AI伦理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E5%9F%BA%E7%A1%80/" rel="tag">AI基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AI%E6%9E%B6%E6%9E%84/" rel="tag">AI架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AgentBench/" rel="tag">AgentBench</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/AutoGen/" rel="tag">AutoGen</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boosting/" rel="tag">Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CNN/" rel="tag">CNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CoT/" rel="tag">CoT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CrewAI/" rel="tag">CrewAI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DQN/" rel="tag">DQN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Decision-Tree/" rel="tag">Decision Tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Framework/" rel="tag">Framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Function-Calling/" rel="tag">Function Calling</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GAN/" rel="tag">GAN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GBDT/" rel="tag">GBDT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Gradient-Boosting/" rel="tag">Gradient Boosting</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/KNN/" rel="tag">KNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LLM/" rel="tag">LLM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LSTM/" rel="tag">LSTM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LangChain/" rel="tag">LangChain</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LangGraph/" rel="tag">LangGraph</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/LightGBM/" rel="tag">LightGBM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Memory/" rel="tag">Memory</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Microsoft/" rel="tag">Microsoft</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Multi-Agent/" rel="tag">Multi-Agent</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ONNX/" rel="tag">ONNX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PPO/" rel="tag">PPO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Planning/" rel="tag">Planning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Policy-Gradient/" rel="tag">Policy Gradient</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Prompt-Injection/" rel="tag">Prompt Injection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Q-Learning/" rel="tag">Q-Learning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RLHF/" rel="tag">RLHF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RNN/" rel="tag">RNN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Random-Forest/" rel="tag">Random Forest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ReAct/" rel="tag">ReAct</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Reasoning/" rel="tag">Reasoning</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SVM/" rel="tag">SVM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Semantic-Kernel/" rel="tag">Semantic Kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Stacking/" rel="tag">Stacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tool-Use/" rel="tag">Tool Use</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Transformer/" rel="tag">Transformer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VAE/" rel="tag">VAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XGBoost/" rel="tag">XGBoost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/life/" rel="tag">life</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thoughts/" rel="tag">thoughts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%8A%A9%E6%89%8B/" rel="tag">代码助手</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/" rel="tag">优化理论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" rel="tag">优化算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BC%A6%E7%90%86/" rel="tag">伦理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2/" rel="tag">信息检索</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%A5%E9%97%A8/" rel="tag">入门</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" rel="tag">决策树</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83/" rel="tag">分布式训练</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E7%B1%BB%E7%AE%97%E6%B3%95/" rel="tag">分类算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F/" rel="tag">协作模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" rel="tag">博弈论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" rel="tag">反向传播</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" rel="tag">可视化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">向量数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/" rel="tag">多智能体</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" rel="tag">大模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%89%E5%85%A8/" rel="tag">安全</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%A2%E6%9C%8D/" rel="tag">客服</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F/" rel="tag">对话系统</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B1%82%E6%AC%A1%E5%8C%96%E6%9E%B6%E6%9E%84/" rel="tag">层次化架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" rel="tag">工具调用</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/" rel="tag">并行策略</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" rel="tag">开发工具</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" rel="tag">强化学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag">微服务</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BE%AE%E8%B0%83/" rel="tag">微调</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%84%9F%E6%83%B3/" rel="tag">感想</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" rel="tag">扩散模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" rel="tag">损失函数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/" rel="tag">推理优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/" rel="tag">提示工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/" rel="tag">数学基础</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" rel="tag">数据分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" rel="tag">数据清洗</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/" rel="tag">数据预处理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%97%A5%E5%BF%97/" rel="tag">日志</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%AA%E6%9D%A5%E8%B6%8B%E5%8A%BF/" rel="tag">未来趋势</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" rel="tag">架构设计</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" rel="tag">梯度提升</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/" rel="tag">概率论</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A6%82%E8%BF%B0/" rel="tag">概述</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E5%8E%8B%E7%BC%A9/" rel="tag">模型压缩</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" rel="tag">模型部署</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%AD%A3%E5%88%99%E5%8C%96/" rel="tag">正则化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/" rel="tag">注意力机制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" rel="tag">激活函数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" rel="tag">特征工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9/" rel="tag">特征选择</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" rel="tag">生成模型</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%94%9F%E6%B4%BB/" rel="tag">生活</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" rel="tag">监督学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" rel="tag">知识蒸馏</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A0%94%E7%A9%B6/" rel="tag">研究</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag">神经网络</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AB%9E%E4%BA%89/" rel="tag">竞争</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E5%8D%8F%E4%BD%9C/" rel="tag">系统协作</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" rel="tag">系统架构</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" rel="tag">线性代数</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" rel="tag">线性回归</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" rel="tag">统计学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%84%E6%B5%8B/" rel="tag">评测</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B0%83%E8%AF%95/" rel="tag">调试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" rel="tag">贝叶斯</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/" rel="tag">超参数调优</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" rel="tag">软件工程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" rel="tag">逻辑回归</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%87%8F%E5%8C%96/" rel="tag">量化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/" rel="tag">随机森林</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/" rel="tag">集成学习</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%A2%84%E8%AE%AD%E7%BB%83/" rel="tag">预训练</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AGI/" style="font-size: 10px;">AGI</a> <a href="/tags/AI%E4%BC%A6%E7%90%86/" style="font-size: 10px;">AI伦理</a> <a href="/tags/AI%E5%9F%BA%E7%A1%80/" style="font-size: 10px;">AI基础</a> <a href="/tags/AI%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">AI架构</a> <a href="/tags/Agent/" style="font-size: 18.89px;">Agent</a> <a href="/tags/AgentBench/" style="font-size: 10px;">AgentBench</a> <a href="/tags/AutoGen/" style="font-size: 11.11px;">AutoGen</a> <a href="/tags/Boosting/" style="font-size: 11.11px;">Boosting</a> <a href="/tags/CNN/" style="font-size: 10px;">CNN</a> <a href="/tags/CoT/" style="font-size: 10px;">CoT</a> <a href="/tags/CrewAI/" style="font-size: 10px;">CrewAI</a> <a href="/tags/DQN/" style="font-size: 10px;">DQN</a> <a href="/tags/Decision-Tree/" style="font-size: 10px;">Decision Tree</a> <a href="/tags/Framework/" style="font-size: 10px;">Framework</a> <a href="/tags/Function-Calling/" style="font-size: 10px;">Function Calling</a> <a href="/tags/GAN/" style="font-size: 10px;">GAN</a> <a href="/tags/GBDT/" style="font-size: 12.22px;">GBDT</a> <a href="/tags/Gradient-Boosting/" style="font-size: 10px;">Gradient Boosting</a> <a href="/tags/KNN/" style="font-size: 10px;">KNN</a> <a href="/tags/LLM/" style="font-size: 14.44px;">LLM</a> <a href="/tags/LSTM/" style="font-size: 10px;">LSTM</a> <a href="/tags/LangChain/" style="font-size: 11.11px;">LangChain</a> <a href="/tags/LangGraph/" style="font-size: 10px;">LangGraph</a> <a href="/tags/LightGBM/" style="font-size: 10px;">LightGBM</a> <a href="/tags/Memory/" style="font-size: 10px;">Memory</a> <a href="/tags/Microsoft/" style="font-size: 10px;">Microsoft</a> <a href="/tags/Multi-Agent/" style="font-size: 15.56px;">Multi-Agent</a> <a href="/tags/ONNX/" style="font-size: 10px;">ONNX</a> <a href="/tags/PPO/" style="font-size: 10px;">PPO</a> <a href="/tags/Planning/" style="font-size: 10px;">Planning</a> <a href="/tags/Policy-Gradient/" style="font-size: 10px;">Policy Gradient</a> <a href="/tags/Prompt-Injection/" style="font-size: 10px;">Prompt Injection</a> <a href="/tags/Q-Learning/" style="font-size: 10px;">Q-Learning</a> <a href="/tags/RLHF/" style="font-size: 10px;">RLHF</a> <a href="/tags/RNN/" style="font-size: 10px;">RNN</a> <a href="/tags/Random-Forest/" style="font-size: 10px;">Random Forest</a> <a href="/tags/ReAct/" style="font-size: 10px;">ReAct</a> <a href="/tags/Reasoning/" style="font-size: 10px;">Reasoning</a> <a href="/tags/SVM/" style="font-size: 10px;">SVM</a> <a href="/tags/Semantic-Kernel/" style="font-size: 10px;">Semantic Kernel</a> <a href="/tags/Stacking/" style="font-size: 10px;">Stacking</a> <a href="/tags/Tool-Use/" style="font-size: 11.11px;">Tool Use</a> <a href="/tags/Transformer/" style="font-size: 10px;">Transformer</a> <a href="/tags/VAE/" style="font-size: 10px;">VAE</a> <a href="/tags/XGBoost/" style="font-size: 12.22px;">XGBoost</a> <a href="/tags/life/" style="font-size: 10px;">life</a> <a href="/tags/thoughts/" style="font-size: 10px;">thoughts</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E5%8A%A9%E6%89%8B/" style="font-size: 10px;">代码助手</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/" style="font-size: 10px;">优化理论</a> <a href="/tags/%E4%BC%98%E5%8C%96%E7%AE%97%E6%B3%95/" style="font-size: 10px;">优化算法</a> <a href="/tags/%E4%BC%A6%E7%90%86/" style="font-size: 10px;">伦理</a> <a href="/tags/%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2/" style="font-size: 10px;">信息检索</a> <a href="/tags/%E5%85%A5%E9%97%A8/" style="font-size: 10px;">入门</a> <a href="/tags/%E5%86%B3%E7%AD%96%E6%A0%91/" style="font-size: 11.11px;">决策树</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%AD%E7%BB%83/" style="font-size: 10px;">分布式训练</a> <a href="/tags/%E5%88%86%E7%B1%BB%E7%AE%97%E6%B3%95/" style="font-size: 14.44px;">分类算法</a> <a href="/tags/%E5%8D%8F%E4%BD%9C%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">协作模式</a> <a href="/tags/%E5%8D%9A%E5%BC%88%E8%AE%BA/" style="font-size: 10px;">博弈论</a> <a href="/tags/%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD/" style="font-size: 10px;">反向传播</a> <a href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" style="font-size: 10px;">可视化</a> <a href="/tags/%E5%90%91%E9%87%8F%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 10px;">向量数据库</a> <a href="/tags/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/" style="font-size: 10px;">多智能体</a> <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" style="font-size: 13.33px;">大模型</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 10px;">安全</a> <a href="/tags/%E5%AE%A2%E6%9C%8D/" style="font-size: 10px;">客服</a> <a href="/tags/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">对话系统</a> <a href="/tags/%E5%B1%82%E6%AC%A1%E5%8C%96%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">层次化架构</a> <a href="/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/" style="font-size: 10px;">工具调用</a> <a href="/tags/%E5%B9%B6%E8%A1%8C%E7%AD%96%E7%95%A5/" style="font-size: 10px;">并行策略</a> <a href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">开发工具</a> <a href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" style="font-size: 13.33px;">强化学习</a> <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" style="font-size: 10px;">微服务</a> <a href="/tags/%E5%BE%AE%E8%B0%83/" style="font-size: 10px;">微调</a> <a href="/tags/%E6%84%9F%E6%83%B3/" style="font-size: 10px;">感想</a> <a href="/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" style="font-size: 10px;">扩散模型</a> <a href="/tags/%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0/" style="font-size: 10px;">损失函数</a> <a href="/tags/%E6%8E%A8%E7%90%86%E4%BC%98%E5%8C%96/" style="font-size: 10px;">推理优化</a> <a href="/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">提示工程</a> <a href="/tags/%E6%95%B0%E5%AD%A6%E5%9F%BA%E7%A1%80/" style="font-size: 13.33px;">数学基础</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" style="font-size: 10px;">数据分析</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97/" style="font-size: 10px;">数据清洗</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/" style="font-size: 10px;">数据预处理</a> <a href="/tags/%E6%97%A5%E5%BF%97/" style="font-size: 10px;">日志</a> <a href="/tags/%E6%9C%AA%E6%9D%A5%E8%B6%8B%E5%8A%BF/" style="font-size: 10px;">未来趋势</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 20px;">机器学习</a> <a href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" style="font-size: 10px;">架构设计</a> <a href="/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/" style="font-size: 10px;">梯度提升</a> <a href="/tags/%E6%A6%82%E7%8E%87%E8%AE%BA/" style="font-size: 10px;">概率论</a> <a href="/tags/%E6%A6%82%E8%BF%B0/" style="font-size: 10px;">概述</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E5%8E%8B%E7%BC%A9/" style="font-size: 10px;">模型压缩</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">模型部署</a> <a href="/tags/%E6%AD%A3%E5%88%99%E5%8C%96/" style="font-size: 10px;">正则化</a> <a href="/tags/%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6/" style="font-size: 10px;">注意力机制</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 17.78px;">深度学习</a> <a href="/tags/%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0/" style="font-size: 10px;">激活函数</a> <a href="/tags/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">特征工程</a> <a href="/tags/%E7%89%B9%E5%BE%81%E9%80%89%E6%8B%A9/" style="font-size: 10px;">特征选择</a> <a href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" style="font-size: 12.22px;">生成模型</a> <a href="/tags/%E7%94%9F%E6%B4%BB/" style="font-size: 10px;">生活</a> <a href="/tags/%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">监督学习</a> <a href="/tags/%E7%9F%A5%E8%AF%86%E8%92%B8%E9%A6%8F/" style="font-size: 10px;">知识蒸馏</a> <a href="/tags/%E7%A0%94%E7%A9%B6/" style="font-size: 10px;">研究</a> <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" style="font-size: 16.67px;">神经网络</a> <a href="/tags/%E7%AB%9E%E4%BA%89/" style="font-size: 10px;">竞争</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E5%8D%8F%E4%BD%9C/" style="font-size: 10px;">系统协作</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">系统架构</a> <a href="/tags/%E7%BA%BF%E6%80%A7%E4%BB%A3%E6%95%B0/" style="font-size: 10px;">线性代数</a> <a href="/tags/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92/" style="font-size: 10px;">线性回归</a> <a href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" style="font-size: 10px;">统计学</a> <a href="/tags/%E8%AF%84%E6%B5%8B/" style="font-size: 10px;">评测</a> <a href="/tags/%E8%B0%83%E8%AF%95/" style="font-size: 10px;">调试</a> <a href="/tags/%E8%B4%9D%E5%8F%B6%E6%96%AF/" style="font-size: 10px;">贝叶斯</a> <a href="/tags/%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/" style="font-size: 10px;">超参数调优</a> <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" style="font-size: 10px;">软件工程</a> <a href="/tags/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92/" style="font-size: 10px;">逻辑回归</a> <a href="/tags/%E9%87%8F%E5%8C%96/" style="font-size: 10px;">量化</a> <a href="/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/" style="font-size: 11.11px;">随机森林</a> <a href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/" style="font-size: 16.67px;">集成学习</a> <a href="/tags/%E9%A2%84%E8%AE%AD%E7%BB%83/" style="font-size: 10px;">预训练</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-architecture/">Agent 架构模式</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/en/essays/blog-redesign/">After the Blog Redesign</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/llm-and-agent/">LLM 与 Agent 的关系</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/">Agent 入门指南</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
