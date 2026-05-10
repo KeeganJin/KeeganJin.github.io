@@ -404,6 +404,16 @@ body {
   position: relative;
   cursor: pointer;
 }
+.lang-switch {
+  font-size: 12px;
+  font-weight: bold;
+  width: auto;
+}
+.lang-switch span {
+  padding: 2px 6px;
+  border: 1px solid rgba(255,255,255,0.5);
+  border-radius: 3px;
+}
 .main-nav-link {
   font-weight: 300;
   letter-spacing: 1px;

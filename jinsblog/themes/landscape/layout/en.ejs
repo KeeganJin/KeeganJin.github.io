@@ -1,0 +1,10 @@
+<div class="outer">
+  <section id="main">
+    <h1 class="archive-year-wrap">English Posts</h1>
+    <% site.posts.sort('-date').each(function(post){ %>
+      <% if (post.source && post.source.includes('_posts/en/')) { %>
+        <%- partial('_partial/article', {post: post, index: true}) %>
+      <% } %>
+    <% }) %>
+  </section>
+</div>
