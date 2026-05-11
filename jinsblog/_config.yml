@@ -102,3 +102,17 @@ theme: landscape
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: ''
+
+# Math rendering
+math:
+  engine: mathjax
+  mathjax:
+    src: https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML
+    config:
+      TeX:
+        equationNumbers: auto
+      tex2jax:
+        inlineMath:
+          - ['$','$']
+          - ['\\(','\\)']
+        processEscapes: true

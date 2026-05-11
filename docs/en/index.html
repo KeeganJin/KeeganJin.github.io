@@ -35,7 +35,22 @@
   
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.2"></head>
+  <!-- MathJax for math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$', '$'], ['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head>
 
 <body>
   <div id="container">
@@ -90,6 +105,8 @@
       
     
       
+    
+      
         <article id="post-en/essays/blog-redesign" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2026/05/10/en/essays/blog-redesign/" class="article-date">
@@ -121,7 +138,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://keeganjin.github.io/2026/05/10/en/essays/blog-redesign/" data-id="cuidtz6O4aGnBa7bTR9SsQ-k5" data-title="After the Blog Redesign" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://keeganjin.github.io/2026/05/10/en/essays/blog-redesign/" data-id="cuidwcWT94v-7nIEISyVJ9qjS" data-title="After the Blog Redesign" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -134,12 +151,6 @@
 
 
 
-      
-    
-      
-    
-      
-    
       
     
       
@@ -161,7 +172,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/2026/05/10/en/tech-docs/machine-learning/tree-models/">Tree Models Introduction</a>
+      <a class="p-name article-title" href="/2026/05/10/en/tech-docs/machine-learning/tree-models/">Tree Models</a>
     </h1>
   
 
@@ -169,14 +180,572 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="What-are-Tree-based-Models"><a href="#What-are-Tree-based-Models" class="headerlink" title="What are Tree-based Models"></a>What are Tree-based Models</h2><p>Tree-based models are an important class of machine learning algorithms including Decision Trees, Random Forests, and Gradient Boosted Decision Trees (GBDT).</p>
-<h3 id="Decision-Tree"><a href="#Decision-Tree" class="headerlink" title="Decision Tree"></a>Decision Tree</h3><p>Decision trees make decisions through a tree structure where each internal node represents a test on a feature.</p>
-<h3 id="Random-Forest"><a href="#Random-Forest" class="headerlink" title="Random Forest"></a>Random Forest</h3><p>Random Forest improves prediction accuracy by ensembling multiple decision trees.</p>
+        <h1 id="Tree-Models"><a href="#Tree-Models" class="headerlink" title="Tree Models"></a>Tree Models</h1><p>[TOC]</p>
+<h2 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h2><p>The core idea of tree models is “if.. else ..”. Complex tree models are combinations of many decision trees in different ways. Here I’ll explain step by step from basics to advanced, covering various tree model variants, which also serves as a review of my own knowledge.</p>
+<h2 id="Decision-Tree"><a href="#Decision-Tree" class="headerlink" title="Decision Tree"></a>Decision Tree</h2><p>A decision tree makes if-else judgments on features. For example, classifying balls: suppose we’re in a dark environment where we can’t see the ball colors. We only know their size and surface texture through touch, and need to predict and classify colors based on these features. If we choose to classify by size - size &gt; 1 goes to one class, size &lt; 1 goes to another. The result looks like the diagram below - not perfect.</p>
+<p><img src="/assets/images/tree-models/1778478720318-image.png" alt="alt text"></p>
+<p>But we can see the balls are roughly separated. How do we judge whether the classification is good or bad? How do we choose the threshold for features? That’s what we’ll discuss next.</p>
+<h2 id="Information-Entropy"><a href="#Information-Entropy" class="headerlink" title="Information Entropy"></a>Information Entropy</h2><p>Information entropy can be used to judge the quality of classification results. The n summation represents n possible situations, each with its probability.<br>$H(X) &#x3D; - \sum_{i&#x3D;1}^{n} P(X&#x3D;i) \log_2 P(X&#x3D;i)$</p>
+<p>Below is a coin toss example showing how information entropy is calculated. Greater uncertainty means higher entropy; less uncertainty means lower entropy.<br><img src="/assets/images/tree-models/1778479983629-v2-7c92101b3e42fed32f48058bde006c73_1440w.png" alt="alt text"></p>
+<p>Now with information entropy as a metric, we can quantify the ball classification results. But for precise expression, we need conditional entropy and information gain.</p>
+<h4 id="Conditional-Entropy"><a href="#Conditional-Entropy" class="headerlink" title="Conditional Entropy"></a>Conditional Entropy</h4><p>Conditional entropy is defined as the uncertainty of random variable X given random variable Y.<br>Intuitive understanding: entropy under a given condition, analogous to conditional probability.<br>$H(X|Y&#x3D;y) &#x3D; - \sum_{i&#x3D;1}^{n} P(X&#x3D;i|Y&#x3D;y)\log_2 P(X&#x3D;i|Y&#x3D;y)$</p>
+<h4 id="Information-Gain"><a href="#Information-Gain" class="headerlink" title="Information Gain"></a>Information Gain</h4><p>Information gain measures how much uncertainty decreases after adding a condition.<br>Also understood as: the degree of entropy reduction after adding a condition.<br>$I(X,Y) &#x3D; H(X) - H(X|Y)$</p>
+<h4 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h4><p>Let’s use these three concepts for the ball classification example.<br><img src="/assets/images/tree-models/1778478720318-image.png" alt="alt text"></p>
+<p>First, information entropy: $H(X) &#x3D; - (0.5 \log_2 0.5 + 0.5 \log_2 0.5) &#x3D; 1 $</p>
+<p>Then <strong>conditional entropy</strong>:</p>
+<h5 id="Left-subtree-size-1"><a href="#Left-subtree-size-1" class="headerlink" title="Left subtree: size &gt; 1"></a>Left subtree: size &gt; 1</h5><ul>
+<li>Samples: 40 red balls, 15 blue balls</li>
+<li>Total: 55</li>
+</ul>
+<p>Probabilities:</p>
+<p>$<br>P(\text{red} \mid \text{size}&gt;1) &#x3D; \frac{40}{55}, \quad P(\text{blue} \mid \text{size}&gt;1) &#x3D; \frac{15}{55}<br>$</p>
+<p>Conditional entropy formula:</p>
+<p>$<br>H(X \mid \text{size}&gt;1) &#x3D; - \left( \frac{40}{55} \log_2 \frac{40}{55} + \frac{15}{55} \log_2 \frac{15}{55} \right)<br>$</p>
+<p>Result approximately:</p>
+<p>$<br>H(X \mid \text{size}&gt;1) \approx 0.86 \text{ bit}<br>$</p>
+<h5 id="Right-subtree-size-≤-1"><a href="#Right-subtree-size-≤-1" class="headerlink" title="Right subtree: size ≤ 1"></a>Right subtree: size ≤ 1</h5><ul>
+<li>Samples: 10 red balls, 35 blue balls</li>
+<li>Total: 45</li>
+</ul>
+<p>Probabilities:</p>
+<p>$<br>P(\text{red} \mid \text{size} \le 1) &#x3D; \frac{10}{45}, \quad P(\text{blue} \mid \text{size} \le 1) &#x3D; \frac{35}{45}<br>$</p>
+<p>Conditional entropy formula:</p>
+<p>$<br>H(X \mid \text{size} \le 1) &#x3D; - \left( \frac{10}{45} \log_2 \frac{10}{45} + \frac{35}{45} \log_2 \frac{35}{45} \right)<br>$</p>
+<p>Result approximately:</p>
+<p>$<br>H(X \mid \text{size} \le 1) \approx 0.79<br>$</p>
+<h5 id="Conditional-entropy-given-feature-size-H-X-mid-text-size"><a href="#Conditional-entropy-given-feature-size-H-X-mid-text-size" class="headerlink" title="Conditional entropy given feature size (H(X \mid \text{size}))"></a>Conditional entropy given feature size (H(X \mid \text{size}))</h5><p>Weighted sum:</p>
+<p>$<br>H(X \mid \text{size}) &#x3D; \frac{55}{100} \cdot 0.86 + \frac{45}{100} \cdot 0.79 \approx 0.83 \text{ bit}<br>$</p>
+<h5 id="Information-gain-I-X-text-size"><a href="#Information-gain-I-X-text-size" class="headerlink" title="Information gain (I(X, \text{size}))"></a>Information gain (I(X, \text{size}))</h5><p>$<br>I(X, \text{size}) &#x3D; H(X) - H(X \mid \text{size}) &#x3D; 1 - 0.83 \approx 0.17<br>$</p>
+<p>Thus, decision trees can use information gain as a criterion, then use optimization algorithms to find the optimal tree across features. Trees can be classification trees or regression trees - the difference is whether leaf nodes contain categories or numerical values.</p>
+<h2 id="ID3-Algorithm"><a href="#ID3-Algorithm" class="headerlink" title="ID3 Algorithm"></a>ID3 Algorithm</h2><p>Using an example from the classic ML book: the root node dataset has 8 good watermelons and 9 bad watermelons, with entropy 0.998.<br><img src="/assets/images/tree-models/1778484987131-v2-19c6bb88fc14b87c1e8b6902b4b33761_1440w.png" alt="alt text"></p>
+<p>Then select the first feature: calculate information gain for different features. E.g., first feature is color, information gain is 0.109, i.e., Gain(D, color)&#x3D;0.109. Similarly, when choosing other features as the first feature:<br><img src="/assets/images/tree-models/1778485113950-v2-206733eb89156a615ed85a77a8527e9a_1440w.png" alt="alt text"></p>
+<p><strong>Feature selection logic: choose the feature with maximum information gain!</strong> Thus, the first layer uses texture as its feature.<br><img src="/assets/images/tree-models/1778485178668-v2-212fe84eababfbce12ba063213922f38_1440w.png" alt="alt text"></p>
+<p>Next, calculate information gain for each child node, e.g., for texture&#x3D;clear node, then select the maximum.</p>
+<p>Continuing this process, we get this tree:<br><img src="/assets/images/tree-models/1778485360306-v2-84cf7ed68fb12174f3d233330bcd2ff6_1440w.png" alt="alt text"></p>
+<h4 id="Limitations"><a href="#Limitations" class="headerlink" title="Limitations"></a>Limitations</h4><p>This method only works for discrete features (like texture being smooth or rough), but cannot handle continuous values like 0-1. Also, building trees this way leads to overfitting.</p>
+<h2 id="C4-5"><a href="#C4-5" class="headerlink" title="C4.5"></a>C4.5</h2><p>To address the feature count bias in information gain, C4.5 uses gain ratio instead of information gain as the criterion for optimal feature selection.</p>
+<p>$<br>\text{GainRatio}(D, A)&#x3D;\frac{\text{Gain}(D, A)}<br>{<br>-\sum_{i&#x3D;1}^{n}<br>\frac{|D_i|}{|D|}<br>\log_2<br>\left(<br>\frac{|D_i|}{|D|}<br>\right)<br>}<br>$</p>
+<p>Where:</p>
+<ul>
+<li>(D): current dataset</li>
+<li>(A): current splitting feature</li>
+<li>(D_i): i-th subset after splitting by feature (A)</li>
+<li>(|D_i|): subset sample count</li>
+<li>(|D|): original dataset sample count</li>
+<li>(\text{Gain}(D, A)): information gain</li>
+</ul>
+<p>For continuous features, this algorithm uses binary discretization: sort continuous features, create N-1 binary splits for N continuous values, calculate information gain for each split, and select the best.<br><img src="/assets/images/tree-models/1778486531074-v2-e1b75db0b2d3c4bc42678444c8b5f109_1440w.png" alt="alt text"></p>
+<h4 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h4><p>C4.5 uses gain ratio to solve ID3’s bias toward features with many values, and handles continuous features. Pruning can prevent overfitting. However, binary discretization is computationally expensive for many continuous features, and it doesn’t consider feature correlations.</p>
+<h2 id="CART-Algorithm"><a href="#CART-Algorithm" class="headerlink" title="CART Algorithm"></a>CART Algorithm</h2><p>CART introduces Gini impurity (Gini index) for classification trees, representing the probability of a randomly selected sample being misclassified. Lower Gini means higher purity; Gini is 0 when all samples are the same class. pk represents the probability of selected sample belonging to class k.</p>
+<p>$\text{Gini}(p)&#x3D;\sum_{k&#x3D;1}^{K} p_k (1-p_k)&#x3D;1-\sum_{k&#x3D;1}^{K} p_k^2$</p>
+<p>Dataset (D) split into (D1) and (D2) by feature (A), Gini index is defined as:</p>
+<p>$\text{Gini}(D,A)<br>&#x3D;\frac{|D_1|}{|D|}\text{Gini}(D_1)+\frac{|D_2|}{|D|}\text{Gini}(D_2)$</p>
+<h3 id="CART-Regression-Tree"><a href="#CART-Regression-Tree" class="headerlink" title="CART Regression Tree"></a>CART Regression Tree</h3><p>CART regression tree uses squared error minimization for feature selection to build binary trees.</p>
+<p>(\min_{c_1}) means: “adjust c1 to minimize error”</p>
+<p>Objective function:</p>
+<p>For feature (j) and split point (s), minimize squared error:</p>
+<p>$<br>\min_{j,s}<br>\left[<br>\min_{c_1}<br>\sum_{x_i \in R_1(j,s)}<br>(y_i-c_1)^2<br>+<br>\min_{c_2}<br>\sum_{x_i \in R_2(j,s)}<br>(y_i-c_2)^2<br>\right]<br>$</p>
+<p>Data split by feature (j) and split point (s) into two regions:</p>
+<p>$<br>R_1(j,s)&#x3D;{x \mid x^{(j)} \le s}<br>$</p>
+<p>$<br>R_2(j,s)&#x3D;{x \mid x^{(j)} &gt; s}<br>$</p>
+<p>Where:</p>
+<ul>
+<li>(x^{(j)}): sample value on feature j</li>
+<li>(y_i): sample label</li>
+</ul>
+<p><strong>Meaning of (c_1)</strong></p>
+<p>Represents:</p>
+<blockquote>
+<p>Prediction value for left region (R_1).</p>
+</blockquote>
+<p>Calculated as:</p>
+<p>$<br>c_1&#x3D;\frac{1}{N_1}\sum_{x_i\in R_1} y_i<br>$</p>
+<p>Meaning:</p>
+<blockquote>
+<p>Average of all labels in the left region.</p>
+</blockquote>
+<hr>
+<p>CART regression tree idea:</p>
+<blockquote>
+<p>Fit each region with a constant.</p>
+</blockquote>
+<p>And this constant:</p>
+<blockquote>
+<p>Is the mean of labels in that region.</p>
+</blockquote>
+<h3 id="Summary-1"><a href="#Summary-1" class="headerlink" title="Summary"></a>Summary</h3><p>The tree methods we’ve seen all involve trying different split points.</p>
+<h1 id="Ensemble-Learning-Optimization-Methods"><a href="#Ensemble-Learning-Optimization-Methods" class="headerlink" title="Ensemble Learning Optimization Methods"></a>Ensemble Learning Optimization Methods</h1><h2 id="Boosting"><a href="#Boosting" class="headerlink" title="Boosting"></a>Boosting</h2><p>This introduces an interesting concept: residuals.</p>
+<p>Consider linear fitting first:<br><img src="/assets/images/tree-models/1778491938738-v2-2853eb76564f61059c3ccfb343e28642_1440w.png" alt="alt text"></p>
+<p>If we have a fitted function with predictions F(x1)&#x3D;0.8, F(x2)&#x3D;0.9, and true values y1&#x3D;1, y2&#x3D;1.2, how to improve fitting accuracy?</p>
+<p>The ensemble strategy uses residuals as a new dataset, fitting residuals with a new function.<br><img src="/assets/images/tree-models/1778491963862-v2-e355182f4165b3d0b1fbb803a8974ac4_1440w.png" alt="alt text"></p>
+<p>Summing F(x) and G(x) gives the model result.</p>
+<p>Applying residual learning to tree models: labels are ages 14, 16, 24, 26; features are shopping amount and Q&amp;A activity.<br><img src="/assets/images/tree-models/1778492028956-v2-1a183ec47a50a433f38842231d07caa7_1440w.png" alt="alt text"></p>
+<p>Boosting tree algorithm: iteratively train multiple regression trees. With L2 loss, each tree learns residuals from previous trees. Residual &#x3D; true value - predicted value. The boosting tree is the sum of all regression trees.<br><img src="/assets/images/tree-models/1778492094984-v2-094dbceab582aefe099c6c9a264a13d0_1440w.png" alt="alt text"></p>
+<h3 id="GBDT"><a href="#GBDT" class="headerlink" title="GBDT"></a>GBDT</h3><p>Unlike boosting which directly fits residuals, GBDT fits the negative gradient of the loss function, not residuals.</p>
+<h3 id="XGBoost"><a href="#XGBoost" class="headerlink" title="XGBoost"></a>XGBoost</h3><p>While GBDT uses first-order gradient, XGBoost uses second-order gradient information. To prevent overfitting from complex models, it adds regularization to penalize complexity while maintaining good performance.<br><img src="/assets/images/tree-models/1778499574419-v2-abcbc9a73074e8eba69c29a195af1118_1440w.png" alt="alt text"></p>
+<p>XGBoost: eXtreme Gradient Boosting</p>
+<p>Built on GBDT with mathematical + engineering optimizations.</p>
+<hr>
+<ol>
+<li>XGBoost Core Idea</li>
+</ol>
+<hr>
+<p>XGBoost is essentially: Boosting + Decision Tree + Gradient Descent</p>
+<p>Model form:</p>
+<p>$<br>F(x)&#x3D;\sum_{m&#x3D;1}^M h_m(x)<br>$</p>
+<p>Where:</p>
+<ul>
+<li>$h_m(x)$: the m-th tree</li>
+<li>$F(x)$: final model</li>
+</ul>
+<p>Training: iteratively add trees:</p>
+<p>$<br>F_m(x)&#x3D;F_{m-1}(x)+\eta h_m(x)<br>$</p>
+<p>Where:</p>
+<ul>
+<li>$\eta$: learning rate</li>
+<li>$h_m(x)$: newly added tree</li>
+</ul>
+<hr>
+<ol start="2">
+<li>Key Difference from GBDT</li>
+</ol>
+<hr>
+<p>GBDT: only uses first-order gradient</p>
+<p>$<br>g_i&#x3D;\frac{\partial L}{\partial F(x_i)}<br>$</p>
+<p>XGBoost: uses both first and second-order gradient (Hessian)</p>
+<p>$<br>h_i&#x3D;\frac{\partial^2 L}{\partial F(x_i)^2}<br>$</p>
+<p>Thus XGBoost is:</p>
+<ul>
+<li>More accurate updates</li>
+<li>Faster convergence</li>
+<li>More stable optimization</li>
+</ul>
+<hr>
+<ol start="3">
+<li>Why Second-order Derivative Matters</li>
+</ol>
+<hr>
+<p>First-order derivative tells: “which direction descends fastest”</p>
+<p>Second-order derivative tells: “how much curvature”</p>
+<p>Meaning at current position:</p>
+<ul>
+<li>How steep</li>
+<li>How curved</li>
+<li>Can we go faster</li>
+</ul>
+<p>Thus:<br>GBDT: like “descending by direction sense”</p>
+<p>XGBoost: like “descending with terrain map”</p>
+<hr>
+<ol start="4">
+<li>Core Mathematical Principles</li>
+</ol>
+<hr>
+<p>XGBoost uses second-order Taylor expansion to approximate objective function.</p>
+<p>Assume:<br>Current model:</p>
+<p>$<br>F_{m-1}(x)<br>$</p>
+<p>New tree:</p>
+<p>$<br>h_m(x)<br>$</p>
+<p>Update:</p>
+<p>$<br>F_m(x)&#x3D;F_{m-1}(x)+h_m(x)<br>$</p>
+<p>Objective:</p>
+<p>$<br>Obj&#x3D;\sum_i L(y_i,F(x_i))+\Omega(h)<br>$</p>
+<p>Where:</p>
+<ul>
+<li>$L$: loss function</li>
+<li>$\Omega(h)$: regularization term</li>
+</ul>
+<hr>
+<ol start="5">
+<li>Second-order Taylor Expansion</li>
+</ol>
+<hr>
+<p>XGBoost expands loss function:</p>
+<p>$<br>L(F+h)<br>\approx<br>L(F)<br>+<br>g h<br>+<br>\frac12 h^2 H<br>$</p>
+<p>Where:</p>
+<p>$<br>g&#x3D;\frac{\partial L}{\partial F}<br>$</p>
+<p>$<br>H&#x3D;\frac{\partial^2 L}{\partial F^2}<br>$</p>
+<p>Thus XGBoost considers:</p>
+<ul>
+<li>First-order gradient (direction)</li>
+<li>Second-order gradient (curvature)</li>
+</ul>
+<hr>
+<ol start="6">
+<li>Regularization</li>
+</ol>
+<hr>
+<p>This is XGBoost’s key enhancement.</p>
+<p>GBDT: prone to overfitting</p>
+<p>XGBoost: adds regularization term:</p>
+<p>$<br>\Omega(T)&#x3D;\gamma T+<br>\frac12 \lambda \sum_j w_j^2$</p>
+<p>Where:</p>
+<ul>
+<li>$T$: number of leaves</li>
+<li>$w_j$: leaf weight</li>
+<li>$\gamma$: leaf count penalty</li>
+<li>$\lambda$: L2 regularization coefficient</li>
+</ul>
+<p>Thus complex trees are penalized.</p>
+<hr>
+<ol start="7">
+<li>XGBoost Objective Function</li>
+</ol>
+<hr>
+<p>Final objective:</p>
+<p>$Obj&#x3D;\sum_i L(y_i,\hat y_i)<br>+<br>\Omega(T)<br>$</p>
+<p>Total objective &#x3D; loss + complexity penalty</p>
+<p>Benefits:</p>
+<ul>
+<li>Prevent overfitting</li>
+<li>Improve generalization</li>
+<li>Keep trees simpler</li>
+</ul>
+<hr>
+<ol start="8">
+<li>How XGBoost Generates New Trees</li>
+</ol>
+<hr>
+<p>Step1: Current model:</p>
+<p>$<br>F_{m-1}(x)<br>$</p>
+<p>Step2: Calculate for each sample:<br>First-order gradient:</p>
+<p>$g_i&#x3D;\frac{\partial L}{\partial F(x_i)}$</p>
+<p>Second-order gradient:</p>
+<p>$h_i&#x3D;\frac{\partial^2 L}{\partial F(x_i)^2}$</p>
+<p>Step3: Train new tree:</p>
+<p>$<br>h_m(x)<br>$</p>
+<p>to maximize objective reduction.</p>
+<p>Step4: Update:</p>
+<p>$F_m(x)&#x3D;F_{m-1}(x)+\eta h_m(x)$</p>
+<hr>
+<ol start="9">
+<li>Learning Rate</li>
+</ol>
+<hr>
+<p>Update:</p>
+<p>$F_m(x)&#x3D;F_{m-1}(x)+\eta h_m(x)$</p>
+<p>$\eta$ controls: “how much each tree affects final model”</p>
+<p>If $\eta$ too large:</p>
+<ul>
+<li>Easy to overfit</li>
+<li>Updates too aggressive</li>
+</ul>
+<p>If $\eta$ too small:</p>
+<ul>
+<li>Slow convergence</li>
+<li>Need more trees</li>
+</ul>
+<p>Usually: small learning rate + more trees works better.</p>
+<hr>
+<ol start="10">
+<li>Engineering Optimization</li>
+</ol>
+<hr>
+<p>XGBoost’s popularity comes not just from math, but from industrial-grade engineering:</p>
+<ol>
+<li>Parallel computation</li>
+<li>Cache optimization</li>
+<li>Sparse optimization</li>
+<li>Missing value handling</li>
+<li>Histogram split optimization</li>
+<li>Feature sampling</li>
+<li>Out-of-core computation</li>
+</ol>
+<p>Thus XGBoost is: fast, stable, scalable, handles large data.</p>
+<hr>
+<ol start="11">
+<li>Essence of XGBoost</li>
+</ol>
+<hr>
+<p>XGBoost essence: “Regularized second-order gradient boosting tree”</p>
+<p>Combination of:</p>
+<ul>
+<li>Boosting</li>
+<li>Decision tree</li>
+<li>Gradient descent</li>
+<li>Second-order optimization</li>
+<li>Regularization</li>
+</ul>
+<hr>
+<ol start="12">
+<li>Final Difference: GBDT vs XGBoost</li>
+</ol>
+<hr>
+<p>GBDT: only uses first-order gradient</p>
+<p>$<br>\frac{\partial L}{\partial F}<br>$</p>
+<p>XGBoost: uses both</p>
+<p>$<br>\frac{\partial L}{\partial F}<br>$</p>
+<p>and</p>
+<p>$<br>\frac{\partial^2 L}{\partial F^2}<br>$</p>
+<p>Plus:</p>
+<ul>
+<li>Regularization</li>
+<li>Engineering optimization</li>
+<li>Feature sampling</li>
+<li>High-performance implementation</li>
+</ul>
+<hr>
+<ol start="13">
+<li>Summary</li>
+</ol>
+<hr>
+<p>XGBoost is essentially GBDT, but enhanced through:</p>
+<ul>
+<li>Second-order Taylor expansion</li>
+<li>Hessian information</li>
+<li>Regularization</li>
+<li>Engineering optimization</li>
+</ul>
+<p>Making GBDT into an industrial-grade high-performance boosting algorithm.</p>
+<h2 id="Bagging"><a href="#Bagging" class="headerlink" title="Bagging"></a>Bagging</h2><p>Bagging stands for: <strong>Bootstrap Aggregating</strong></p>
+<p>Bagging and Boosting are two completely different ensemble learning approaches. Both solve “single model not strong enough” but in opposite ways.</p>
+<p>Bagging idea: “If one model is unstable, train many models and average.”</p>
+<p>Boosting idea: “Where the previous model made mistakes, the next model specifically fixes those errors.”</p>
+<p>These developed into:<br>Bagging → Random Forest<br>Boosting → GBDT, XGBoost, LightGBM</p>
+<p>Two completely different technical paths.</p>
+<p>It’s a classic ensemble learning method.</p>
+<p>Bagging core idea:</p>
+<blockquote>
+<p>Train multiple independent models, then average (regression) or vote (classification).</p>
+</blockquote>
+<p>Goals:</p>
+<ul>
+<li>Reduce variance</li>
+<li>Improve stability</li>
+<li>Reduce overfitting risk</li>
+</ul>
+<hr>
+<h3 id="Bagging-Process"><a href="#Bagging-Process" class="headerlink" title="Bagging Process"></a>Bagging Process</h3><h4 id="1-Bootstrap-Sampling"><a href="#1-Bootstrap-Sampling" class="headerlink" title="1. Bootstrap Sampling"></a>1. Bootstrap Sampling</h4><p>Random sampling with replacement from original training set.<br>Generate multiple different data subsets.<br>E.g., Dataset 1, Dataset 2, Dataset 3.<br>Each subset usually same size as original.</p>
+<hr>
+<h4 id="2-Train-Multiple-Independent-Models"><a href="#2-Train-Multiple-Independent-Models" class="headerlink" title="2. Train Multiple Independent Models"></a>2. Train Multiple Independent Models</h4><p>Each data subset trains one model.<br>Models are:</p>
+<ul>
+<li>Independent</li>
+<li>No sequential dependency</li>
+</ul>
+<p>Thus Bagging can train in parallel.</p>
+<hr>
+<h4 id="3-Aggregate-Results"><a href="#3-Aggregate-Results" class="headerlink" title="3. Aggregate Results"></a>3. Aggregate Results</h4><p>For regression: average:</p>
+<p>$<br>F(x)&#x3D;\frac1M\sum_{m&#x3D;1}^M h_m(x)<br>$</p>
+<p>For classification: majority vote.</p>
+<hr>
+<h3 id="Core-Philosophy"><a href="#Core-Philosophy" class="headerlink" title="Core Philosophy"></a>Core Philosophy</h3><blockquote>
+<p>“Multiple unstable models become stable when averaged.”</p>
+</blockquote>
+<p>Especially suitable for high variance models like decision trees, since single trees are very sensitive to training data - slight data change means completely different tree structure.</p>
+<p>Bagging trains many different trees and averages to reduce instability.</p>
+<hr>
+<h3 id="Classic-Algorithm-Random-Forest"><a href="#Classic-Algorithm-Random-Forest" class="headerlink" title="Classic Algorithm: Random Forest"></a>Classic Algorithm: Random Forest</h3><p>Core:</p>
+<ul>
+<li>Bootstrap Sampling</li>
+<li>Multiple decision trees</li>
+<li>Random feature sampling</li>
+<li>Final voting&#x2F;averaging</li>
+</ul>
+<h2 id="Stacking-Blending"><a href="#Stacking-Blending" class="headerlink" title="Stacking &#x2F; Blending"></a>Stacking &#x2F; Blending</h2><p>Stacking and Blending are advanced ensemble methods.</p>
+<p>Their core idea is not:</p>
+<ul>
+<li>Average results (Bagging)</li>
+<li>Fix errors (Boosting)</li>
+</ul>
+<p>But:</p>
+<blockquote>
+<p>“Train another model to learn how to combine outputs from multiple models.”</p>
+</blockquote>
+<p>Thus they belong to: <strong>Model Fusion &#x2F; Meta Learning</strong></p>
+<hr>
+<h3 id="Why-Stacking"><a href="#Why-Stacking" class="headerlink" title="Why Stacking"></a>Why Stacking</h3><p>Suppose you have multiple models:</p>
+<ul>
+<li>Random Forest</li>
+<li>XGBoost</li>
+<li>LightGBM</li>
+<li>Logistic Regression</li>
+</ul>
+<p>Each excels in different situations:</p>
+<ul>
+<li>XGBoost for complex nonlinear</li>
+<li>Logistic Regression for linear relations</li>
+<li>Random Forest more stable</li>
+</ul>
+<p>Question becomes:</p>
+<blockquote>
+<p>“Can another model automatically learn: when to trust which model?”</p>
+</blockquote>
+<p>This is Stacking’s core idea.</p>
+<hr>
+<h3 id="Stacking-Structure"><a href="#Stacking-Structure" class="headerlink" title="Stacking Structure"></a>Stacking Structure</h3><h4 id="Layer-1-Base-Models"><a href="#Layer-1-Base-Models" class="headerlink" title="Layer 1 (Base Models)"></a>Layer 1 (Base Models)</h4><p>Multiple base models, e.g.:</p>
+<ul>
+<li>Random Forest</li>
+<li>XGBoost</li>
+<li>SVM</li>
+<li>Neural Network</li>
+</ul>
+<p>Each trained independently, outputting predictions.</p>
+<hr>
+<h4 id="Layer-2-Meta-Model"><a href="#Layer-2-Meta-Model" class="headerlink" title="Layer 2 (Meta Model)"></a>Layer 2 (Meta Model)</h4><p>Train another model specifically to learn how to combine Layer 1 outputs.</p>
+<p>This model is called:</p>
+<ul>
+<li>Meta Learner</li>
+<li>Level-2 Model</li>
+</ul>
+<hr>
+<h3 id="Stacking-Training-Process"><a href="#Stacking-Training-Process" class="headerlink" title="Stacking Training Process"></a>Stacking Training Process</h3><p>Original data: $(X, y)$</p>
+<h4 id="Step1-Train-Layer-1"><a href="#Step1-Train-Layer-1" class="headerlink" title="Step1: Train Layer 1"></a>Step1: Train Layer 1</h4><p>Train RF, XGB, SVM<br>Get predictions: $\hat y_1, \hat y_2, \hat y_3$</p>
+<hr>
+<h4 id="Step2-Create-New-Training-Set"><a href="#Step2-Create-New-Training-Set" class="headerlink" title="Step2: Create New Training Set"></a>Step2: Create New Training Set</h4><p>Use Layer 1 outputs as new features:</p>
+<table>
+<thead>
+<tr>
+<th>RF output</th>
+<th>XGB output</th>
+<th>SVM output</th>
+<th>True label</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0.8</td>
+<td>0.9</td>
+<td>0.7</td>
+<td>1</td>
+</tr>
+<tr>
+<td>0.2</td>
+<td>0.3</td>
+<td>0.1</td>
+<td>0</td>
+</tr>
+</tbody></table>
+<hr>
+<h4 id="Step3-Train-Layer-2"><a href="#Step3-Train-Layer-2" class="headerlink" title="Step3: Train Layer 2"></a>Step3: Train Layer 2</h4><p>Train Meta Model:<br>$<br>g(\hat y_1,\hat y_2,\hat y_3)<br>$</p>
+<p>Learn “how to combine these models”.</p>
+<hr>
+<h4 id="Step4-Final-Prediction"><a href="#Step4-Final-Prediction" class="headerlink" title="Step4: Final Prediction"></a>Step4: Final Prediction</h4><p>$<br>F(x)&#x3D;g(h_1(x),h_2(x),…,h_m(x))<br>$</p>
+<p>Where:</p>
+<ul>
+<li>$h_i(x)$: base models</li>
+<li>$g$: fusion model</li>
+</ul>
+<hr>
+<h3 id="Essence-of-Stacking"><a href="#Essence-of-Stacking" class="headerlink" title="Essence of Stacking"></a>Essence of Stacking</h3><p>Not simple averaging.</p>
+<blockquote>
+<p>“Learn combination relationships between different models.”</p>
+</blockquote>
+<p>It’s “machine learning on models”.</p>
+<hr>
+<h3 id="Why-Stacking-Works"><a href="#Why-Stacking-Works" class="headerlink" title="Why Stacking Works"></a>Why Stacking Works</h3><p>Different models make different mistakes:</p>
+<ul>
+<li>Model A: high recall</li>
+<li>Model B: high precision</li>
+<li>Model C: stable for outliers</li>
+</ul>
+<p>Meta Model automatically learns:</p>
+<ul>
+<li>When to trust A</li>
+<li>When to trust B</li>
+<li>When to ignore C</li>
+</ul>
+<p>Thus often outperforms single models.</p>
+<hr>
+<h3 id="Main-Problem-Data-Leakage"><a href="#Main-Problem-Data-Leakage" class="headerlink" title="Main Problem: Data Leakage"></a>Main Problem: Data Leakage</h3><p>If Layer 1 predicts on training set, and Layer 2 uses these predictions, severe overfitting occurs because Meta Model sees “training answers”.</p>
+<hr>
+<h4 id="Solution-K-Fold-Out-of-Fold-Prediction"><a href="#Solution-K-Fold-Out-of-Fold-Prediction" class="headerlink" title="Solution: K-Fold Out-of-Fold Prediction"></a>Solution: K-Fold Out-of-Fold Prediction</h4><p>Process:</p>
+<h5 id="Fold1"><a href="#Fold1" class="headerlink" title="Fold1"></a>Fold1</h5><p>Train on Fold 2~5, predict Fold1.</p>
+<h5 id="Fold2"><a href="#Fold2" class="headerlink" title="Fold2"></a>Fold2</h5><p>Train on Fold 1,3,4,5, predict Fold2.</p>
+<p>Final result: “non-leaked predictions” on entire training set, then train Layer 2.</p>
+<hr>
+<h3 id="What-is-Blending"><a href="#What-is-Blending" class="headerlink" title="What is Blending"></a>What is Blending</h3><p>Blending: “simplified Stacking”</p>
+<p>Has Layer 1 and Layer 2, but doesn’t use K-Fold.</p>
+<hr>
+<h3 id="Blending-Process"><a href="#Blending-Process" class="headerlink" title="Blending Process"></a>Blending Process</h3><p>Split training set into Train Set and Validation Set.</p>
+<h4 id="Step1"><a href="#Step1" class="headerlink" title="Step1"></a>Step1</h4><p>Base models train only on Train Set.</p>
+<h4 id="Step2"><a href="#Step2" class="headerlink" title="Step2"></a>Step2</h4><p>Base models predict Validation Set.<br>Get RF, XGB, SVM predictions.</p>
+<h4 id="Step3"><a href="#Step3" class="headerlink" title="Step3"></a>Step3</h4><p>Train Meta Model using these predictions.</p>
+<h4 id="Step4"><a href="#Step4" class="headerlink" title="Step4"></a>Step4</h4><p>Final fusion prediction.</p>
+<hr>
+<h3 id="Difference-Blending-vs-Stacking"><a href="#Difference-Blending-vs-Stacking" class="headerlink" title="Difference: Blending vs Stacking"></a>Difference: Blending vs Stacking</h3><p>Blending: no K-Fold, directly uses Validation Set.</p>
+<p>Thus:</p>
+<ul>
+<li>Simpler</li>
+<li>But wastes some training data</li>
+</ul>
+<hr>
+<h3 id="Comparison-Table"><a href="#Comparison-Table" class="headerlink" title="Comparison Table"></a>Comparison Table</h3><table>
+<thead>
+<tr>
+<th>Comparison</th>
+<th>Stacking</th>
+<th>Blending</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Uses K-Fold</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Data leakage risk</td>
+<td>Lower</td>
+<td>Higher</td>
+</tr>
+<tr>
+<td>Data utilization</td>
+<td>High</td>
+<td>Lower</td>
+</tr>
+<tr>
+<td>Complexity</td>
+<td>High</td>
+<td>Low</td>
+</tr>
+<tr>
+<td>Generalization</td>
+<td>Stronger</td>
+<td>Slightly weaker</td>
+</tr>
+<tr>
+<td>Implementation</td>
+<td>Complex</td>
+<td>Simple</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="Four-Ensemble-Methods-Summary"><a href="#Four-Ensemble-Methods-Summary" class="headerlink" title="Four Ensemble Methods Summary"></a>Four Ensemble Methods Summary</h3><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Core Idea</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Bagging</td>
+<td>Independent training then average</td>
+</tr>
+<tr>
+<td>Boosting</td>
+<td>Next model fixes previous errors</td>
+</tr>
+<tr>
+<td>Stacking</td>
+<td>Learn how to combine models</td>
+</tr>
+<tr>
+<td>Blending</td>
+<td>Simplified Stacking with validation set</td>
+</tr>
+</tbody></table>
+<hr>
+<h3 id="Typical-Applications"><a href="#Typical-Applications" class="headerlink" title="Typical Applications"></a>Typical Applications</h3><p>Stacking common in:</p>
+<ul>
+<li>Kaggle competitions</li>
+<li>High-precision tasks</li>
+<li>Multi-model fusion</li>
+</ul>
+<p>Usually squeezes out more performance.</p>
+<hr>
+<h3 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h3><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/399549773">https://zhuanlan.zhihu.com/p/399549773</a></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://keeganjin.github.io/2026/05/10/en/tech-docs/machine-learning/tree-models/" data-id="cuidd-9EioFwnsZ-91vAE5SsH" data-title="Tree Models Introduction" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://keeganjin.github.io/2026/05/10/en/tech-docs/machine-learning/tree-models/" data-id="cuidUtPdYSDcHyYru6XyPJ6xW" data-title="Tree Models" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -189,92 +758,6 @@
 
 
 
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
       
     
       
@@ -361,7 +844,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://keeganjin.github.io/2026/05/09/en/tech-docs/machine-learning/xgboost-algorithm/" data-id="cuid-TLr5ljYqgWOI4aFtewLM" data-title="XGBoost Algorithm Explained" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://keeganjin.github.io/2026/05/09/en/tech-docs/machine-learning/xgboost-algorithm/" data-id="cuidbPJgpfNr4g3l0vBfH4y0w" data-title="XGBoost Algorithm Explained" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -410,7 +893,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://keeganjin.github.io/2026/05/08/en/tech-docs/agent/agent-introduction/" data-id="cuidV7MkwDhey6ZTbEt1AzWeI" data-title="AI Agent Introduction" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://keeganjin.github.io/2026/05/08/en/tech-docs/agent/agent-introduction/" data-id="cuidoeVWktp9IwNpkrOSQsugM" data-title="AI Agent Introduction" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -423,6 +906,98 @@
 
 
 
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
       
     
   </section>
@@ -463,7 +1038,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a></li></ul>
     </div>
   </div>
 
@@ -476,11 +1051,15 @@
       <ul>
         
           <li>
-            <a href="/2026/05/10/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+            <a href="/2026/05/11/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/">(no title)</a>
           </li>
         
           <li>
-            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-architecture/">Agent 架构模式</a>
+            <a href="/2026/05/11/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
           </li>
         
           <li>
@@ -488,11 +1067,7 @@
           </li>
         
           <li>
-            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/llm-and-agent/">LLM 与 Agent 的关系</a>
-          </li>
-        
-          <li>
-            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/">Agent 入门指南</a>
+            <a href="/2026/05/10/en/tech-docs/machine-learning/tree-models/">Tree Models</a>
           </li>
         
       </ul>

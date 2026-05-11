@@ -7,7 +7,20 @@
       "Bash(git commit *)",
       "Bash(git push *)",
       "Bash(gh workflow *)",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "WebSearch",
+      "Bash(npm search *)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.npmjs.com)",
+      "Bash(npm install *)",
+      "Bash(npm uninstall *)",
+      "Bash(dir *)",
+      "Bash(node *)",
+      "Bash(cp -r node_modules/hexo-theme-redefine/layout themes/hexo-theme-redefine/)",
+      "Bash(cp -r node_modules/hexo-theme-redefine/source themes/hexo-theme-redefine/)",
+      "Bash(Get-ChildItem -Path \"E:\\\\Projects\\\\KeeganJin.github.io\\\\docs\\\\2026\\\\05\\\\10\\\\zh-CN\" -Recurse -Filter \"*.html\")",
+      "Bash(Select-Object -First 10)",
+      "Bash(python fix_math_dates.py)"
     ]
   }
 }

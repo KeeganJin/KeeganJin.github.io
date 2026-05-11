@@ -1,0 +1,39 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.0.3 Chrome/140.0.7339.249 Electron/38.7.0 Safari/537.36" version="29.0.3">
+  <diagram name="Page-1" id="H6gOUfNmUKedbbKOZphm">
+    <mxGraphModel dx="690" dy="593" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="TRKB5MlZmpMxQDlTA01I-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="TRKB5MlZmpMxQDlTA01I-1" target="TRKB5MlZmpMxQDlTA01I-3">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="160" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TRKB5MlZmpMxQDlTA01I-7" value="if size &amp;gt; 1, then" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=15;" vertex="1" connectable="0" parent="TRKB5MlZmpMxQDlTA01I-2">
+          <mxGeometry x="0.15" y="2" relative="1" as="geometry">
+            <mxPoint x="8" y="-22" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TRKB5MlZmpMxQDlTA01I-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="TRKB5MlZmpMxQDlTA01I-1" target="TRKB5MlZmpMxQDlTA01I-6">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="480" y="190" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TRKB5MlZmpMxQDlTA01I-8" value="if size &amp;lt;=1, then" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=15;" vertex="1" connectable="0" parent="TRKB5MlZmpMxQDlTA01I-4">
+          <mxGeometry x="-0.1" y="2" relative="1" as="geometry">
+            <mxPoint x="12" y="-18" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="TRKB5MlZmpMxQDlTA01I-1" value="Samples：50 red balls， 50 blue balls&lt;div&gt;Features：size， surface&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="40" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TRKB5MlZmpMxQDlTA01I-3" value="40 red balls, 15 blue balls" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="120" y="200" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="TRKB5MlZmpMxQDlTA01I-6" value="10 red balls, 35 blue balls" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="200" width="160" height="60" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

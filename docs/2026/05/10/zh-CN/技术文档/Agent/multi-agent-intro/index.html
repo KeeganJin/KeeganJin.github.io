@@ -38,7 +38,22 @@
   
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
 
-<meta name="generator" content="Hexo 8.1.2"></head>
+  <!-- MathJax for math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$', '$'], ['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head>
 
 <body>
   <div id="container">
@@ -385,7 +400,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://keeganjin.github.io/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-intro/" data-id="cuidGFUuweMf-WSF49DgIBBMh" data-title="多 Agent 系统概述" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      <a data-url="https://keeganjin.github.io/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-intro/" data-id="cuidx2qKphs1RqIf8AP3eZM7p" data-title="多 Agent 系统概述" class="article-share-link"><span class="fa fa-share">分享</span></a>
       
       
       
@@ -397,19 +412,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-collaboration/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/research-agent/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">前一篇</strong>
       <div class="article-nav-title">
         
-          多 Agent 协作模式
+          自动研究 Agent
         
       </div>
     </a>
   
   
-    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-competition/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/tool-use/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">后一篇</strong>
-      <div class="article-nav-title">多 Agent 竞争与博弈</div>
+      <div class="article-nav-title">工具调用机制（Tool Use）</div>
     </a>
   
 </nav>
@@ -455,7 +470,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a></li></ul>
     </div>
   </div>
 
@@ -468,11 +483,15 @@
       <ul>
         
           <li>
-            <a href="/2026/05/10/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+            <a href="/2026/05/11/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/">(no title)</a>
           </li>
         
           <li>
-            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-architecture/">Agent 架构模式</a>
+            <a href="/2026/05/11/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/10/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
           </li>
         
           <li>
@@ -480,11 +499,7 @@
           </li>
         
           <li>
-            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/llm-and-agent/">LLM 与 Agent 的关系</a>
-          </li>
-        
-          <li>
-            <a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/">Agent 入门指南</a>
+            <a href="/2026/05/10/en/tech-docs/machine-learning/tree-models/">Tree Models</a>
           </li>
         
       </ul>
