@@ -1,3 +1,7 @@
+// ========================================
+// Sidebar Widgets (北欧极简白侧边栏)
+// ========================================
+
 #sidebar
   @media mq-normal
     column(sidebar-column)
@@ -5,18 +9,20 @@
     padding-right: 0
 
 .widget-wrap
-  margin: 24px 0
+  margin: 32px 0
+  &:first-child
+    margin-top: 0
 
 .widget-title
   font-family: font-serif
-  font-size: 13px
-  font-weight: 700
+  font-size: 14px
+  font-weight: 600
   color: #1A202C
-  text-transform: none
-  letter-spacing: 1px
-  margin-bottom: 12px
-  padding-bottom: 8px
+  letter-spacing: 0.5px
+  margin-bottom: 16px
+  padding-bottom: 10px
   border-bottom: 2px solid color-link
+  display: inline-block
 
 .widget
   color: color-sidebar-text
@@ -25,106 +31,169 @@
   background: transparent
   border: none
   padding: 0
+
+  // 所有链接的基础样式 - 北欧暖色调
   a
-    color: color-default
+    color: #4A5568  // 中灰蓝，不是默认蓝色
     text-decoration: none
-    transition: color 0.3s ease
+    transition: all 0.25s ease
     display: block
-    padding: 6px 0
+    padding: 8px 0
+    line-height: 1.5
+    border-radius: radius-sm
     &:hover
       color: color-link
+      background: rgba(184, 125, 75, 0.08)  // 暖赭色淡背景
+      padding-left: 8px
+    &:active
+      color: color-link
+
   ul, ol, dl
     list-style: none
     margin: 0
     padding: 0
     ul, ol, dl
-      margin-left: 16px
+      margin-left: 12px
       padding-left: 12px
 
-// Category widget - clean nested style
+// ========================================
+// Category Widget - 层级分类
+// ========================================
 .category-list
   .category-list-item
-    margin-bottom: 2px
+    margin-bottom: 0
 
-.category-list-link
-  font-size: 13px
-  color: color-default
-  display: block
-  padding: 4px 0
-  position: relative
-  &:before
-    content: ""
-    display: none
-
-// Nested categories (子分类)
-.category-list-child
-  margin-top: 4px
-  padding-left: 16px
-  border-left: 1px solid color-border
   .category-list-link
-    font-size: 12px
-    color: color-grey
+    font-family: font-sans
+    font-size: 13px
+    color: #4A5568
+    display: block
+    padding: 8px 0
+    position: relative
+    font-weight: 500
+    &:before
+      content: ""
+      display: none
     &:hover
       color: color-link
+      background: rgba(184, 125, 75, 0.08)
+      padding-left: 8px
+
+  // 子分类样式
+  .category-list-child
+    margin-top: 4px
+    padding-left: 16px
+    border-left: 2px solid rgba(184, 125, 75, 0.3)
+    .category-list-link
+      font-size: 12px
+      color: #718096
+      font-weight: 400
+      padding: 6px 0
+      &:hover
+        color: color-link
+        background: rgba(184, 125, 75, 0.08)
 
 .category-list-count
   font-size: 11px
-  color: color-grey
+  color: #A0AEC0
+  font-weight: 400
   float: right
-  margin-top: 2px
+  margin-top: 3px
 
-// Archive widget - minimal
+// ========================================
+// Archive Widget - 优雅归档
+// ========================================
 .archive-list
   .archive-list-item
-    margin-bottom: 2px
+    margin-bottom: 0
 
-.archive-list-link
-  font-size: 13px
-  display: block
-  padding: 4px 0
+  .archive-list-link
+    font-family: font-sans
+    font-size: 13px
+    color: #4A5568
+    display: block
+    padding: 8px 0
+    font-weight: 500
+    &:hover
+      color: color-link
+      background: rgba(184, 125, 75, 0.08)
+      padding-left: 8px
 
 .archive-list-count
   font-size: 11px
-  color: color-grey
+  color: #A0AEC0
+  font-weight: 400
   float: right
+  margin-top: 3px
 
-// Recent posts widget - elegant
+// ========================================
+// Recent Posts Widget - 最新文章
+// ========================================
 .recent-posts-list
   .recent-posts-item
-    margin-bottom: 8px
+    margin-bottom: 0
     &:last-child
       margin-bottom: 0
 
-.recent-posts-link
-  font-family: font-serif
-  font-size: 13px
-  color: color-default
-  line-height: 1.4
-  display: block
-  padding: 4px 0
-  border-bottom: 1px solid color-border
-  &:hover
-    color: color-link
+  .recent-posts-link
+    font-family: font-serif
+    font-size: 13px
+    color: #4A5568
+    line-height: 1.5
+    display: block
+    padding: 8px 0
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6)
+    &:hover
+      color: color-link
+      background: rgba(184, 125, 75, 0.08)
+      padding-left: 8px
 
-// Tag widget - badge style
+// ========================================
+// Tag Widget - 标签徽章
+// ========================================
 .tag-list
   display: flex
   flex-wrap: wrap
-  gap: 6px
+  gap: 8px
+  margin-top: 8px
 
 .tag-list-item
   display: inline-block
 
 .tag-list-link
   display: inline-block
-  padding: 3px 10px
+  padding: 4px 12px
   background: #FFFFFF
-  color: color-grey
+  color: #718096
   border: 1px solid color-border
   border-radius: radius-sm
   font-size: 11px
-  transition: all 0.3s ease
+  font-family: font-sans
+  font-weight: 400
+  transition: all 0.25s ease
   &:hover
     background: color-link
     color: #FFFFFF
     border-color: color-link
+
+// ========================================
+// Tagcloud Widget - 标签云
+// ========================================
+.tagcloud
+  display: flex
+  flex-wrap: wrap
+  gap: 6px
+  a
+    display: inline-block
+    padding: 3px 10px
+    background: #FFFFFF
+    color: #718096
+    border: 1px solid color-border
+    border-radius: radius-sm
+    font-size: 11px
+    font-family: font-sans
+    transition: all 0.25s ease
+    &:hover
+      background: color-link
+      color: #FFFFFF
+      border-color: color-link

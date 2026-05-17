@@ -88,30 +88,38 @@
     padding: 20px
 
     .widget-wrap
-      margin: 16px 0
+      margin: 20px 0
       &:first-child
-        margin-top: 24px
+        margin-top: 28px
 
     .widget-title
       font-family: font-serif
-      font-size: 13px
-      font-weight: 700
+      font-size: 14px
+      font-weight: 600
       color: #1A202C
-      margin-bottom: 10px
-      padding-bottom: 6px
+      letter-spacing: 0.5px
+      margin-bottom: 14px
+      padding-bottom: 8px
       border-bottom: 2px solid color-link
+      display: inline-block
 
     .widget
       font-size: 13px
+      font-family: font-sans
 
+      // 链接样式 - 北欧暖色调，不是默认蓝色
       a
         display: block
         padding: 8px 0
-        color: color-default
+        color: #4A5568  // 中灰蓝
         text-decoration: none
-        transition: color 0.3s ease
+        line-height: 1.5
+        border-radius: radius-sm
+        transition: all 0.25s ease
         &:hover
           color: color-link
+          background: rgba(184, 125, 75, 0.08)
+          padding-left: 8px
 
       ul, ol
         list-style: none
@@ -121,36 +129,60 @@
     // Category in mobile nav
     .category-list
       .category-list-item
-        margin-bottom: 4px
+        margin-bottom: 0
 
       .category-list-link
         font-size: 13px
+        font-family: font-sans
+        font-weight: 500
+        color: #4A5568
         padding: 8px 0
 
       .category-list-child
-        padding-left: 12px
-        border-left: 1px solid color-border
+        padding-left: 16px
+        border-left: 2px solid rgba(184, 125, 75, 0.3)
         margin-top: 4px
+        .category-list-link
+          font-size: 12px
+          color: #718096
+          font-weight: 400
+          padding: 6px 0
+
+      .category-list-count
+        font-size: 11px
+        color: #A0AEC0
+        float: right
+        margin-top: 3px
 
     // Recent posts in mobile nav
     .recent-posts-list
       .recent-posts-item
-        margin-bottom: 8px
+        margin-bottom: 0
 
       .recent-posts-link
         font-family: font-serif
         font-size: 13px
-        padding: 6px 0
-        border-bottom: 1px solid color-border
+        color: #4A5568
+        padding: 8px 0
+        border-bottom: 1px solid rgba(226, 232, 240, 0.6)
 
     // Archive in mobile nav
     .archive-list
       .archive-list-item
-        margin-bottom: 4px
+        margin-bottom: 0
 
       .archive-list-link
         font-size: 13px
-        padding: 6px 0
+        font-family: font-sans
+        font-weight: 500
+        color: #4A5568
+        padding: 8px 0
+
+      .archive-list-count
+        font-size: 11px
+        color: #A0AEC0
+        float: right
+        margin-top: 3px
 
 @media mq-tablet
   .article-inner

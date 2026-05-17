@@ -1578,35 +1578,42 @@ pre .javascript .function {
     padding: 20px;
   }
   .mobile-nav-widgets .widget-wrap {
-    margin: 16px 0;
+    margin: 20px 0;
   }
   .mobile-nav-widgets .widget-wrap:first-child {
-    margin-top: 24px;
+    margin-top: 28px;
   }
   .mobile-nav-widgets .widget-title {
     font-family: "Noto Serif SC", Georgia, "Times New Roman", serif;
-    font-size: 13px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 600;
     color: #1a202c;
-    margin-bottom: 10px;
-    padding-bottom: 6px;
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
     border-bottom: 2px solid #b87d4b;
+    display: inline-block;
   }
   .mobile-nav-widgets .widget {
     font-size: 13px;
+    font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
   .mobile-nav-widgets .widget a {
     display: block;
     padding: 8px 0;
-    color: #2d3748;
+    color: #4a5568;
     text-decoration: none;
-    -webkit-transition: color 0.3s ease;
-    -moz-transition: color 0.3s ease;
-    -ms-transition: color 0.3s ease;
-    transition: color 0.3s ease;
+    line-height: 1.5;
+    border-radius: 4px;
+    -webkit-transition: all 0.25s ease;
+    -moz-transition: all 0.25s ease;
+    -ms-transition: all 0.25s ease;
+    transition: all 0.25s ease;
   }
   .mobile-nav-widgets .widget a:hover {
     color: #b87d4b;
+    background: rgba(184,125,75,0.08);
+    padding-left: 8px;
   }
   .mobile-nav-widgets .widget ul,
   .mobile-nav-widgets .widget ol {
@@ -1615,32 +1622,57 @@ pre .javascript .function {
     padding: 0;
   }
   .mobile-nav-widgets .category-list .category-list-item {
-    margin-bottom: 4px;
+    margin-bottom: 0;
   }
   .mobile-nav-widgets .category-list .category-list-link {
     font-size: 13px;
+    font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 500;
+    color: #4a5568;
     padding: 8px 0;
   }
   .mobile-nav-widgets .category-list .category-list-child {
-    padding-left: 12px;
-    border-left: 1px solid #e2e8f0;
+    padding-left: 16px;
+    border-left: 2px solid rgba(184,125,75,0.3);
     margin-top: 4px;
   }
+  .mobile-nav-widgets .category-list .category-list-child .category-list-link {
+    font-size: 12px;
+    color: #718096;
+    font-weight: 400;
+    padding: 6px 0;
+  }
+  .mobile-nav-widgets .category-list .category-list-count {
+    font-size: 11px;
+    color: #a0aec0;
+    float: right;
+    margin-top: 3px;
+  }
   .mobile-nav-widgets .recent-posts-list .recent-posts-item {
-    margin-bottom: 8px;
+    margin-bottom: 0;
   }
   .mobile-nav-widgets .recent-posts-list .recent-posts-link {
     font-family: "Noto Serif SC", Georgia, "Times New Roman", serif;
     font-size: 13px;
-    padding: 6px 0;
-    border-bottom: 1px solid #e2e8f0;
+    color: #4a5568;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(226,232,240,0.6);
   }
   .mobile-nav-widgets .archive-list .archive-list-item {
-    margin-bottom: 4px;
+    margin-bottom: 0;
   }
   .mobile-nav-widgets .archive-list .archive-list-link {
     font-size: 13px;
-    padding: 6px 0;
+    font-family: "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 500;
+    color: #4a5568;
+    padding: 8px 0;
+  }
+  .mobile-nav-widgets .archive-list .archive-list-count {
+    font-size: 11px;
+    color: #a0aec0;
+    float: right;
+    margin-top: 3px;
   }
 }
 @media screen and (min-width: 480px) and (max-width: 767px) {
