@@ -29,6 +29,12 @@
   <% if (theme.favicon){ %>
     <%- favicon_tag(theme.favicon) %>
   <% } %>
+
+  <!-- Nordic Zen Fonts: Noto Serif SC for elegant reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
   <% if (config.highlight.enable){ %>
     <%- css('https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css') %>
   <% } %>
@@ -37,6 +43,7 @@
     <%- css('fancybox/jquery.fancybox.min.css') %>
   <% } %>
   <%- css('https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css') %>
+
   <!-- MathJax for math rendering -->
   <script>
     MathJax = {

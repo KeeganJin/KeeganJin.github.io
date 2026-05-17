@@ -1,1 +1,308 @@
-<%- partial('_partial/archive', {expand: true, index: true}) %>
+<!-- 首页自定义内容 -->
+<%
+  var homeContent = `
+<div class="home-hero">
+  <div class="hero-text">
+    <h1>你好，我是 Jin</h1>
+    <p class="hero-subtitle">一个热爱技术与生活的数字园丁</p>
+  </div>
+  <div class="hero-image">
+    <img src="/images/avatar-placeholder.svg" alt="Profile" class="profile-photo">
+  </div>
+</div>
+
+<div class="home-section">
+  <h2>关于这个数字花园</h2>
+  <p>这里是我的个人博客，记录着我在技术探索路上的点滴，以及生活中的一些感悟。它不是一个严格的技术文档库，而更像是一个数字花园——有机生长、持续耕耘。</p>
+
+  <div class="quote-box">
+    <blockquote>
+      "唯有系统地输出，方能确信深刻理解。"
+    </blockquote>
+    <p class="quote-author">—— 费曼学习法的启发</p>
+  </div>
+</div>
+
+<div class="home-section">
+  <h2>我在做什么</h2>
+  <div class="activity-grid">
+    <div class="activity-card">
+      <div class="card-icon">🤖</div>
+      <h3>AI Agent 研究</h3>
+      <p>探索大语言模型驱动的智能体系统，研究 Agent 架构设计、多智能体协作、以及 Agent 在实际场景中的应用。</p>
+    </div>
+    <div class="activity-card">
+      <div class="card-icon">🧠</div>
+      <h3>机器学习实践</h3>
+      <p>从经典算法到深度学习，从模型训练到部署优化。记录学习过程中的思考与实践经验。</p>
+    </div>
+    <div class="activity-card">
+      <div class="card-icon">✍️</div>
+      <h3>生活随笔</h3>
+      <p>技术之外，生活同样值得记录。一些随想、一些感悟、一些生活的温度。</p>
+    </div>
+  </div>
+</div>
+
+<div class="home-section">
+  <h2>一些故事</h2>
+  <p>2024年的某个深夜，我在调试一个 Agent 系统时，突然意识到：我们正在构建的不仅仅是代码，而是一种新的"数字生命"形态。它们能感知、能思考、能行动——虽然还很稚嫩，但未来可期。</p>
+
+  <p>这个博客的诞生，源于一个简单的愿望：<strong>我希望把自己学到的、思考的东西沉淀下来</strong>，不是为了炫耀，而是为了让自己真正理解。就像费曼说的，如果你不能简单地解释一件事，说明你还没真正理解它。</p>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <span class="timeline-date">2024</span>
+      <span class="timeline-content">开始深入研究 AI Agent 架构</span>
+    </div>
+    <div class="timeline-item">
+      <span class="timeline-date">2023</span>
+      <span class="timeline-content">系统性学习机器学习算法</span>
+    </div>
+    <div class="timeline-item">
+      <span class="timeline-date">2022</span>
+      <span class="timeline-content">从产品经理转型技术研发</span>
+    </div>
+  </div>
+</div>
+
+<div class="home-section">
+  <h2>找到我</h2>
+  <div class="social-links">
+    <a href="https://github.com/KeeganJin" class="social-link">
+      <span class="social-icon">GitHub</span>
+      <span class="social-desc">我的开源项目和代码</span>
+    </a>
+    <a href="/atom.xml" class="social-link">
+      <span class="social-icon">RSS</span>
+      <span class="social-desc">订阅这个博客的更新</span>
+    </a>
+  </div>
+</div>
+
+<style>
+.home-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 48px 0 32px;
+  border-bottom: 1px solid #E2E8F0;
+  margin-bottom: 40px;
+}
+
+.hero-text h1 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #1A202C;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.hero-subtitle {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 16px;
+  color: #64748B;
+  letter-spacing: 1px;
+}
+
+.hero-image {
+  margin-top: 32px;
+}
+
+.profile-photo {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #B87D4B;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.home-section {
+  margin-bottom: 48px;
+}
+
+.home-section h2 {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1A202C;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #B87D4B;
+  display: inline-block;
+}
+
+.home-section p {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #2D3748;
+  margin-bottom: 16px;
+}
+
+.quote-box {
+  background: #F3ECE3;
+  padding: 24px 32px;
+  border-radius: 8px;
+  border-left: 4px solid #B87D4B;
+  margin: 24px 0;
+}
+
+.quote-box blockquote {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 18px;
+  color: #1A202C;
+  margin: 0;
+  font-weight: 400;
+}
+
+.quote-author {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 13px;
+  color: #64748B;
+  margin-top: 12px;
+  text-align: right;
+}
+
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.activity-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.3s ease;
+}
+
+.activity-card:hover {
+  border-color: #B87D4B;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.card-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.activity-card h3 {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1A202C;
+  margin-bottom: 8px;
+}
+
+.activity-card p {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 14px;
+  color: #64748B;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.timeline {
+  margin-top: 24px;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px dashed #E2E8F0;
+}
+
+.timeline-date {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-weight: 700;
+  color: #B87D4B;
+  font-size: 14px;
+  min-width: 60px;
+}
+
+.timeline-content {
+  font-family: 'Noto Serif SC', serif;
+  color: #2D3748;
+  font-size: 15px;
+  margin-left: 16px;
+}
+
+.social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.social-link {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 24px;
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  min-width: 140px;
+}
+
+.social-link:hover {
+  border-color: #B87D4B;
+  background: #F3ECE3;
+}
+
+.social-icon {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1A202C;
+}
+
+.social-desc {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 12px;
+  color: #64748B;
+  margin-top: 4px;
+}
+
+@media (max-width: 768px) {
+  .home-hero {
+    padding: 32px 0 24px;
+  }
+
+  .hero-text h1 {
+    font-size: 24px;
+  }
+
+  .profile-photo {
+    width: 120px;
+    height: 120px;
+  }
+
+  .activity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .social-links {
+    flex-direction: column;
+  }
+}
+</style>
+  `;
+%>
+
+<article class="article article-type-page">
+  <div class="article-inner">
+    <div class="article-entry">
+      <%- homeContent %>
+    </div>
+  </div>
+</article>

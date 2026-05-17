@@ -1,6 +1,6 @@
 ---
 title: Agent 架构模式
-date: 2026-05-10
+date: 2026-03-01
 categories: [技术文档, Agent]
 lang: zh-CN
 tags: [Agent, 架构设计, 系统架构]

@@ -1,6 +1,6 @@
 ---
 title: 线性回归
-date: 2026-04-29
+date: 2025-10-15
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 线性回归, 监督学习]

@@ -1,6 +1,6 @@
 ---
 title: 多 Agent 竞争与博弈
-date: 2026-05-10
+date: 2026-04-01
 categories: [技术文档, Agent]
 lang: zh-CN
 tags: [Agent, Multi-Agent, 博弈论, 竞争]

@@ -1,6 +1,6 @@
 ---
 title: 注意力机制详解
-date: 2026-04-11
+date: 2026-01-01
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 深度学习, 注意力机制]

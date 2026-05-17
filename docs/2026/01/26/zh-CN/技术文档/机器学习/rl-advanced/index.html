@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>强化学习进阶 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="模型预测与规划Model-based强化学习学习环境模型，用于规划： 环境模型：  状态转移模型：$P(s’|s,a)$ 奖励模型：$R(s,a)$  Dyna算法结合Model-free和Model-based： 1231. 用真实经验更新Q（Q-Learning）2. 存储经验到记忆3. 用记忆模拟经验，多次更新Q  123456789101112131415161718class DynaQ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="强化学习进阶">
+<meta property="og:url" content="https://keeganjin.github.io/2026/01/26/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-advanced/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="模型预测与规划Model-based强化学习学习环境模型，用于规划： 环境模型：  状态转移模型：$P(s’|s,a)$ 奖励模型：$R(s,a)$  Dyna算法结合Model-free和Model-based： 1231. 用真实经验更新Q（Q-Learning）2. 存储经验到记忆3. 用记忆模拟经验，多次更新Q  123456789101112131415161718class DynaQ">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-01-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-17T16:20:37.799Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="RLHF">
+<meta property="article:tag" content="多智能体">
+<meta property="article:tag" content="强化学习">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+
+  <!-- Nordic Zen Fonts: Noto Serif SC for elegant reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+
+  <!-- MathJax for math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$', '$'], ['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Life Notes</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/机器学习/rl-advanced" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/01/26/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-advanced/" class="article-date">
+  <time class="dt-published" datetime="2026-01-25T16:00:00.000Z" itemprop="datePublished">2026-01-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      强化学习进阶
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="模型预测与规划"><a href="#模型预测与规划" class="headerlink" title="模型预测与规划"></a>模型预测与规划</h2><h3 id="Model-based强化学习"><a href="#Model-based强化学习" class="headerlink" title="Model-based强化学习"></a>Model-based强化学习</h3><p>学习环境模型，用于规划：</p>
+<p><strong>环境模型</strong>：</p>
+<ul>
+<li>状态转移模型：$P(s’|s,a)$</li>
+<li>奖励模型：$R(s,a)$</li>
+</ul>
+<h3 id="Dyna算法"><a href="#Dyna算法" class="headerlink" title="Dyna算法"></a>Dyna算法</h3><p>结合Model-free和Model-based：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 用真实经验更新Q（Q-Learning）</span><br><span class="line">2. 存储经验到记忆</span><br><span class="line">3. 用记忆模拟经验，多次更新Q</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">DynaQ</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, n_states, n_actions, n_planning=<span class="number">10</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.q_table = np.zeros((n_states, n_actions))</span><br><span class="line">        <span class="variable language_">self</span>.model = &#123;&#125;  <span class="comment"># 存储(s,a)-&gt;(r,s&#x27;)</span></span><br><span class="line">        <span class="variable language_">self</span>.n_planning = n_planning</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update</span>(<span class="params">self, state, action, reward, next_state</span>):</span><br><span class="line">        <span class="comment"># 直接学习</span></span><br><span class="line">        <span class="variable language_">self</span>.q_learning_update(state, action, reward, next_state)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 存储模型</span></span><br><span class="line">        <span class="variable language_">self</span>.model[(state, action)] = (reward, next_state)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 模拟规划</span></span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="variable language_">self</span>.n_planning):</span><br><span class="line">            s, a = random.choice(<span class="built_in">list</span>(<span class="variable language_">self</span>.model.keys()))</span><br><span class="line">            r, s_next = <span class="variable language_">self</span>.model[(s, a)]</span><br><span class="line">            <span class="variable language_">self</span>.q_learning_update(s, a, r, s_next)</span><br></pre></td></tr></table></figure>
+
+<h3 id="世界模型"><a href="#世界模型" class="headerlink" title="世界模型"></a>世界模型</h3><p>学习完整的环境模型：</p>
+<ul>
+<li>状态预测</li>
+<li>奖励预测</li>
+<li>用于高效规划</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">WorldModel</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, state_dim, action_dim</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 状态预测</span></span><br><span class="line">        <span class="variable language_">self</span>.state_net = nn.Sequential(</span><br><span class="line">            nn.Linear(state_dim + action_dim, <span class="number">128</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">128</span>, state_dim)</span><br><span class="line">        )</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 奖励预测</span></span><br><span class="line">        <span class="variable language_">self</span>.reward_net = nn.Sequential(</span><br><span class="line">            nn.Linear(state_dim + action_dim, <span class="number">64</span>),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.Linear(<span class="number">64</span>, <span class="number">1</span>)</span><br><span class="line">        )</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, state, action</span>):</span><br><span class="line">        x = torch.cat([state, action], dim=-<span class="number">1</span>)</span><br><span class="line">        next_state = <span class="variable language_">self</span>.state_net(x)</span><br><span class="line">        reward = <span class="variable language_">self</span>.reward_net(x)</span><br><span class="line">        <span class="keyword">return</span> next_state, reward</span><br></pre></td></tr></table></figure>
+
+<h3 id="MBPO"><a href="#MBPO" class="headerlink" title="MBPO"></a>MBPO</h3><p>Model-Based Policy Optimization：</p>
+<ul>
+<li>学习世界模型</li>
+<li>在模型上短时规划</li>
+<li>结合真实经验</li>
+</ul>
+<h2 id="多智能体强化学习"><a href="#多智能体强化学习" class="headerlink" title="多智能体强化学习"></a>多智能体强化学习</h2><h3 id="多智能体系统"><a href="#多智能体系统" class="headerlink" title="多智能体系统"></a>多智能体系统</h3><p>多个Agent在同一环境交互。</p>
+<p><strong>类型</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>合作</td>
+<td>共同目标</td>
+</tr>
+<tr>
+<td>竞争</td>
+<td>对抗目标</td>
+</tr>
+<tr>
+<td>混合</td>
+<td>合作+竞争</td>
+</tr>
+</tbody></table>
+<h3 id="多智能体挑战"><a href="#多智能体挑战" class="headerlink" title="多智能体挑战"></a>多智能体挑战</h3><table>
+<thead>
+<tr>
+<th>挑战</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>非平稳</td>
+<td>其他Agent策略变化</td>
+</tr>
+<tr>
+<td>信用分配</td>
+<td>团队奖励如何分配</td>
+</tr>
+<tr>
+<td>可扩展性</td>
+<td>Agent数量多时</td>
+</tr>
+</tbody></table>
+<h3 id="独立学习"><a href="#独立学习" class="headerlink" title="独立学习"></a>独立学习</h3><p>每个Agent独立学习：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">IndependentLearners</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, n_agents, state_dim, action_dim</span>):</span><br><span class="line">        <span class="variable language_">self</span>.agents = [DQNAgent(state_dim, action_dim) </span><br><span class="line">                       <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n_agents)]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">act</span>(<span class="params">self, states</span>):</span><br><span class="line">        actions = [agent.select_action(s) </span><br><span class="line">                   <span class="keyword">for</span> agent, s <span class="keyword">in</span> <span class="built_in">zip</span>(<span class="variable language_">self</span>.agents, states)]</span><br><span class="line">        <span class="keyword">return</span> actions</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update</span>(<span class="params">self, experiences</span>):</span><br><span class="line">        <span class="keyword">for</span> agent, exp <span class="keyword">in</span> <span class="built_in">zip</span>(<span class="variable language_">self</span>.agents, experiences):</span><br><span class="line">            agent.update(*exp)</span><br></pre></td></tr></table></figure>
+
+<h3 id="QMIX"><a href="#QMIX" class="headerlink" title="QMIX"></a>QMIX</h3><p>合作多智能体：</p>
+<ul>
+<li>集中训练，分散执行</li>
+<li>混合价值函数</li>
+</ul>
+<h3 id="MADDPG"><a href="#MADDPG" class="headerlink" title="MADDPG"></a>MADDPG</h3><p>多Agent DDPG：</p>
+<ul>
+<li>每个Agent有自己的Actor</li>
+<li>Critic看全局状态</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MADDPG</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, n_agents, state_dim, action_dim</span>):</span><br><span class="line">        <span class="variable language_">self</span>.actors = [ActorNetwork(state_dim, action_dim) </span><br><span class="line">                       <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n_agents)]</span><br><span class="line">        <span class="variable language_">self</span>.critics = [CriticNetwork(n_agents * state_dim, </span><br><span class="line">                                       n_agents * action_dim)</span><br><span class="line">                        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n_agents)]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">act</span>(<span class="params">self, observations</span>):</span><br><span class="line">        actions = [actor(obs) <span class="keyword">for</span> actor, obs <span class="keyword">in</span> <span class="built_in">zip</span>(<span class="variable language_">self</span>.actors, observations)]</span><br><span class="line">        <span class="keyword">return</span> actions</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update</span>(<span class="params">self, batch</span>):</span><br><span class="line">        <span class="comment"># 每个Agent用自己的Critic评估全局</span></span><br><span class="line">        <span class="keyword">for</span> i, (actor, critic) <span class="keyword">in</span> <span class="built_in">enumerate</span>(<span class="built_in">zip</span>(<span class="variable language_">self</span>.actors, <span class="variable language_">self</span>.critics)):</span><br><span class="line">            <span class="comment"># 计算Q_i(o, a_1, ..., a_n)</span></span><br><span class="line">            full_states = torch.cat(batch.states)</span><br><span class="line">            full_actions = torch.cat(batch.actions)</span><br><span class="line">            q_value = critic(full_states, full_actions)</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 更新Actor</span></span><br><span class="line">            action_i = actor(batch.observations[i])</span><br><span class="line">            loss = -q_value.mean()</span><br><span class="line">            </span><br><span class="line">            actor_optimizer.zero_grad()</span><br><span class="line">            loss.backward()</span><br><span class="line">            actor_optimizer.step()</span><br></pre></td></tr></table></figure>
+
+<h3 id="自我对弈"><a href="#自我对弈" class="headerlink" title="自我对弈"></a>自我对弈</h3><p>Agent与自己博弈：</p>
+<ul>
+<li>两个相同策略对弈</li>
+<li>不断改进</li>
+</ul>
+<h2 id="RLHF人类反馈强化学习"><a href="#RLHF人类反馈强化学习" class="headerlink" title="RLHF人类反馈强化学习"></a>RLHF人类反馈强化学习</h2><h3 id="RLHF原理"><a href="#RLHF原理" class="headerlink" title="RLHF原理"></a>RLHF原理</h3><p>用人类反馈训练LLM：</p>
+<ul>
+<li>人类评价模型输出</li>
+<li>学习奖励模型</li>
+<li>用RL优化策略</li>
+</ul>
+<h3 id="RLHF流程"><a href="#RLHF流程" class="headerlink" title="RLHF流程"></a>RLHF流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. 预训练模型（SFT）</span><br><span class="line">2. 收集人类比较数据</span><br><span class="line">3. 训练奖励模型</span><br><span class="line">4. 用PPO优化策略</span><br></pre></td></tr></table></figure>
+
+<h3 id="奖励模型学习"><a href="#奖励模型学习" class="headerlink" title="奖励模型学习"></a>奖励模型学习</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RewardModel</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="variable language_">self</span>.model = model  <span class="comment"># 基于LLM</span></span><br><span class="line">        <span class="variable language_">self</span>.reward_head = nn.Linear(hidden_dim, <span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, text</span>):</span><br><span class="line">        hidden = <span class="variable language_">self</span>.model.encode(text)</span><br><span class="line">        reward = <span class="variable language_">self</span>.reward_head(hidden)</span><br><span class="line">        <span class="keyword">return</span> reward</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">train_reward_model</span>(<span class="params">reward_model, comparisons</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    comparisons: [(text_a, text_b, winner)]</span></span><br><span class="line"><span class="string">    winner: 0 if a better, 1 if b better</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> text_a, text_b, winner <span class="keyword">in</span> comparisons:</span><br><span class="line">        r_a = reward_model(text_a)</span><br><span class="line">        r_b = reward_model(text_b)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Bradley-Terry模型</span></span><br><span class="line">        prob_a = torch.sigmoid(r_a - r_b)</span><br><span class="line">        loss = -torch.log(prob_a) <span class="keyword">if</span> winner == <span class="number">0</span> <span class="keyword">else</span> -torch.log(<span class="number">1</span> - prob_a)</span><br><span class="line">        </span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br></pre></td></tr></table></figure>
+
+<h3 id="PPO训练"><a href="#PPO训练" class="headerlink" title="PPO训练"></a>PPO训练</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">rlhf_ppo_train</span>(<span class="params">policy, reward_model, prompts</span>):</span><br><span class="line">    <span class="keyword">for</span> prompt <span class="keyword">in</span> prompts:</span><br><span class="line">        <span class="comment"># 生成回复</span></span><br><span class="line">        response = policy.generate(prompt)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 计算奖励</span></span><br><span class="line">        reward = reward_model(prompt + response)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># PPO更新</span></span><br><span class="line">        <span class="comment"># KL惩罚防止偏离太远</span></span><br><span class="line">        ref_log_prob = reference_model.log_prob(response)</span><br><span class="line">        policy_log_prob = policy.log_prob(response)</span><br><span class="line">        kl_penalty = kl_divergence(policy_log_prob, ref_log_prob)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 最终奖励</span></span><br><span class="line">        final_reward = reward - kl_coef * kl_penalty</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># PPO损失</span></span><br><span class="line">        ppo_loss = compute_ppo_loss(policy, response, final_reward)</span><br><span class="line">        </span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        ppo_loss.backward()</span><br><span class="line">        optimizer.step()</span><br></pre></td></tr></table></figure>
+
+<h3 id="RLHF应用"><a href="#RLHF应用" class="headerlink" title="RLHF应用"></a>RLHF应用</h3><table>
+<thead>
+<tr>
+<th>应用</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ChatGPT</td>
+<td>OpenAI对话模型</td>
+</tr>
+<tr>
+<td>Claude</td>
+<td>Anthropic助手</td>
+</tr>
+<tr>
+<td>LLaMA-2-chat</td>
+<td>Meta对话模型</td>
+</tr>
+</tbody></table>
+<h2 id="强化学习应用案例"><a href="#强化学习应用案例" class="headerlink" title="强化学习应用案例"></a>强化学习应用案例</h2><h3 id="游戏AI"><a href="#游戏AI" class="headerlink" title="游戏AI"></a>游戏AI</h3><p><strong>AlphaGo</strong>：</p>
+<ul>
+<li>策略网络+价值网络</li>
+<li>蒙特卡洛树搜索</li>
+<li>自我对弈训练</li>
+</ul>
+<p><strong>AlphaZero</strong>：</p>
+<ul>
+<li>不需人类知识</li>
+<li>纯自我对弈</li>
+<li>适用于多种游戏</li>
+</ul>
+<h3 id="推荐系统"><a href="#推荐系统" class="headerlink" title="推荐系统"></a>推荐系统</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">RecommenderRL</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, user_features, item_features</span>):</span><br><span class="line">        <span class="variable language_">self</span>.state_dim = user_feature_dim</span><br><span class="line">        <span class="variable language_">self</span>.action_dim = num_items</span><br><span class="line">        </span><br><span class="line">        <span class="variable language_">self</span>.policy = PolicyNetwork(<span class="variable language_">self</span>.state_dim, <span class="variable language_">self</span>.action_dim)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_state</span>(<span class="params">self, user_history</span>):</span><br><span class="line">        <span class="comment"># 用户历史编码为状态</span></span><br><span class="line">        <span class="keyword">return</span> encode_history(user_history)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">recommend</span>(<span class="params">self, user_state</span>):</span><br><span class="line">        probs = <span class="variable language_">self</span>.policy(user_state)</span><br><span class="line">        <span class="keyword">return</span> torch.multinomial(probs, <span class="number">10</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update</span>(<span class="params">self, user_state, action, feedback</span>):</span><br><span class="line">        <span class="comment"># 反馈为奖励（点击/购买）</span></span><br><span class="line">        reward = feedback</span><br><span class="line">        <span class="comment"># 策略梯度更新</span></span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
+
+<h3 id="机器人控制"><a href="#机器人控制" class="headerlink" title="机器人控制"></a>机器人控制</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">train_robot_control</span>():</span><br><span class="line">    env = RobotEnv()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># SAC算法（适合连续控制）</span></span><br><span class="line">    agent = SAC(state_dim=robot_state_dim, </span><br><span class="line">                action_dim=robot_action_dim)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> episode <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10000</span>):</span><br><span class="line">        state = env.reset()</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            action = agent.select_action(state)</span><br><span class="line">            next_state, reward, done = env.step(action)</span><br><span class="line">            </span><br><span class="line">            agent.update(state, action, reward, next_state)</span><br><span class="line">            </span><br><span class="line">            state = next_state</span><br><span class="line">            <span class="keyword">if</span> done:</span><br><span class="line">                <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="资源管理"><a href="#资源管理" class="headerlink" title="资源管理"></a>资源管理</h3><p>数据中心冷却控制：</p>
+<ul>
+<li>状态：温度、负载</li>
+<li>动作：风扇转速、空调</li>
+<li>奖励：能耗最小化</li>
+</ul>
+<h2 id="强化学习前沿"><a href="#强化学习前沿" class="headerlink" title="强化学习前沿"></a>强化学习前沿</h2><h3 id="Offline-RL"><a href="#Offline-RL" class="headerlink" title="Offline RL"></a>Offline RL</h3><p>从历史数据学习，不交互：</p>
+<p><strong>挑战</strong>：</p>
+<ul>
+<li>分布偏移</li>
+<li>数据质量</li>
+</ul>
+<p><strong>方法</strong>：</p>
+<ul>
+<li>Conservative Q-Learning</li>
+<li>Batch RL</li>
+</ul>
+<h3 id="分布式RL"><a href="#分布式RL" class="headerlink" title="分布式RL"></a>分布式RL</h3><p>大规模并行训练：</p>
+<ul>
+<li>IMPALA</li>
+<li>Ape-X</li>
+<li>RLlib</li>
+</ul>
+<h3 id="安全RL"><a href="#安全RL" class="headerlink" title="安全RL"></a>安全RL</h3><p>考虑安全约束：</p>
+<ul>
+<li>Constrained Policy Optimization</li>
+<li>Safe RL with constraints</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">constrained_update</span>(<span class="params">policy, cost_limit</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;带约束的策略更新&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 主目标：最大化奖励</span></span><br><span class="line">    reward_objective = compute_reward_gradient()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 安全约束：成本不超过限制</span></span><br><span class="line">    cost_objective = compute_cost_gradient()</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># Lagrange优化</span></span><br><span class="line">    <span class="keyword">while</span> estimated_cost &gt; cost_limit:</span><br><span class="line">        increase_lambda()</span><br><span class="line">        update_with_constraint(reward_objective, cost_objective, <span class="keyword">lambda</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="层次化RL"><a href="#层次化RL" class="headerlink" title="层次化RL"></a>层次化RL</h3><p>分层决策：</p>
+<ul>
+<li>高层：设定子目标</li>
+<li>低层：执行子任务</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">HierarchicalAgent</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.high_policy = HighLevelPolicy()  <span class="comment"># 选择子目标</span></span><br><span class="line">        <span class="variable language_">self</span>.low_policy = LowLevelPolicy()    <span class="comment"># 执行子目标</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">act</span>(<span class="params">self, state</span>):</span><br><span class="line">        <span class="comment"># 高层定期决策</span></span><br><span class="line">        <span class="keyword">if</span> should_decide_goal():</span><br><span class="line">            goal = <span class="variable language_">self</span>.high_policy(state)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 低层执行</span></span><br><span class="line">        action = <span class="variable language_">self</span>.low_policy(state, goal)</span><br><span class="line">        <span class="keyword">return</span> action</span><br></pre></td></tr></table></figure>
+
+<h2 id="强化学习最佳实践"><a href="#强化学习最佳实践" class="headerlink" title="强化学习最佳实践"></a>强化学习最佳实践</h2><h3 id="环境设计"><a href="#环境设计" class="headerlink" title="环境设计"></a>环境设计</h3><table>
+<thead>
+<tr>
+<th>建议</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>合理奖励</td>
+<td>与目标一致</td>
+</tr>
+<tr>
+<td>适当稀疏</td>
+<td>平衡学习难度</td>
+</tr>
+<tr>
+<td>清晰终止</td>
+<td>明确结束条件</td>
+</tr>
+</tbody></table>
+<h3 id="网络设计"><a href="#网络设计" class="headerlink" title="网络设计"></a>网络设计</h3><table>
+<thead>
+<tr>
+<th>建议</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>适当规模</td>
+<td>不太大</td>
+</tr>
+<tr>
+<td>稳定架构</td>
+<td>经典结构</td>
+</tr>
+<tr>
+<td>正则化</td>
+<td>防过拟合</td>
+</tr>
+</tbody></table>
+<h3 id="训练技巧"><a href="#训练技巧" class="headerlink" title="训练技巧"></a>训练技巧</h3><table>
+<thead>
+<tr>
+<th>技巧</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>学习率</td>
+<td>适当衰减</td>
+</tr>
+<tr>
+<td>探索</td>
+<td>逐渐减少</td>
+</tr>
+<tr>
+<td>监控</td>
+<td>跟踪指标</td>
+</tr>
+<tr>
+<td>调试</td>
+<td>可视化决策</td>
+</tr>
+</tbody></table>
+<h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>不收敛</td>
+<td>检查奖励、学习率</td>
+</tr>
+<tr>
+<td>性能差</td>
+<td>增探索、调网络</td>
+</tr>
+<tr>
+<td>过拟合</td>
+<td>数据多样性</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>强化学习进阶涵盖高级主题。核心内容包括：</p>
+<ul>
+<li>Model-based方法：学习环境模型用于规划</li>
+<li>多智能体RL：合作、竞争、混合场景</li>
+<li>RLHF：人类反馈训练LLM</li>
+<li>应用案例：游戏AI、推荐、机器人</li>
+<li>前沿方向：Offline RL、安全RL、层次化RL</li>
+</ul>
+<p>强化学习应用广泛，持续发展。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-introduction/">强化学习基础</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-value-based/">基于价值的方法</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-policy-based/">基于策略的方法</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/llm-architecture/">大模型架构演进</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/01/26/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-advanced/" data-id="cuidw6x5H9FlteLuRUu8pfSmJ" data-title="强化学习进阶" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RLHF/" rel="tag">RLHF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A4%9A%E6%99%BA%E8%83%BD%E4%BD%93/" rel="tag">多智能体</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/" rel="tag">强化学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/02/01/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/llm-architecture/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          大模型架构演进
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/01/23/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-policy-based/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">基于策略的方法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><span class="category-list-count">77</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">50</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/LM-2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/17/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/02/">二月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">一月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a><span class="archive-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        All content licensed under CC BY 4.0
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

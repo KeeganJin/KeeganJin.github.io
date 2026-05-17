@@ -1,47 +1,58 @@
-// https://github.com/chriskempson/tomorrow-theme
-highlight-background = #2d2d2d
-highlight-current-line = #393939
-highlight-selection = #515151
-highlight-foreground = #cccccc
-highlight-comment = #999999
-highlight-red = #f2777a
-highlight-orange = #f99157
-highlight-yellow = #ffcc66
-highlight-green = #99cc99
-highlight-aqua = #66cccc
-highlight-blue = #6699cc
-highlight-purple = #cc99cc
+// ========================================
+// Nordic Zen Code Highlight (北欧极简白代码高亮)
+// ========================================
+// Warm, readable code blocks with Fira Code
+
+highlight-background = #F7F5F2  // 温暖米白背景
+highlight-current-line = #E2E8F0
+highlight-selection = #E2E8F0
+highlight-foreground = #2D3748
+highlight-comment = #64748B
+highlight-red = #B87D4B  // 暖赭色
+highlight-orange = #C97B4B
+highlight-yellow = #A68B5B
+highlight-green = #2B5F43  // 森林绿
+highlight-aqua = #5B8A72
+highlight-blue = #4A6FA5
+highlight-purple = #7B6B8D
 
 $code-block
   background: highlight-background
-  margin: 0 article-padding * -1
-  padding: 15px article-padding
+  margin: 1em article-padding * -1
+  padding: 20px article-padding
   border-style: solid
   border-color: color-border
   border-width: 1px 0
+  border-radius: 0
   overflow: auto
   color: highlight-foreground
-  line-height: font-size * line-height
+  line-height: 1.6
+  font-family: font-mono
+  font-size: 14px
 
 $line-numbers
-  color: #666
-  font-size: 0.85em
+  color: color-grey
+  font-size: 13px
+  font-family: font-mono
 
 .article-entry
   pre, code
     font-family: font-mono
   code
-    background: color-background
-    text-shadow: 0 1px #fff
-    padding: 0 0.3em
+    background: color-widget-background
+    padding: 2px 6px
+    border-radius: radius-sm
+    font-size: 0.9em
+    color: highlight-red
   pre
     @extend $code-block
     code
       background: none
-      text-shadow: none
       padding: 0
   .highlight
     @extend $code-block
+    margin: 1.5em article-padding * -1
+    border-radius: radius-md
     pre
       border: none
       margin: 0
@@ -58,28 +69,31 @@ $line-numbers
       color: highlight-comment
       line-height: 1em
       margin-bottom: 1em
+      font-family: font-sans
       a
         float: right
+        color: color-link
     .gutter
-      -moz-user-select: none;
-      -ms-user-select: none;
-      -webkit-user-select: none;
-      user-select: none;
+      -moz-user-select: none
+      -ms-user-select: none
+      -webkit-user-select: none
+      user-select: none
       pre
         @extend $line-numbers
         text-align: right
         padding-right: 20px
     .line
-      height: font-size * line-height
+      height: 22px
     .line.marked
       background: highlight-selection
   .gist
-    margin: 0 article-padding * -1
+    margin: 1em article-padding * -1
     border-style: solid
     border-color: color-border
     border-width: 1px 0
     background: highlight-background
-    padding: 15px article-padding 15px 0
+    padding: 20px article-padding 20px 0
+    border-radius: radius-md
     .gist-file
       border: none
       font-family: font-mono
@@ -102,7 +116,6 @@ $line-numbers
         background: highlight-background
         color: highlight-comment
         font: 0.85em font-sans
-        text-shadow: 0 0
         padding: 0
         margin-top: 1em
         margin-left: article-padding
@@ -112,6 +125,7 @@ $line-numbers
           &:hover
             text-decoration: underline
 
+// Syntax highlighting colors
 pre
   .comment
   .title

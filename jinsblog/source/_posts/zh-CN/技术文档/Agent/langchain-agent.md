@@ -1,6 +1,6 @@
 ---
 title: LangChain Agent 实践
-date: 2026-05-10
+date: 2026-03-16
 categories: [技术文档, Agent]
 lang: zh-CN
 tags: [Agent, LangChain, LangGraph]

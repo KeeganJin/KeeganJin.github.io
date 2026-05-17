@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>代码助手 Agent | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="代码助手的应用场景代码助手 Agent 是 Agent 技术在软件开发领域的应用，可以辅助开发者完成各种编程任务。 主要应用场景   场景 描述    代码生成 根据需求生成代码   代码补全 智能补全代码片段   Bug 修复 分析和修复代码错误   代码重构 优化代码结构和质量   代码审查 检查代码问题和改进建议   文档生成 自动生成代码文档   测试生成 生成单元测试代码   代码助手的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码助手 Agent">
+<meta property="og:url" content="https://keeganjin.github.io/2026/04/07/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/code-assistant-agent/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="代码助手的应用场景代码助手 Agent 是 Agent 技术在软件开发领域的应用，可以辅助开发者完成各种编程任务。 主要应用场景   场景 描述    代码生成 根据需求生成代码   代码补全 智能补全代码片段   Bug 修复 分析和修复代码错误   代码重构 优化代码结构和质量   代码审查 检查代码问题和改进建议   文档生成 自动生成代码文档   测试生成 生成单元测试代码   代码助手的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-17T16:21:20.726Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="代码助手">
+<meta property="article:tag" content="开发工具">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+
+  <!-- Nordic Zen Fonts: Noto Serif SC for elegant reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+
+  <!-- MathJax for math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$', '$'], ['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Life Notes</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/Agent/code-assistant-agent" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/04/07/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/code-assistant-agent/" class="article-date">
+  <time class="dt-published" datetime="2026-04-06T16:00:00.000Z" itemprop="datePublished">2026-04-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      代码助手 Agent
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="代码助手的应用场景"><a href="#代码助手的应用场景" class="headerlink" title="代码助手的应用场景"></a>代码助手的应用场景</h2><p>代码助手 Agent 是 Agent 技术在软件开发领域的应用，可以辅助开发者完成各种编程任务。</p>
+<h3 id="主要应用场景"><a href="#主要应用场景" class="headerlink" title="主要应用场景"></a>主要应用场景</h3><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>代码生成</td>
+<td>根据需求生成代码</td>
+</tr>
+<tr>
+<td>代码补全</td>
+<td>智能补全代码片段</td>
+</tr>
+<tr>
+<td>Bug 修复</td>
+<td>分析和修复代码错误</td>
+</tr>
+<tr>
+<td>代码重构</td>
+<td>优化代码结构和质量</td>
+</tr>
+<tr>
+<td>代码审查</td>
+<td>检查代码问题和改进建议</td>
+</tr>
+<tr>
+<td>文档生成</td>
+<td>自动生成代码文档</td>
+</tr>
+<tr>
+<td>测试生成</td>
+<td>生成单元测试代码</td>
+</tr>
+</tbody></table>
+<h3 id="代码助手的价值"><a href="#代码助手的价值" class="headerlink" title="代码助手的价值"></a>代码助手的价值</h3><ul>
+<li><strong>提高效率</strong>：减少重复性编码工作</li>
+<li><strong>降低门槛</strong>：帮助新手编写高质量代码</li>
+<li><strong>提升质量</strong>：自动检查和优化代码</li>
+<li><strong>加速学习</strong>：提供代码示例和解释</li>
+</ul>
+<h2 id="核心能力：代码生成、调试、重构"><a href="#核心能力：代码生成、调试、重构" class="headerlink" title="核心能力：代码生成、调试、重构"></a>核心能力：代码生成、调试、重构</h2><h3 id="代码生成能力"><a href="#代码生成能力" class="headerlink" title="代码生成能力"></a>代码生成能力</h3><p>代码助手可以根据自然语言描述生成代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用户输入</span></span><br><span class="line"><span class="string">&quot;写一个 Python 函数计算斐波那契数列&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Agent 输出</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fibonacci</span>(<span class="params">n</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;计算斐波那契数列的第n项&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> n &lt;= <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">elif</span> n == <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> fibonacci(n-<span class="number">1</span>) + fibonacci(n-<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者更高效的迭代版本</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">fibonacci_iterative</span>(<span class="params">n</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;使用迭代计算斐波那契数列&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> n &lt;= <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    a, b = <span class="number">0</span>, <span class="number">1</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">        a, b = b, a + b</span><br><span class="line">    <span class="keyword">return</span> a</span><br></pre></td></tr></table></figure>
+
+<h3 id="代码生成实现"><a href="#代码生成实现" class="headerlink" title="代码生成实现"></a>代码生成实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.agents <span class="keyword">import</span> AgentExecutor, create_openai_functions_agent</span><br><span class="line"><span class="keyword">from</span> langchain.tools <span class="keyword">import</span> tool</span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_code</span>(<span class="params">description: <span class="built_in">str</span>, language: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;根据描述生成代码</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        description: 功能描述</span></span><br><span class="line"><span class="string">        language: 编程语言</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        生成的代码</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    根据以下描述生成 <span class="subst">&#123;language&#125;</span> 代码：</span></span><br><span class="line"><span class="string">    <span class="subst">&#123;description&#125;</span></span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    要求：</span></span><br><span class="line"><span class="string">    1. 代码清晰易读</span></span><br><span class="line"><span class="string">    2. 包含必要注释</span></span><br><span class="line"><span class="string">    3. 处理边界情况</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> llm.generate(prompt)</span><br></pre></td></tr></table></figure>
+
+<h3 id="调试能力"><a href="#调试能力" class="headerlink" title="调试能力"></a>调试能力</h3><p>代码助手可以帮助分析和修复代码错误：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 用户输入错误代码</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="keyword">return</span> a / b  <span class="comment"># 可能产生 ZeroDivisionError</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Agent 分析和修复</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">divide</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;安全的除法函数&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> b == <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;除数不能为零&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> a / b</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或者返回 None 处理</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">divide_safe</span>(<span class="params">a, b</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;安全除法，返回 None 处理错误&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">return</span> a / b</span><br><span class="line">    <span class="keyword">except</span> ZeroDivisionError:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="调试实现"><a href="#调试实现" class="headerlink" title="调试实现"></a>调试实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">debug_code</span>(<span class="params">code: <span class="built_in">str</span>, error_message: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;调试代码错误</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        code: 有问题的代码</span></span><br><span class="line"><span class="string">        error_message: 错误信息</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        修复后的代码和解释</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    分析以下代码的错误：</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    代码：</span></span><br><span class="line"><span class="string">    <span class="subst">&#123;code&#125;</span></span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    错误信息：</span></span><br><span class="line"><span class="string">    <span class="subst">&#123;error_message&#125;</span></span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    请：</span></span><br><span class="line"><span class="string">    1. 分析错误原因</span></span><br><span class="line"><span class="string">    2. 提供修复方案</span></span><br><span class="line"><span class="string">    3. 解释修复逻辑</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> llm.generate(prompt)</span><br></pre></td></tr></table></figure>
+
+<h3 id="重构能力"><a href="#重构能力" class="headerlink" title="重构能力"></a>重构能力</h3><p>代码助手可以优化代码结构：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 原始代码（冗长、重复）</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">process_data</span>(<span class="params">data</span>):</span><br><span class="line">    result = []</span><br><span class="line">    <span class="keyword">for</span> item <span class="keyword">in</span> data:</span><br><span class="line">        <span class="keyword">if</span> item &gt; <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">if</span> item &lt; <span class="number">10</span>:</span><br><span class="line">                result.append(item * <span class="number">2</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                result.append(item * <span class="number">3</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            result.append(<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"><span class="comment"># Agent 重构后（简洁、函数化）</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">process_data</span>(<span class="params">data</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;处理数据，正数按范围乘不同因子&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> [</span><br><span class="line">        item * <span class="number">2</span> <span class="keyword">if</span> <span class="number">0</span> &lt; item &lt; <span class="number">10</span> </span><br><span class="line">        <span class="keyword">else</span> item * <span class="number">3</span> <span class="keyword">if</span> item &gt; <span class="number">0</span> </span><br><span class="line">        <span class="keyword">else</span> <span class="number">0</span> </span><br><span class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> data</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 或更清晰的版本</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">calculate_multiplier</span>(<span class="params">value: <span class="built_in">float</span></span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;计算乘数因子&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> value &lt;= <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">elif</span> value &lt; <span class="number">10</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">2</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">process_data</span>(<span class="params">data: <span class="built_in">list</span></span>) -&gt; <span class="built_in">list</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;处理数据列表&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> [item * calculate_multiplier(item) <span class="keyword">for</span> item <span class="keyword">in</span> data]</span><br></pre></td></tr></table></figure>
+
+<h2 id="实现要点：代码理解、工具集成"><a href="#实现要点：代码理解、工具集成" class="headerlink" title="实现要点：代码理解、工具集成"></a>实现要点：代码理解、工具集成</h2><h3 id="代码理解能力"><a href="#代码理解能力" class="headerlink" title="代码理解能力"></a>代码理解能力</h3><p>代码助手需要理解代码的语义：</p>
+<h4 id="静态分析"><a href="#静态分析" class="headerlink" title="静态分析"></a>静态分析</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">analyze_code</span>(<span class="params">code: <span class="built_in">str</span></span>) -&gt; <span class="built_in">dict</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;静态分析代码</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        分析结果，包括结构、依赖、潜在问题</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 解析代码结构</span></span><br><span class="line">    tree = ast.parse(code)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 提取信息</span></span><br><span class="line">    functions = [node.name <span class="keyword">for</span> node <span class="keyword">in</span> ast.walk(tree) <span class="keyword">if</span> <span class="built_in">isinstance</span>(node, ast.FunctionDef)]</span><br><span class="line">    imports = [node.module <span class="keyword">for</span> node <span class="keyword">in</span> ast.walk(tree) <span class="keyword">if</span> <span class="built_in">isinstance</span>(node, ast.Import)]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;functions&quot;</span>: functions,</span><br><span class="line">        <span class="string">&quot;imports&quot;</span>: imports,</span><br><span class="line">        <span class="string">&quot;complexity&quot;</span>: calculate_complexity(code),</span><br><span class="line">        <span class="string">&quot;issues&quot;</span>: detect_issues(code)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="语义理解"><a href="#语义理解" class="headerlink" title="语义理解"></a>语义理解</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">understand_code</span>(<span class="params">code: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;理解代码语义</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        代码功能描述</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    分析以下代码的功能：</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    <span class="subst">&#123;code&#125;</span></span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    请描述：</span></span><br><span class="line"><span class="string">    1. 代码的主要功能</span></span><br><span class="line"><span class="string">    2. 关键算法或逻辑</span></span><br><span class="line"><span class="string">    3. 输入输出说明</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> llm.generate(prompt)</span><br></pre></td></tr></table></figure>
+
+<h3 id="工具集成"><a href="#工具集成" class="headerlink" title="工具集成"></a>工具集成</h3><p>代码助手需要集成多种工具：</p>
+<h4 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read_file</span>(<span class="params">file_path: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;读取文件内容&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;r&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">write_file</span>(<span class="params">file_path: <span class="built_in">str</span>, content: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;写入文件&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(content)</span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;文件已保存: <span class="subst">&#123;file_path&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="代码执行"><a href="#代码执行" class="headerlink" title="代码执行"></a>代码执行</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">execute_code</span>(<span class="params">code: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;执行 Python 代码并返回结果&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="comment"># 安全执行环境</span></span><br><span class="line">        namespace = &#123;<span class="string">&quot;__builtins__&quot;</span>: &#123;&#125;&#125;</span><br><span class="line">        <span class="built_in">exec</span>(code, namespace)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">str</span>(namespace.get(<span class="string">&quot;result&quot;</span>, <span class="string">&quot;执行成功&quot;</span>))</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;执行错误: <span class="subst">&#123;<span class="built_in">str</span>(e)&#125;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Git-操作"><a href="#Git-操作" class="headerlink" title="Git 操作"></a>Git 操作</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">git_status</span>() -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;查看 Git 状态&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">import</span> subprocess</span><br><span class="line">    result = subprocess.run([<span class="string">&quot;git&quot;</span>, <span class="string">&quot;status&quot;</span>], capture_output=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> result.stdout</span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">git_commit</span>(<span class="params">message: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;提交代码&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">import</span> subprocess</span><br><span class="line">    subprocess.run([<span class="string">&quot;git&quot;</span>, <span class="string">&quot;add&quot;</span>, <span class="string">&quot;.&quot;</span>])</span><br><span class="line">    subprocess.run([<span class="string">&quot;git&quot;</span>, <span class="string">&quot;commit&quot;</span>, <span class="string">&quot;-m&quot;</span>, message])</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;提交成功&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="案例分析：Devin、Cursor"><a href="#案例分析：Devin、Cursor" class="headerlink" title="案例分析：Devin、Cursor"></a>案例分析：Devin、Cursor</h2><h3 id="Devin-案例分析"><a href="#Devin-案例分析" class="headerlink" title="Devin 案例分析"></a>Devin 案例分析</h3><p>Devin 是一个全自主的代码助手 Agent。</p>
+<h4 id="Devin-的特点"><a href="#Devin-的特点" class="headerlink" title="Devin 的特点"></a>Devin 的特点</h4><table>
+<thead>
+<tr>
+<th>特点</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>全自主</td>
+<td>独立完成整个开发任务</td>
+</tr>
+<tr>
+<td>环境管理</td>
+<td>可以创建和管理开发环境</td>
+</tr>
+<tr>
+<td>长任务</td>
+<td>处理复杂的多步骤任务</td>
+</tr>
+<tr>
+<td>人类协作</td>
+<td>关键节点请求人类介入</td>
+</tr>
+<tr>
+<td>实时展示</td>
+<td>实时展示工作过程</td>
+</tr>
+</tbody></table>
+<h4 id="Devin-的能力"><a href="#Devin-的能力" class="headerlink" title="Devin 的能力"></a>Devin 的能力</h4><ol>
+<li><strong>需求理解</strong>：理解复杂的开发需求</li>
+<li><strong>环境搭建</strong>：安装依赖、配置环境</li>
+<li><strong>代码开发</strong>：编写完整代码</li>
+<li><strong>测试验证</strong>：运行测试、修复 Bug</li>
+<li><strong>部署发布</strong>：完成部署流程</li>
+</ol>
+<h4 id="Devin-工作流程"><a href="#Devin-工作流程" class="headerlink" title="Devin 工作流程"></a>Devin 工作流程</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">用户任务 → Devin 分析 → 规划步骤 → </span><br><span class="line">创建环境 → 开发代码 → 测试 → </span><br><span class="line">修复问题 → 验证完成 → 交付结果</span><br></pre></td></tr></table></figure>
+
+<h3 id="Cursor-案例分析"><a href="#Cursor-案例分析" class="headerlink" title="Cursor 案例分析"></a>Cursor 案例分析</h3><p>Cursor 是一个 IDE 集成的代码助手。</p>
+<h4 id="Cursor-的特点"><a href="#Cursor-的特点" class="headerlink" title="Cursor 的特点"></a>Cursor 的特点</h4><table>
+<thead>
+<tr>
+<th>特点</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>IDE集成</td>
+<td>直接在编辑器中使用</td>
+</tr>
+<tr>
+<td>实时辅助</td>
+<td>边写边辅助</td>
+</tr>
+<tr>
+<td>Chat功能</td>
+<td>对话式辅助</td>
+</tr>
+<tr>
+<td>上下文理解</td>
+<td>理解整个项目代码</td>
+</tr>
+<tr>
+<td>快捷键</td>
+<td>快速触发辅助</td>
+</tr>
+</tbody></table>
+<h4 id="Cursor-的功能"><a href="#Cursor-的功能" class="headerlink" title="Cursor 的功能"></a>Cursor 的功能</h4><ol>
+<li><strong>代码补全</strong>：智能补全代码</li>
+<li><strong>代码生成</strong>：根据描述生成代码</li>
+<li><strong>代码解释</strong>：解释代码功能</li>
+<li><strong>重构建议</strong>：提出重构方案</li>
+<li><strong>问题修复</strong>：帮助修复 Bug</li>
+</ol>
+<h4 id="Cursor-使用模式"><a href="#Cursor-使用模式" class="headerlink" title="Cursor 使用模式"></a>Cursor 使用模式</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Chat模式：对话解决问题</span><br><span class="line">Composer模式：多文件编辑</span><br><span class="line">Apply模式：应用建议修改</span><br></pre></td></tr></table></figure>
+
+<h3 id="代码助手-Agent-架构"><a href="#代码助手-Agent-架构" class="headerlink" title="代码助手 Agent 架构"></a>代码助手 Agent 架构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────┐</span><br><span class="line">│           代码助手 Agent            │</span><br><span class="line">│                                     │</span><br><span class="line">│  ┌─────────┐ ┌─────────┐ ┌────────┐│</span><br><span class="line">│  │代码理解 │ │代码生成 │ │代码执行 ││</span><br><span class="line">│  │ 模块    │ │ 模块    │ │ 模块   ││</span><br><span class="line">│  └─────────┘ └─────────┘ └────────┘│</span><br><span class="line">│                                     │</span><br><span class="line">│  ┌─────────────────────────────┐   │</span><br><span class="line">│  │         工具集成            │   │</span><br><span class="line">│  │  文件 | Git | 测试 | Lint   │   │</span><br><span class="line">│  └─────────────────────────────┘   │</span><br><span class="line">│                                     │</span><br><span class="line">│  ┌─────────────────────────────┐   │</span><br><span class="line">│  │         项目上下文          │   │</span><br><span class="line">│  │  文件结构 | 依赖 | 历史记录 │   │</span><br><span class="line">│  └─────────────────────────────┘   │</span><br><span class="line">└─────────────────────────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h2 id="代码助手-Agent-实现示例"><a href="#代码助手-Agent-实现示例" class="headerlink" title="代码助手 Agent 实现示例"></a>代码助手 Agent 实现示例</h2><h3 id="完整实现"><a href="#完整实现" class="headerlink" title="完整实现"></a>完整实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.agents <span class="keyword">import</span> AgentExecutor, create_openai_functions_agent</span><br><span class="line"><span class="keyword">from</span> langchain.chat_models <span class="keyword">import</span> ChatOpenAI</span><br><span class="line"><span class="keyword">from</span> langchain.tools <span class="keyword">import</span> tool</span><br><span class="line"><span class="keyword">from</span> langchain.prompts <span class="keyword">import</span> ChatPromptTemplate</span><br><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"><span class="keyword">import</span> ast</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义工具</span></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read_file</span>(<span class="params">file_path: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;读取文件内容&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;r&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="keyword">return</span> f.read()</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;读取失败: <span class="subst">&#123;<span class="built_in">str</span>(e)&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">write_file</span>(<span class="params">file_path: <span class="built_in">str</span>, content: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;写入文件内容&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(file_path, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">            f.write(content)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;写入成功: <span class="subst">&#123;file_path&#125;</span>&quot;</span></span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;写入失败: <span class="subst">&#123;<span class="built_in">str</span>(e)&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">analyze_code</span>(<span class="params">code: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;分析代码结构和问题&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        tree = ast.parse(code)</span><br><span class="line">        functions = [n.name <span class="keyword">for</span> n <span class="keyword">in</span> ast.walk(tree) <span class="keyword">if</span> <span class="built_in">isinstance</span>(n, ast.FunctionDef)]</span><br><span class="line">        classes = [n.name <span class="keyword">for</span> n <span class="keyword">in</span> ast.walk(tree) <span class="keyword">if</span> <span class="built_in">isinstance</span>(n, ast.ClassDef)]</span><br><span class="line">        </span><br><span class="line">        analysis = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        代码分析结果：</span></span><br><span class="line"><span class="string">        - 函数: <span class="subst">&#123;functions&#125;</span></span></span><br><span class="line"><span class="string">        - 类: <span class="subst">&#123;classes&#125;</span></span></span><br><span class="line"><span class="string">        - 行数: <span class="subst">&#123;<span class="built_in">len</span>(code.splitlines())&#125;</span></span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> analysis</span><br><span class="line">    <span class="keyword">except</span> SyntaxError <span class="keyword">as</span> e:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;语法错误: <span class="subst">&#123;<span class="built_in">str</span>(e)&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">run_tests</span>(<span class="params">test_file: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;运行测试&quot;&quot;&quot;</span></span><br><span class="line">    result = subprocess.run(</span><br><span class="line">        [<span class="string">&quot;python&quot;</span>, <span class="string">&quot;-m&quot;</span>, <span class="string">&quot;pytest&quot;</span>, test_file, <span class="string">&quot;-v&quot;</span>],</span><br><span class="line">        capture_output=<span class="literal">True</span>,</span><br><span class="line">        text=<span class="literal">True</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> result.stdout + result.stderr</span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">lint_code</span>(<span class="params">file_path: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;代码风格检查&quot;&quot;&quot;</span></span><br><span class="line">    result = subprocess.run(</span><br><span class="line">        [<span class="string">&quot;python&quot;</span>, <span class="string">&quot;-m&quot;</span>, <span class="string">&quot;pylint&quot;</span>, file_path],</span><br><span class="line">        capture_output=<span class="literal">True</span>,</span><br><span class="line">        text=<span class="literal">True</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> result.stdout</span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">search_web</span>(<span class="params">query: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;搜索技术资料&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 实际实现会调用搜索 API</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;搜索结果: <span class="subst">&#123;query&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Agent</span></span><br><span class="line">llm = ChatOpenAI(model=<span class="string">&quot;gpt-4&quot;</span>)</span><br><span class="line">tools = [read_file, write_file, analyze_code, run_tests, lint_code, search_web]</span><br><span class="line"></span><br><span class="line">prompt = ChatPromptTemplate.from_messages([</span><br><span class="line">    (<span class="string">&quot;system&quot;</span>, <span class="string">&quot;&quot;&quot;你是一个专业的代码助手 Agent。</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    你可以：</span></span><br><span class="line"><span class="string">    - 读取和写入文件</span></span><br><span class="line"><span class="string">    - 分析代码结构</span></span><br><span class="line"><span class="string">    - 运行测试</span></span><br><span class="line"><span class="string">    - 检查代码风格</span></span><br><span class="line"><span class="string">    - 搜索技术资料</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    请根据用户请求完成任务。&quot;&quot;&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;user&quot;</span>, <span class="string">&quot;&#123;input&#125;&quot;</span>)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">agent = create_openai_functions_agent(llm, tools, prompt)</span><br><span class="line">agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用示例</span></span><br><span class="line">result = agent_executor.invoke(&#123;</span><br><span class="line">    <span class="string">&quot;input&quot;</span>: <span class="string">&quot;请帮我创建一个简单的 Python HTTP 服务器实现&quot;</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(result[<span class="string">&quot;output&quot;</span>])</span><br></pre></td></tr></table></figure>
+
+<h3 id="代码助手最佳实践"><a href="#代码助手最佳实践" class="headerlink" title="代码助手最佳实践"></a>代码助手最佳实践</h3><ol>
+<li><strong>理解上下文</strong>：了解项目结构和依赖</li>
+<li><strong>安全执行</strong>：限制危险操作</li>
+<li><strong>验证输出</strong>：测试生成的代码</li>
+<li><strong>逐步改进</strong>：迭代优化代码</li>
+<li><strong>人类确认</strong>：关键修改请求确认</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>代码助手 Agent 在软件开发领域有广泛应用，包括代码生成、调试、重构、审查等。核心能力是代码理解、代码生成、工具集成。典型案例 Devin 展示了全自主代码助手，Cursor 展示了 IDE 集成的实时辅助。</p>
+<p>实现代码助手需要：代码理解模块、代码生成模块、工具集成（文件、Git、测试）、项目上下文管理。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/">Agent 入门指南</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/tool-use/">工具调用机制详解</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-planning/">Agent 规划与推理</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/data-analysis-agent/">数据分析 Agent</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/04/07/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/code-assistant-agent/" data-id="cuidPfItypjkqEyQNCnqVXd8X" data-title="代码助手 Agent" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BB%A3%E7%A0%81%E5%8A%A9%E6%89%8B/" rel="tag">代码助手</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/" rel="tag">开发工具</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/04/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/data-analysis-agent/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          数据分析 Agent
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/04/04/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/hierarchical-agent/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">层次化 Agent 系统</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><span class="category-list-count">77</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">50</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/LM-2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/17/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/02/">二月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">一月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a><span class="archive-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        All content licensed under CC BY 4.0
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

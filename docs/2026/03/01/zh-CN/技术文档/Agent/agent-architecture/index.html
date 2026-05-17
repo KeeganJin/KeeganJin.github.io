@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Agent 架构模式 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Agent 架构概述Agent 架构定义了 Agent 系统各组件的组织方式和交互模式。选择合适的架构是构建有效 Agent 系统的关键。 单 Agent 架构单 Agent 架构是最基本的 Agent 组织形式，一个独立的 Agent 完成所有任务。 基本结构12345678┌─────────────────────────────────────┐│            单 Agent">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent 架构模式">
+<meta property="og:url" content="https://keeganjin.github.io/2026/03/01/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-architecture/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="Agent 架构概述Agent 架构定义了 Agent 系统各组件的组织方式和交互模式。选择合适的架构是构建有效 Agent 系统的关键。 单 Agent 架构单 Agent 架构是最基本的 Agent 组织形式，一个独立的 Agent 完成所有任务。 基本结构12345678┌─────────────────────────────────────┐│            单 Agent">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-02-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-17T16:21:16.851Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="架构设计">
+<meta property="article:tag" content="系统架构">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+
+  <!-- Nordic Zen Fonts: Noto Serif SC for elegant reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+
+  <!-- MathJax for math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$', '$'], ['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Life Notes</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/Agent/agent-architecture" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/03/01/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-architecture/" class="article-date">
+  <time class="dt-published" datetime="2026-02-28T16:00:00.000Z" itemprop="datePublished">2026-03-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Agent 架构模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="Agent-架构概述"><a href="#Agent-架构概述" class="headerlink" title="Agent 架构概述"></a>Agent 架构概述</h2><p>Agent 架构定义了 Agent 系统各组件的组织方式和交互模式。选择合适的架构是构建有效 Agent 系统的关键。</p>
+<h2 id="单-Agent-架构"><a href="#单-Agent-架构" class="headerlink" title="单 Agent 架构"></a>单 Agent 架构</h2><p>单 Agent 架构是最基本的 Agent 组织形式，一个独立的 Agent 完成所有任务。</p>
+<h3 id="基本结构"><a href="#基本结构" class="headerlink" title="基本结构"></a>基本结构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────┐</span><br><span class="line">│            单 Agent                 │</span><br><span class="line">│  ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐   │</span><br><span class="line">│  │ LLM │ │Memory│ │Tools│ │Planner│ │</span><br><span class="line">│  └─────┘ └─────┘ └─────┘ └─────┘   │</span><br><span class="line">└─────────────────────────────────────┘</span><br><span class="line">        ↑                    ↓</span><br><span class="line">      用户输入              用户输出</span><br></pre></td></tr></table></figure>
+
+<h3 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h3><ol>
+<li><strong>接收输入</strong>：Agent 接收用户请求</li>
+<li><strong>理解意图</strong>：LLM 解析用户意图</li>
+<li><strong>规划行动</strong>：制定行动计划</li>
+<li><strong>执行行动</strong>：调用工具或生成内容</li>
+<li><strong>反馈整合</strong>：整合执行结果</li>
+<li><strong>输出响应</strong>：向用户返回结果</li>
+</ol>
+<h3 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h3><p>单 Agent 架构适用于：</p>
+<ul>
+<li>相对简单的任务</li>
+<li>不需要协作的独立任务</li>
+<li>用户个人助手</li>
+<li>信息问答类应用</li>
+</ul>
+<h3 id="优势与局限"><a href="#优势与局限" class="headerlink" title="优势与局限"></a>优势与局限</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>局限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>结构简单，易于实现</td>
+<td>复杂任务处理能力有限</td>
+</tr>
+<tr>
+<td>调试和维护方便</td>
+<td>单点故障风险</td>
+</tr>
+<tr>
+<td>响应延迟低</td>
+<td>无法并行处理</td>
+</tr>
+<tr>
+<td>成本可控</td>
+<td>知识和能力有限</td>
+</tr>
+</tbody></table>
+<h2 id="多-Agent-架构"><a href="#多-Agent-架构" class="headerlink" title="多 Agent 架构"></a>多 Agent 架构</h2><p>多 Agent 架构使用多个 Agent 协作完成复杂任务。</p>
+<h3 id="基本结构-1"><a href="#基本结构-1" class="headerlink" title="基本结构"></a>基本结构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">┌─────────┐     ┌─────────┐     ┌─────────┐</span><br><span class="line">│ Agent A │ ←→  │ Agent B │ ←→  │ Agent C │</span><br><span class="line">└─────────┘     └─────────┘     └─────────┘</span><br><span class="line">     ↑               ↑               ↑</span><br><span class="line">     └───────────────┴───────────────┘</span><br><span class="line">                   协作层</span><br><span class="line">                      ↓</span><br><span class="line">                   用户交互</span><br></pre></td></tr></table></figure>
+
+<h3 id="协作模式"><a href="#协作模式" class="headerlink" title="协作模式"></a>协作模式</h3><h4 id="对话协作模式"><a href="#对话协作模式" class="headerlink" title="对话协作模式"></a>对话协作模式</h4><p>Agent 之间通过对话交流：</p>
+<ul>
+<li>Agent A 发送消息给 Agent B</li>
+<li>Agent B 处理并回复</li>
+<li>消息传递直到任务完成</li>
+</ul>
+<p><strong>代表框架</strong>：AutoGen 的 GroupChat</p>
+<h4 id="顺序协作模式"><a href="#顺序协作模式" class="headerlink" title="顺序协作模式"></a>顺序协作模式</h4><p>Agent 按顺序处理任务：</p>
+<ul>
+<li>Agent A 处理第一步</li>
+<li>Agent B 处理第二步（使用 A 的输出）</li>
+<li>Agent C 处理第三步（使用 B 的输出）</li>
+</ul>
+<p><strong>代表框架</strong>：CrewAI 的 Sequential 流程</p>
+<h4 id="并行协作模式"><a href="#并行协作模式" class="headerlink" title="并行协作模式"></a>并行协作模式</h4><p>多个 Agent 同时处理不同子任务：</p>
+<ul>
+<li>Agent A 处理子任务 1</li>
+<li>Agent B 处理子任务 2</li>
+<li>结果聚合后返回</li>
+</ul>
+<p><strong>适用场景</strong>：独立子任务可并行处理</p>
+<h3 id="适用场景-1"><a href="#适用场景-1" class="headerlink" title="适用场景"></a>适用场景</h3><p>多 Agent 架构适用于：</p>
+<ul>
+<li>复杂的多步骤任务</li>
+<li>需要不同专业能力的任务</li>
+<li>需要并行处理的大任务</li>
+<li>需要多方视角的任务（如辩论、评审）</li>
+</ul>
+<h3 id="优势与局限-1"><a href="#优势与局限-1" class="headerlink" title="优势与局限"></a>优势与局限</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>局限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>处理复杂任务能力强</td>
+<td>结构复杂，实现难度高</td>
+</tr>
+<tr>
+<td>专业化分工</td>
+<td>Agent 间协调开销</td>
+</tr>
+<tr>
+<td>可并行处理</td>
+<td>成本较高</td>
+</tr>
+<tr>
+<td>故障隔离</td>
+<td>调试困难</td>
+</tr>
+</tbody></table>
+<h2 id="层次化-Agent-架构"><a href="#层次化-Agent-架构" class="headerlink" title="层次化 Agent 架构"></a>层次化 Agent 架构</h2><p>层次化架构使用层级组织 Agent，上层 Agent 管理下层 Agent。</p>
+<h3 id="基本结构-2"><a href="#基本结构-2" class="headerlink" title="基本结构"></a>基本结构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">┌───────────────┐</span><br><span class="line">│  Manager Agent │  ← 顶层决策、任务分配</span><br><span class="line">└───────────────┘</span><br><span class="line">      ↓    ↓    ↓</span><br><span class="line">┌────┐ ┌────┐ ┌────┐</span><br><span class="line">│ W1 │ │ W2 │ │ W3 │  ← Worker 执行具体任务</span><br><span class="line">└────┘ └────┘ └────┘</span><br><span class="line">      ↓    ↓    ↓</span><br><span class="line">┌────┐ ┌────┐ ┌────┐</span><br><span class="line">│ W4 │ │ W5 │ │ W6 │  ← 更细粒度的执行</span><br><span class="line">└────┘ └────┘ └────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="工作机制"><a href="#工作机制" class="headerlink" title="工作机制"></a>工作机制</h3><h4 id="Manager-Agent"><a href="#Manager-Agent" class="headerlink" title="Manager Agent"></a>Manager Agent</h4><ul>
+<li>接收用户任务</li>
+<li>分解任务为子任务</li>
+<li>分配子任务给 Worker</li>
+<li>收集 Worker 结果</li>
+<li>整合结果并返回</li>
+</ul>
+<h4 id="Worker-Agent"><a href="#Worker-Agent" class="headerlink" title="Worker Agent"></a>Worker Agent</h4><ul>
+<li>接收 Manager 分配的子任务</li>
+<li>执行具体任务</li>
+<li>可调用工具或下层 Worker</li>
+<li>向 Manager 上报结果</li>
+</ul>
+<h3 id="适用场景-2"><a href="#适用场景-2" class="headerlink" title="适用场景"></a>适用场景</h3><p>层次化架构适用于：</p>
+<ul>
+<li>大型复杂任务（如软件开发、研究报告）</li>
+<li>需要多层分解的任务</li>
+<li>需要集中管理的场景</li>
+<li>企业级应用</li>
+</ul>
+<h3 id="优势与局限-2"><a href="#优势与局限-2" class="headerlink" title="优势与局限"></a>优势与局限</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>展现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>任务分解清晰</td>
+<td>层级管理开销</td>
+</tr>
+<tr>
+<td>可处理超大任务</td>
+<td>信息传递延迟</td>
+</tr>
+<tr>
+<td>专业化分工明确</td>
+<td>层级过深效率下降</td>
+</tr>
+<tr>
+<td>易于扩展</td>
+<td>Manager 成为瓶颈风险</td>
+</tr>
+</tbody></table>
+<p><strong>代表框架</strong>：CrewAI 的 Hierarchical 流程、AutoGen 的层次化对话</p>
+<h2 id="黑板架构模式"><a href="#黑板架构模式" class="headerlink" title="黑板架构模式"></a>黑板架构模式</h2><p>黑板架构是一种协作模式，多个 Agent 共享一个”黑板”来交换信息。</p>
+<h3 id="基本结构-3"><a href="#基本结构-3" class="headerlink" title="基本结构"></a>基本结构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">┌───────────────────────────────┐</span><br><span class="line">│          黑板（共享数据区）     │</span><br><span class="line">│   ┌─────┐ ┌─────┐ ┌─────┐     │</span><br><span class="line">│   │任务 │ │状态 │ │结果 │     │</span><br><span class="line">│   └─────┘ └─────┘ └─────┘     │</span><br><span class="line">└───────────────────────────────┘</span><br><span class="line">      ↑ 写    ↑ 读    ↑ 写</span><br><span class="line">┌─────┐ ┌─────┐ ┌─────┐</span><br><span class="line">│Ag.1│ │Ag.2│ │Ag.3│</span><br><span class="line">└─────┘ └─────┘ └─────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="工作机制-1"><a href="#工作机制-1" class="headerlink" title="工作机制"></a>工作机制</h3><ol>
+<li><p><strong>黑板</strong>：共享的数据存储区域</p>
+<ul>
+<li>存储任务状态</li>
+<li>存储中间结果</li>
+<li>存储共享知识</li>
+</ul>
+</li>
+<li><p><strong>Agent</strong>：多个独立 Agent</p>
+<ul>
+<li>从黑板读取信息</li>
+<li>处理自己的部分</li>
+<li>向黑板写入结果</li>
+</ul>
+</li>
+<li><p><strong>控制器</strong>：可选的控制组件</p>
+<ul>
+<li>决定哪个 Agent 活跃</li>
+<li>判断任务完成状态</li>
+</ul>
+</li>
+</ol>
+<h3 id="适用场景-3"><a href="#适用场景-3" class="headerlink" title="适用场景"></a>适用场景</h3><p>黑板架构适用于：</p>
+<ul>
+<li>多 Agent 协作但不需要直接对话</li>
+<li>信息共享需求强的任务</li>
+<li>异步协作场景</li>
+<li>专家系统集成</li>
+</ul>
+<h3 id="优势与局限-3"><a href="#优势与局限-3" class="headerlink" title="优势与局限"></a>优势与局限</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>局限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Agent 独立性强</td>
+<td>黑板一致性管理复杂</td>
+</tr>
+<tr>
+<td>信息共享方便</td>
+<td>可能产生冲突写入</td>
+</tr>
+<tr>
+<td>异步协作支持</td>
+<td>读写顺序管理</td>
+</tr>
+</tbody></table>
+<h2 id="消息传递架构"><a href="#消息传递架构" class="headerlink" title="消息传递架构"></a>消息传递架构</h2><p>消息传递架构通过消息队列实现 Agent 间通信。</p>
+<h3 id="基本结构-4"><a href="#基本结构-4" class="headerlink" title="基本结构"></a>基本结构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">┌─────┐     ┌───────────┐     ┌─────┐</span><br><span class="line">│Ag. A│ →→  │ 消息队列  │ →→  │Ag. B│</span><br><span class="line">└─────┘     └───────────┘     └─────┘</span><br><span class="line">               ↑ ↓</span><br><span class="line">            ┌─────┐</span><br><span class="line">            │Ag. C│</span><br><span class="line">            └─────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="工作机制-2"><a href="#工作机制-2" class="headerlink" title="工作机制"></a>工作机制</h3><ol>
+<li><p><strong>消息格式</strong>：标准化消息格式</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;from&quot;</span><span class="punctuation">:</span> <span class="string">&quot;agent_a&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;to&quot;</span><span class="punctuation">:</span> <span class="string">&quot;agent_b&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;task_request&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>...<span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;timestamp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;...&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>消息队列</strong>：消息存储和传递</p>
+<ul>
+<li>消息持久化</li>
+<li>消息排序</li>
+<li>消息路由</li>
+</ul>
+</li>
+<li><p><strong>Agent 通信</strong>：</p>
+<ul>
+<li>发送消息到队列</li>
+<li>从队列接收消息</li>
+<li>处理消息并回复</li>
+</ul>
+</li>
+</ol>
+<h3 id="适用场景-4"><a href="#适用场景-4" class="headerlink" title="适用场景"></a>适用场景</h3><p>消息传递架构适用于：</p>
+<ul>
+<li>分布式 Agent 系统</li>
+<li>异步任务处理</li>
+<li>需要可靠传递的系统</li>
+<li>大规模 Agent 网络</li>
+</ul>
+<h3 id="优势与局限-4"><a href="#优势与局限-4" class="headerlink" title="优势与局限"></a>优势与局限</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>局限</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>解耦 Agent</td>
+<td>消息延迟</td>
+</tr>
+<tr>
+<td>可扩展性好</td>
+<td>消息顺序管理复杂</td>
+</tr>
+<tr>
+<td>支持异步</td>
+<td>需要消息队列基础设施</td>
+</tr>
+<tr>
+<td>容错能力强</td>
+<td>消息丢失风险</td>
+</tr>
+</tbody></table>
+<h2 id="混合架构"><a href="#混合架构" class="headerlink" title="混合架构"></a>混合架构</h2><p>实际系统往往采用混合架构，结合多种模式的优点。</p>
+<h3 id="混合架构示例"><a href="#混合架构示例" class="headerlink" title="混合架构示例"></a>混合架构示例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">      ┌───────────────┐</span><br><span class="line">      │ Manager Agent │</span><br><span class="line">      └───────────────┘</span><br><span class="line">            ↓</span><br><span class="line">┌───────────────────────┐</span><br><span class="line">│      黑板              │</span><br><span class="line">└───────────────────────┘</span><br><span class="line">      ↑     ↑     ↑</span><br><span class="line">┌────┐ ┌────┐ ┌────┐</span><br><span class="line">│ W1 │ │ W2 │ │ W3 │</span><br><span class="line">└────┘ └────┘ └────┘</span><br><span class="line">      ← 消息队列 →</span><br></pre></td></tr></table></figure>
+
+<h3 id="混合策略"><a href="#混合策略" class="headerlink" title="混合策略"></a>混合策略</h3><ol>
+<li><strong>层次 + 黑板</strong>：Manager 通过黑板管理 Worker</li>
+<li><strong>层次 + 消息队列</strong>：层次间用消息队列传递</li>
+<li><strong>对话 + 黑板</strong>：Agent 对话同时共享黑板</li>
+<li><strong>并行 + 顺序</strong>：部分并行、部分顺序</li>
+</ol>
+<h2 id="架构选择考量"><a href="#架构选择考量" class="headerlink" title="架构选择考量"></a>架构选择考量</h2><h3 id="任务复杂度"><a href="#任务复杂度" class="headerlink" title="任务复杂度"></a>任务复杂度</h3><table>
+<thead>
+<tr>
+<th>任务复杂度</th>
+<th>推荐架构</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>简单单步任务</td>
+<td>单 Agent</td>
+</tr>
+<tr>
+<td>中等多步任务</td>
+<td>单 Agent + 工具</td>
+</tr>
+<tr>
+<td>复杂多步任务</td>
+<td>多 Agent（顺序）</td>
+</tr>
+<tr>
+<td>超大复杂任务</td>
+<td>层次化 Agent</td>
+</tr>
+<tr>
+<td>多维度并行任务</td>
+<td>多 Agent（并行）</td>
+</tr>
+</tbody></table>
+<h3 id="团队规模"><a href="#团队规模" class="headerlink" title="团队规模"></a>团队规模</h3><table>
+<thead>
+<tr>
+<th>Agent 数量</th>
+<th>推荐架构</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1-2</td>
+<td>单 Agent 或简单多 Agent</td>
+</tr>
+<tr>
+<td>3-10</td>
+<td>对话协作或层次化</td>
+</tr>
+<tr>
+<td>10+</td>
+<td>层次化或消息传递</td>
+</tr>
+</tbody></table>
+<h3 id="响应要求"><a href="#响应要求" class="headerlink" title="响应要求"></a>响应要求</h3><table>
+<thead>
+<tr>
+<th>响应要求</th>
+<th>推荐架构</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>实时响应</td>
+<td>单 Agent</td>
+</tr>
+<tr>
+<td>秒级响应</td>
+<td>简单多 Agent</td>
+</tr>
+<tr>
+<td>分钟级响应</td>
+<td>层次化或黑板</td>
+</tr>
+<tr>
+<td>异步任务</td>
+<td>消息传递</td>
+</tr>
+</tbody></table>
+<h3 id="成本考量"><a href="#成本考量" class="headerlink" title="成本考量"></a>成本考量</h3><table>
+<thead>
+<tr>
+<th>成本敏感度</th>
+<th>推荐架构</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>高度敏感</td>
+<td>单 Agent，控制调用次数</td>
+</tr>
+<tr>
+<td>中等敏感</td>
+<td>多 Agent，优化协作流程</td>
+</tr>
+<tr>
+<td>不敏感</td>
+<td>复杂架构，追求最优效果</td>
+</tr>
+</tbody></table>
+<h2 id="架构演进建议"><a href="#架构演进建议" class="headerlink" title="架构演进建议"></a>架构演进建议</h2><h3 id="从简单开始"><a href="#从简单开始" class="headerlink" title="从简单开始"></a>从简单开始</h3><p>建议架构演进路径：</p>
+<ol>
+<li><p><strong>第一阶段</strong>：单 Agent + 基础工具</p>
+<ul>
+<li>实现基本功能</li>
+<li>收集用户反馈</li>
+<li>了解任务复杂度</li>
+</ul>
+</li>
+<li><p><strong>第二阶段</strong>：单 Agent + 多工具</p>
+<ul>
+<li>添加更多工具</li>
+<li>优化规划能力</li>
+<li>增强记忆系统</li>
+</ul>
+</li>
+<li><p><strong>第三阶段</strong>：简单多 Agent</p>
+<ul>
+<li>针对复杂任务添加 Agent</li>
+<li>实现基本协作</li>
+<li>测试协作效果</li>
+</ul>
+</li>
+<li><p><strong>第四阶段</strong>：复杂架构</p>
+<ul>
+<li>根据需求选择层次化&#x2F;黑板&#x2F;消息传递</li>
+<li>优化协作效率</li>
+<li>添加监控和调试能力</li>
+</ul>
+</li>
+</ol>
+<h3 id="避免过度设计"><a href="#避免过度设计" class="headerlink" title="避免过度设计"></a>避免过度设计</h3><p>常见错误：一开始就设计复杂的多 Agent 架构。</p>
+<p>正确做法：根据实际需求逐步演进架构复杂度。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Agent 架构选择需要根据任务复杂度、团队规模、响应要求、成本考量等因素综合判断。从单 Agent 开始，根据实际需求逐步演进，避免过度设计。</p>
+<p>主流架构包括：单 Agent、多 Agent（对话&#x2F;顺序&#x2F;并行）、层次化 Agent、黑板架构、消息传递架构。实际系统往往采用混合架构。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/">Agent 入门指南</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/llm-and-agent/">LLM 与 Agent 的关系</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-intro/">多 Agent 系统概述</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/hierarchical-agent/">层次化 Agent 系统</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/03/01/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-architecture/" data-id="cuidDC7ouG9khhsh1WZqNJ43S" data-title="Agent 架构模式" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1/" rel="tag">架构设计</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" rel="tag">系统架构</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/03/04/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/tool-use/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          工具调用机制（Tool Use）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/02/28/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/llm-and-agent/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">LLM 与 Agent 的关系</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><span class="category-list-count">77</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">50</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/LM-2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/17/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/02/">二月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">一月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a><span class="archive-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        All content licensed under CC BY 4.0
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,6 +1,6 @@
 ---
 title: OpenClaw 拆解
-date: 2026-05-08
+date: 2026-05-04
 categories: [技术文档, Agent]
 lang: zh-CN
 translation: /2026/05/08/en/tech-docs/agent/openclaw-architecture/

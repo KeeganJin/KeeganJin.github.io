@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Semantic Kernel 实践 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Semantic Kernel 设计理念Semantic Kernel 是微软开发的企业级 Agent SDK，旨在将 LLM 与传统编程语言无缝集成。 核心设计原则 代码优先：以代码为核心，而非 Prompt 企业级：支持安全、合规、可扩展 模块化：Skills 组织能力，易于管理 自动规划：Planner 自动组合 Skills  与其他框架的区别   特性 Semantic Kernel L">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Semantic Kernel 实践">
+<meta property="og:url" content="https://keeganjin.github.io/2026/03/25/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/semantic-kernel/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="Semantic Kernel 设计理念Semantic Kernel 是微软开发的企业级 Agent SDK，旨在将 LLM 与传统编程语言无缝集成。 核心设计原则 代码优先：以代码为核心，而非 Prompt 企业级：支持安全、合规、可扩展 模块化：Skills 组织能力，易于管理 自动规划：Planner 自动组合 Skills  与其他框架的区别   特性 Semantic Kernel L">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-03-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-17T16:21:17.850Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="Microsoft">
+<meta property="article:tag" content="Semantic Kernel">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+
+  <!-- Nordic Zen Fonts: Noto Serif SC for elegant reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+
+  <!-- MathJax for math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$', '$'], ['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Life Notes</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/Agent/semantic-kernel" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/03/25/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/semantic-kernel/" class="article-date">
+  <time class="dt-published" datetime="2026-03-24T16:00:00.000Z" itemprop="datePublished">2026-03-25</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Semantic Kernel 实践
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="Semantic-Kernel-设计理念"><a href="#Semantic-Kernel-设计理念" class="headerlink" title="Semantic Kernel 设计理念"></a>Semantic Kernel 设计理念</h2><p>Semantic Kernel 是微软开发的企业级 Agent SDK，旨在将 LLM 与传统编程语言无缝集成。</p>
+<h3 id="核心设计原则"><a href="#核心设计原则" class="headerlink" title="核心设计原则"></a>核心设计原则</h3><ol>
+<li><strong>代码优先</strong>：以代码为核心，而非 Prompt</li>
+<li><strong>企业级</strong>：支持安全、合规、可扩展</li>
+<li><strong>模块化</strong>：Skills 组织能力，易于管理</li>
+<li><strong>自动规划</strong>：Planner 自动组合 Skills</li>
+</ol>
+<h3 id="与其他框架的区别"><a href="#与其他框架的区别" class="headerlink" title="与其他框架的区别"></a>与其他框架的区别</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Semantic Kernel</th>
+<th>LangChain</th>
+<th>AutoGen</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>开发方式</td>
+<td>代码优先</td>
+<td>Prompt 优先</td>
+<td>对话优先</td>
+</tr>
+<tr>
+<td>目标用户</td>
+<td>企业开发者</td>
+<td>一般开发者</td>
+<td>研究者</td>
+</tr>
+<tr>
+<td>企业支持</td>
+<td>强</td>
+<td>一般</td>
+<td>研究友好</td>
+</tr>
+<tr>
+<td>Azure集成</td>
+<td>原生</td>
+<td>需配置</td>
+<td>需配置</td>
+</tr>
+<tr>
+<td>语言支持</td>
+<td>C#&#x2F;Python</td>
+<td>Python</td>
+<td>Python</td>
+</tr>
+</tbody></table>
+<h2 id="Skills、Functions、Planners"><a href="#Skills、Functions、Planners" class="headerlink" title="Skills、Functions、Planners"></a>Skills、Functions、Planners</h2><h3 id="Skills（技能）"><a href="#Skills（技能）" class="headerlink" title="Skills（技能）"></a>Skills（技能）</h3><p>Skills 是 Semantic Kernel 的核心抽象，代表 Agent 的能力集合。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> semantic_kernel <span class="keyword">import</span> Kernel</span><br><span class="line"><span class="keyword">from</span> semantic_kernel.skills <span class="keyword">import</span> SkillCollection</span><br><span class="line"></span><br><span class="line"><span class="comment"># Skills 是 Function 的集合</span></span><br><span class="line">skill_collection = SkillCollection()</span><br></pre></td></tr></table></figure>
+
+<h3 id="Functions（函数）"><a href="#Functions（函数）" class="headerlink" title="Functions（函数）"></a>Functions（函数）</h3><p>Function 是 Skills 中的具体能力：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> semantic_kernel.skills <span class="keyword">import</span> kernel_function</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义 Semantic Function（LLM驱动）</span></span><br><span class="line"><span class="meta">@kernel_function(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="meta">    description=<span class="string">&quot;生成产品描述&quot;</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">    name=<span class="string">&quot;generate_description&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="meta"></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_product_description</span>(<span class="params">product_name: <span class="built_in">str</span>, features: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;生成产品描述&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 由 LLM 执行</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义 Native Function（代码实现）</span></span><br><span class="line"><span class="meta">@kernel_function(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="meta">    description=<span class="string">&quot;计算总价&quot;</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">    name=<span class="string">&quot;calculate_total&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="meta"></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">calculate_total_price</span>(<span class="params">price: <span class="built_in">float</span>, quantity: <span class="built_in">int</span></span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;计算总价&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> price * quantity</span><br></pre></td></tr></table></figure>
+
+<h3 id="Function-类型"><a href="#Function-类型" class="headerlink" title="Function 类型"></a>Function 类型</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>描述</th>
+<th>执行方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Semantic Function</td>
+<td>AI 驱动函数</td>
+<td>LLM 执行</td>
+</tr>
+<tr>
+<td>Native Function</td>
+<td>代码函数</td>
+<td>直接执行</td>
+</tr>
+</tbody></table>
+<h3 id="Planners（规划器）"><a href="#Planners（规划器）" class="headerlink" title="Planners（规划器）"></a>Planners（规划器）</h3><p>Planner 自动组合 Functions 完成任务：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> semantic_kernel.planners <span class="keyword">import</span> SequentialPlanner, ActionPlanner</span><br><span class="line"></span><br><span class="line"><span class="comment"># Sequential Planner：顺序执行</span></span><br><span class="line">sequential_planner = SequentialPlanner(kernel)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Action Planner：选择最佳单一 Action</span></span><br><span class="line">action_planner = ActionPlanner(kernel)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行规划</span></span><br><span class="line">plan = <span class="keyword">await</span> sequential_planner.create_plan(<span class="string">&quot;分析销售数据并生成报告&quot;</span>)</span><br><span class="line">result = <span class="keyword">await</span> plan.invoke()</span><br></pre></td></tr></table></figure>
+
+<h3 id="Planner-类型"><a href="#Planner-类型" class="headerlink" title="Planner 类型"></a>Planner 类型</h3><table>
+<thead>
+<tr>
+<th>Planner</th>
+<th>描述</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SequentialPlanner</td>
+<td>顺序执行多个 Function</td>
+<td>多步骤任务</td>
+</tr>
+<tr>
+<td>ActionPlanner</td>
+<td>选择最佳单一 Function</td>
+<td>单步骤任务</td>
+</tr>
+<tr>
+<td>StepwisePlanner</td>
+<td>逐步推理执行</td>
+<td>复杂推理任务</td>
+</tr>
+</tbody></table>
+<h2 id="与-Microsoft-生态集成"><a href="#与-Microsoft-生态集成" class="headerlink" title="与 Microsoft 生态集成"></a>与 Microsoft 生态集成</h2><h3 id="Azure-OpenAI-集成"><a href="#Azure-OpenAI-集成" class="headerlink" title="Azure OpenAI 集成"></a>Azure OpenAI 集成</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> semantic_kernel <span class="keyword">import</span> Kernel</span><br><span class="line"><span class="keyword">from</span> semantic_kernel.connectors.ai.open_ai <span class="keyword">import</span> AzureChatCompletion</span><br><span class="line"></span><br><span class="line">kernel = Kernel()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加 Azure OpenAI 服务</span></span><br><span class="line">kernel.add_chat_service(</span><br><span class="line">    <span class="string">&quot;azure_chat&quot;</span>,</span><br><span class="line">    AzureChatCompletion(</span><br><span class="line">        deployment_name=<span class="string">&quot;gpt-4&quot;</span>,</span><br><span class="line">        endpoint=<span class="string">&quot;https://your-resource.openai.azure.com/&quot;</span>,</span><br><span class="line">        api_key=<span class="string">&quot;your-api-key&quot;</span></span><br><span class="line">    )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Azure-Cognitive-Services-集成"><a href="#Azure-Cognitive-Services-集成" class="headerlink" title="Azure Cognitive Services 集成"></a>Azure Cognitive Services 集成</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> semantic_kernel.connectors.ai.open_ai <span class="keyword">import</span> AzureTextEmbedding</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加 Embedding 服务</span></span><br><span class="line">kernel.add_text_embedding_generation_service(</span><br><span class="line">    <span class="string">&quot;azure_embedding&quot;</span>,</span><br><span class="line">    AzureTextEmbedding(</span><br><span class="line">        deployment_name=<span class="string">&quot;text-embedding-ada-002&quot;</span>,</span><br><span class="line">        endpoint=<span class="string">&quot;https://your-resource.openai.azure.com/&quot;</span>,</span><br><span class="line">        api_key=<span class="string">&quot;your-api-key&quot;</span></span><br><span class="line">    )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Azure-存储集成"><a href="#Azure-存储集成" class="headerlink" title="Azure 存储集成"></a>Azure 存储集成</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> semantic_kernel.memory.semantic_text_memory <span class="keyword">import</span> SemanticTextMemory</span><br><span class="line"><span class="keyword">from</span> semantic_kernel.connectors.memory.azure_cognitive_search <span class="keyword">import</span> AzureCognitiveSearchMemoryStore</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 Azure Cognitive Search 作为记忆存储</span></span><br><span class="line">memory_store = AzureCognitiveSearchMemoryStore(</span><br><span class="line">    endpoint=<span class="string">&quot;https://your-search.search.windows.net&quot;</span>,</span><br><span class="line">    api_key=<span class="string">&quot;your-api-key&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">memory = SemanticTextMemory(storage=memory_store)</span><br><span class="line">kernel.register_memory(memory)</span><br></pre></td></tr></table></figure>
+
+<h2 id="实战案例：企业自动化-Agent"><a href="#实战案例：企业自动化-Agent" class="headerlink" title="实战案例：企业自动化 Agent"></a>实战案例：企业自动化 Agent</h2><h3 id="定义目标"><a href="#定义目标" class="headerlink" title="定义目标"></a>定义目标</h3><p>创建一个企业自动化 Agent：</p>
+<ul>
+<li><strong>数据处理</strong>：读取和分析企业数据</li>
+<li><strong>报告生成</strong>：生成业务报告</li>
+<li><strong>邮件通知</strong>：发送通知邮件</li>
+</ul>
+<h3 id="完整实现"><a href="#完整实现" class="headerlink" title="完整实现"></a>完整实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">from</span> semantic_kernel <span class="keyword">import</span> Kernel</span><br><span class="line"><span class="keyword">from</span> semantic_kernel.connectors.ai.open_ai <span class="keyword">import</span> AzureChatCompletion</span><br><span class="line"><span class="keyword">from</span> semantic_kernel.skills <span class="keyword">import</span> kernel_function, SkillCollection</span><br><span class="line"><span class="keyword">from</span> semantic_kernel.planners <span class="keyword">import</span> SequentialPlanner</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Kernel</span></span><br><span class="line">kernel = Kernel()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置 Azure OpenAI</span></span><br><span class="line">kernel.add_chat_service(</span><br><span class="line">    <span class="string">&quot;azure_chat&quot;</span>,</span><br><span class="line">    AzureChatCompletion(</span><br><span class="line">        deployment_name=<span class="string">&quot;gpt-4&quot;</span>,</span><br><span class="line">        endpoint=<span class="string">&quot;https://your-resource.openai.azure.com/&quot;</span>,</span><br><span class="line">        api_key=<span class="string">&quot;your-api-key&quot;</span></span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义 Skills</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DataSkill</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;数据处理技能&quot;&quot;&quot;</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">    @kernel_function(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="meta">        description=<span class="string">&quot;读取CSV数据文件&quot;</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">        name=<span class="string">&quot;read_csv&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="meta">    </span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read_csv_data</span>(<span class="params">self, file_path: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;读取CSV文件并返回数据摘要&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">        df = pd.read_csv(file_path)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;数据行数: <span class="subst">&#123;<span class="built_in">len</span>(df)&#125;</span>, 列数: <span class="subst">&#123;<span class="built_in">len</span>(df.columns)&#125;</span>, 列名: <span class="subst">&#123;<span class="built_in">list</span>(df.columns)&#125;</span>&quot;</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">    @kernel_function(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="meta">        description=<span class="string">&quot;分析数据趋势&quot;</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">        name=<span class="string">&quot;analyze_trend&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="meta">    </span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">analyze_data_trend</span>(<span class="params">self, data_summary: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;分析数据趋势&quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment"># 这个是 Semantic Function，由 LLM 执行</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;由 LLM 分析数据趋势&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ReportSkill</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;报告生成技能&quot;&quot;&quot;</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">    @kernel_function(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="meta">        description=<span class="string">&quot;生成业务报告&quot;</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">        name=<span class="string">&quot;generate_report&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="meta">    </span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">generate_business_report</span>(<span class="params">self, analysis_result: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;生成业务报告&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;基于分析结果生成报告: <span class="subst">&#123;analysis_result&#125;</span>&quot;</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">    @kernel_function(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="meta">        description=<span class="string">&quot;格式化报告为HTML&quot;</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">        name=<span class="string">&quot;format_html&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="meta">    </span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">format_to_html</span>(<span class="params">self, report_content: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;将报告格式化为HTML&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;&lt;html&gt;&lt;body&gt;<span class="subst">&#123;report_content&#125;</span>&lt;/body&gt;&lt;/html&gt;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">NotificationSkill</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;通知技能&quot;&quot;&quot;</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">    @kernel_function(<span class="params"></span></span></span><br><span class="line"><span class="params"><span class="meta">        description=<span class="string">&quot;发送邮件通知&quot;</span>,</span></span></span><br><span class="line"><span class="params"><span class="meta">        name=<span class="string">&quot;send_email&quot;</span></span></span></span><br><span class="line"><span class="params"><span class="meta">    </span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">send_email_notification</span>(<span class="params">self, recipient: <span class="built_in">str</span>, subject: <span class="built_in">str</span>, content: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;发送邮件&quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment"># 这里可以集成实际的邮件发送逻辑</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">f&quot;邮件已发送给 <span class="subst">&#123;recipient&#125;</span>, 主题: <span class="subst">&#123;subject&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 注册 Skills</span></span><br><span class="line">data_skill = kernel.import_skill(DataSkill(), <span class="string">&quot;data&quot;</span>)</span><br><span class="line">report_skill = kernel.import_skill(ReportSkill(), <span class="string">&quot;report&quot;</span>)</span><br><span class="line">notification_skill = kernel.import_skill(NotificationSkill(), <span class="string">&quot;notification&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Planner</span></span><br><span class="line">planner = SequentialPlanner(kernel)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行任务</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">run_automation</span>():</span><br><span class="line">    <span class="comment"># 创建计划</span></span><br><span class="line">    plan = <span class="keyword">await</span> planner.create_plan(</span><br><span class="line">        <span class="string">&quot;读取 /data/sales.csv 数据，分析趋势，生成报告，并发送给 manager@company.com&quot;</span></span><br><span class="line">    )</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 执行计划</span></span><br><span class="line">    result = <span class="keyword">await</span> plan.invoke()</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;执行结果:&quot;</span>, result)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 运行</span></span><br><span class="line">asyncio.run(run_automation())</span><br></pre></td></tr></table></figure>
+
+<h3 id="Semantic-Function-定义"><a href="#Semantic-Function-定义" class="headerlink" title="Semantic Function 定义"></a>Semantic Function 定义</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用 Prompt 定义 Semantic Function</span></span><br><span class="line"><span class="keyword">from</span> semantic_kernel.semantic_functions <span class="keyword">import</span> PromptTemplate</span><br><span class="line"></span><br><span class="line">prompt_template = PromptTemplate(</span><br><span class="line">    template=<span class="string">&quot;&quot;&quot;分析以下数据的趋势：</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    &#123;&#123;$data_summary&#125;&#125;</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    请提供：</span></span><br><span class="line"><span class="string">    1. 主要趋势分析</span></span><br><span class="line"><span class="string">    2. 关键发现</span></span><br><span class="line"><span class="string">    3. 建议&quot;&quot;&quot;</span>,</span><br><span class="line">    execution_settings=&#123;</span><br><span class="line">        <span class="string">&quot;max_tokens&quot;</span>: <span class="number">1000</span>,</span><br><span class="line">        <span class="string">&quot;temperature&quot;</span>: <span class="number">0.7</span></span><br><span class="line">    &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注册 Semantic Function</span></span><br><span class="line">kernel.import_semantic_function_from_prompt(</span><br><span class="line">    <span class="string">&quot;analysis&quot;</span>,</span><br><span class="line">    <span class="string">&quot;analyze_trend&quot;</span>,</span><br><span class="line">    prompt_template</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="完整企业-Agent-示例"><a href="#完整企业-Agent-示例" class="headerlink" title="完整企业 Agent 示例"></a>完整企业 Agent 示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"><span class="keyword">from</span> semantic_kernel <span class="keyword">import</span> Kernel</span><br><span class="line"><span class="keyword">from</span> semantic_kernel.connectors.ai.open_ai <span class="keyword">import</span> AzureChatCompletion</span><br><span class="line"><span class="keyword">from</span> semantic_kernel.semantic_functions <span class="keyword">import</span> PromptTemplate</span><br><span class="line"><span class="keyword">from</span> semantic_kernel.skills <span class="keyword">import</span> kernel_function</span><br><span class="line"><span class="keyword">from</span> semantic_kernel.planners <span class="keyword">import</span> SequentialPlanner</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">EnterpriseAgent</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.kernel = Kernel()</span><br><span class="line">        <span class="variable language_">self</span>.setup_kernel()</span><br><span class="line">        <span class="variable language_">self</span>.register_skills()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">setup_kernel</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;配置 Kernel&quot;&quot;&quot;</span></span><br><span class="line">        <span class="variable language_">self</span>.kernel.add_chat_service(</span><br><span class="line">            <span class="string">&quot;azure_chat&quot;</span>,</span><br><span class="line">            AzureChatCompletion(</span><br><span class="line">                deployment_name=<span class="string">&quot;gpt-4&quot;</span>,</span><br><span class="line">                endpoint=<span class="string">&quot;https://your-resource.openai.azure.com/&quot;</span>,</span><br><span class="line">                api_key=<span class="string">&quot;your-api-key&quot;</span></span><br><span class="line">            )</span><br><span class="line">        )</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">register_skills</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;注册技能&quot;&quot;&quot;</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 数据技能</span></span><br><span class="line">        <span class="keyword">class</span> <span class="title class_">DataSkill</span>:</span><br><span class="line"><span class="meta">            @kernel_function</span></span><br><span class="line">            <span class="keyword">def</span> <span class="title function_">read_data</span>(<span class="params">self, file_path: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">                <span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line">                df = pd.read_csv(file_path)</span><br><span class="line">                <span class="keyword">return</span> df.describe().to_string()</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 报告技能（Semantic）</span></span><br><span class="line">        report_prompt = PromptTemplate(</span><br><span class="line">            template=<span class="string">&quot;&quot;&quot;基于以下数据生成业务报告：</span></span><br><span class="line"><span class="string">            </span></span><br><span class="line"><span class="string">            &#123;&#123;$data&#125;&#125;</span></span><br><span class="line"><span class="string">            </span></span><br><span class="line"><span class="string">            报告要求：</span></span><br><span class="line"><span class="string">            - 包含数据概览</span></span><br><span class="line"><span class="string">            - 包含趋势分析</span></span><br><span class="line"><span class="string">            - 包含建议&quot;&quot;&quot;</span></span><br><span class="line">        )</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 邮件技能</span></span><br><span class="line">        <span class="keyword">class</span> <span class="title class_">EmailSkill</span>:</span><br><span class="line"><span class="meta">            @kernel_function</span></span><br><span class="line">            <span class="keyword">def</span> <span class="title function_">send_email</span>(<span class="params">self, to: <span class="built_in">str</span>, subject: <span class="built_in">str</span>, body: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">                <span class="comment"># 集成邮件服务</span></span><br><span class="line">                <span class="keyword">return</span> <span class="string">f&quot;邮件发送成功: <span class="subst">&#123;to&#125;</span>&quot;</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 注册</span></span><br><span class="line">        <span class="variable language_">self</span>.kernel.import_skill(DataSkill(), <span class="string">&quot;data&quot;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.kernel.import_semantic_function_from_prompt(</span><br><span class="line">            <span class="string">&quot;report&quot;</span>, <span class="string">&quot;generate&quot;</span>, report_prompt</span><br><span class="line">        )</span><br><span class="line">        <span class="variable language_">self</span>.kernel.import_skill(EmailSkill(), <span class="string">&quot;email&quot;</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">run_task</span>(<span class="params">self, task_description: <span class="built_in">str</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;执行任务&quot;&quot;&quot;</span></span><br><span class="line">        planner = SequentialPlanner(<span class="variable language_">self</span>.kernel)</span><br><span class="line">        plan = <span class="keyword">await</span> planner.create_plan(task_description)</span><br><span class="line">        result = <span class="keyword">await</span> plan.invoke()</span><br><span class="line">        <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    agent = EnterpriseAgent()</span><br><span class="line">    result = <span class="keyword">await</span> agent.run_task(</span><br><span class="line">        <span class="string">&quot;读取 /data/monthly_sales.csv，生成销售报告，发送给 sales@company.com&quot;</span></span><br><span class="line">    )</span><br><span class="line">    <span class="built_in">print</span>(result)</span><br><span class="line"></span><br><span class="line">asyncio.run(main())</span><br></pre></td></tr></table></figure>
+
+<h2 id="Semantic-Kernel-进阶用法"><a href="#Semantic-Kernel-进阶用法" class="headerlink" title="Semantic Kernel 进阶用法"></a>Semantic Kernel 进阶用法</h2><h3 id="记忆系统"><a href="#记忆系统" class="headerlink" title="记忆系统"></a>记忆系统</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> semantic_kernel.memory.semantic_text_memory <span class="keyword">import</span> SemanticTextMemory</span><br><span class="line"><span class="keyword">from</span> semantic_kernel.connectors.memory.volatile_memory_store <span class="keyword">import</span> VolatileMemoryStore</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建记忆</span></span><br><span class="line">memory = SemanticTextMemory(storage=VolatileMemoryStore())</span><br><span class="line">kernel.register_memory(memory)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存信息</span></span><br><span class="line"><span class="keyword">await</span> memory.save_information(</span><br><span class="line">    <span class="string">&quot;company_docs&quot;</span>,</span><br><span class="line">    <span class="built_in">id</span>=<span class="string">&quot;doc1&quot;</span>,</span><br><span class="line">    text=<span class="string">&quot;公司年度报告内容...&quot;</span>,</span><br><span class="line">    description=<span class="string">&quot;2024年度报告&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检索信息</span></span><br><span class="line">results = <span class="keyword">await</span> memory.search(<span class="string">&quot;company_docs&quot;</span>, <span class="string">&quot;销售数据&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="上下文变量"><a href="#上下文变量" class="headerlink" title="上下文变量"></a>上下文变量</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> semantic_kernel.orchestration.context_variables <span class="keyword">import</span> ContextVariables</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建上下文</span></span><br><span class="line">context = ContextVariables()</span><br><span class="line">context[<span class="string">&quot;data_file&quot;</span>] = <span class="string">&quot;/data/sales.csv&quot;</span></span><br><span class="line">context[<span class="string">&quot;recipient&quot;</span>] = <span class="string">&quot;manager@company.com&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行 Function 时使用上下文</span></span><br><span class="line">result = <span class="keyword">await</span> kernel.run_async(</span><br><span class="line">    data_skill[<span class="string">&quot;read_data&quot;</span>],</span><br><span class="line">    input_vars=context</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="流式输出"><a href="#流式输出" class="headerlink" title="流式输出"></a>流式输出</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 流式获取 LLM 输出</span></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">stream_example</span>():</span><br><span class="line">    stream = <span class="keyword">await</span> kernel.run_stream_async(</span><br><span class="line">        semantic_function,</span><br><span class="line">        input_context</span><br><span class="line">    )</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> chunk <span class="keyword">in</span> stream:</span><br><span class="line">        <span class="built_in">print</span>(chunk, end=<span class="string">&quot;&quot;</span>, flush=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="并行执行"><a href="#并行执行" class="headerlink" title="并行执行"></a>并行执行</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> asyncio</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="keyword">def</span> <span class="title function_">parallel_example</span>():</span><br><span class="line">    <span class="comment"># 并行执行多个 Function</span></span><br><span class="line">    results = <span class="keyword">await</span> asyncio.gather(</span><br><span class="line">        kernel.run_async(skill1[<span class="string">&quot;func1&quot;</span>], input1),</span><br><span class="line">        kernel.run_async(skill2[<span class="string">&quot;func2&quot;</span>], input2),</span><br><span class="line">        kernel.run_async(skill3[<span class="string">&quot;func3&quot;</span>], input3)</span><br><span class="line">    )</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 整合结果</span></span><br><span class="line">    combined = <span class="string">&quot;\n&quot;</span>.join(results)</span><br><span class="line">    <span class="keyword">return</span> combined</span><br></pre></td></tr></table></figure>
+
+<h2 id="Semantic-Kernel-最佳实践"><a href="#Semantic-Kernel-最佳实践" class="headerlink" title="Semantic Kernel 最佳实践"></a>Semantic Kernel 最佳实践</h2><h3 id="Skills-组织"><a href="#Skills-组织" class="headerlink" title="Skills 组织"></a>Skills 组织</h3><ol>
+<li><strong>分类组织</strong>：按功能分类 Skills</li>
+<li><strong>命名规范</strong>：Function 名称清晰</li>
+<li><strong>描述准确</strong>：描述帮助 Planner 正确选择</li>
+</ol>
+<h3 id="Planner-使用"><a href="#Planner-使用" class="headerlink" title="Planner 使用"></a>Planner 使用</h3><ol>
+<li><strong>任务清晰</strong>：任务描述具体</li>
+<li><strong>限制范围</strong>：设置 Function 约束</li>
+<li><strong>验证计划</strong>：检查生成的计划</li>
+</ol>
+<h3 id="企业部署"><a href="#企业部署" class="headerlink" title="企业部署"></a>企业部署</h3><ol>
+<li><strong>安全配置</strong>：配置安全策略</li>
+<li><strong>日志记录</strong>：记录执行日志</li>
+<li><strong>错误处理</strong>：完善的错误处理</li>
+<li><strong>监控告警</strong>：设置监控机制</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Semantic Kernel 以 Skills-Functions-Planners 架构组织 Agent 能力。Skills 是 Function 集合，Function 包括 Semantic（LLM驱动）和 Native（代码）两种类型，Planner 自动组合 Functions 执行任务。</p>
+<p>Semantic Kernel 与 Azure 服务无缝集成，适合企业级应用开发。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-frameworks/">Agent 框架概览</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/tool-use/">工具调用机制详解</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-security/">Agent 安全考量</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/langchain-agent/">LangChain Agent 实践</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/03/25/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/semantic-kernel/" data-id="cuidL4pkFpLRveilQ7tdQNiyM" data-title="Semantic Kernel 实践" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Microsoft/" rel="tag">Microsoft</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Semantic-Kernel/" rel="tag">Semantic Kernel</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/03/28/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-intro/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          多 Agent 系统概述
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/03/22/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/crewai-agent/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">CrewAI Agent 实践</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><span class="category-list-count">77</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">50</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/LM-2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/17/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/02/">二月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">一月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a><span class="archive-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        All content licensed under CC BY 4.0
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

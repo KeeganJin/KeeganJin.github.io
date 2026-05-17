@@ -1,6 +1,6 @@
 ---
 title: 层次化 Agent 系统
-date: 2026-05-10
+date: 2026-04-04
 categories: [技术文档, Agent]
 lang: zh-CN
 tags: [Agent, Multi-Agent, 层次化架构]

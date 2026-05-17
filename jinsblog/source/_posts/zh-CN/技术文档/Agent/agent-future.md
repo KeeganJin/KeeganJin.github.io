@@ -1,6 +1,6 @@
 ---
 title: Agent 未来展望
-date: 2026-05-10
+date: 2026-05-07
 categories: [技术文档, Agent]
 lang: zh-CN
 tags: [Agent, 未来趋势, AGI]

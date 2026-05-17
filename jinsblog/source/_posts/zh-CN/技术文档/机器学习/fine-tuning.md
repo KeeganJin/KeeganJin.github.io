@@ -1,6 +1,6 @@
 ---
 title: 微调技术详解
-date: 2026-04-22
+date: 2026-02-11
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 大模型, 微调]

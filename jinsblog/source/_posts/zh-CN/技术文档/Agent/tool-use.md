@@ -1,6 +1,6 @@
 ---
 title: 工具调用机制（Tool Use）
-date: 2026-05-10
+date: 2026-03-04
 categories: [技术文档, Agent]
 lang: zh-CN
 tags: [Agent, Tool Use, Function Calling]

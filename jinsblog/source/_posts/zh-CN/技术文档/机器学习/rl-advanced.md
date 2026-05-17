@@ -1,6 +1,6 @@
 ---
 title: 强化学习进阶
-date: 2026-04-14
+date: 2026-01-26
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 强化学习, RLHF, 多智能体]

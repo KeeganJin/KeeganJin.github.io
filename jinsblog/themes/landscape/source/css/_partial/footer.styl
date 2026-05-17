@@ -1,14 +1,24 @@
+// ========================================
+// Nordic Zen Footer (北欧极简白页脚)
+// ========================================
+
 #footer
   background: color-footer-background
-  padding: 50px 0
+  padding: 40px 0
   border-top: 1px solid color-border
   color: color-grey
+  font-family: font-sans
   a
     color: color-link
     text-decoration: none
+    transition: color 0.3s ease
     &:hover
-      text-decoration: underline
+      color: darken(color-link, 20%)
 
 #footer-info
   line-height: line-height
-  font-size: 0.85em
+  font-size: 14px
+  text-align: center
+
+.footer-link
+  margin: 0 8px

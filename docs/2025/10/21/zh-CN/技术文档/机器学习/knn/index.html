@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>K近邻（KNN） | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="KNN基本原理K近邻概念K近邻（K-Nearest Neighbors, KNN）是一种基于实例的学习算法。 核心思想：  找到距离测试样本最近的K个训练样本 根据这K个邻居的类别进行预测  分类决策：投票决定类别回归决策：取K个邻居的平均值 KNN的工作流程123451. 计算测试样本与所有训练样本的距离2. 按距离排序，选择最近的K个样本3. 统计K个邻居的类别4. 分类：多数投票决定类别5.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="K近邻（KNN）">
+<meta property="og:url" content="https://keeganjin.github.io/2025/10/21/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/knn/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="KNN基本原理K近邻概念K近邻（K-Nearest Neighbors, KNN）是一种基于实例的学习算法。 核心思想：  找到距离测试样本最近的K个训练样本 根据这K个邻居的类别进行预测  分类决策：投票决定类别回归决策：取K个邻居的平均值 KNN的工作流程123451. 计算测试样本与所有训练样本的距离2. 按距离排序，选择最近的K个样本3. 统计K个邻居的类别4. 分类：多数投票决定类别5.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-10-20T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-17T16:16:46.065Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="KNN">
+<meta property="article:tag" content="分类算法">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+
+  <!-- Nordic Zen Fonts: Noto Serif SC for elegant reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+
+  <!-- MathJax for math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$', '$'], ['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Life Notes</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/机器学习/knn" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/10/21/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/knn/" class="article-date">
+  <time class="dt-published" datetime="2025-10-20T16:00:00.000Z" itemprop="datePublished">2025-10-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      K近邻（KNN）
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="KNN基本原理"><a href="#KNN基本原理" class="headerlink" title="KNN基本原理"></a>KNN基本原理</h2><h3 id="K近邻概念"><a href="#K近邻概念" class="headerlink" title="K近邻概念"></a>K近邻概念</h3><p>K近邻（K-Nearest Neighbors, KNN）是一种基于实例的学习算法。</p>
+<p><strong>核心思想</strong>：</p>
+<ul>
+<li>找到距离测试样本最近的K个训练样本</li>
+<li>根据这K个邻居的类别进行预测</li>
+</ul>
+<p><strong>分类决策</strong>：投票决定类别<br><strong>回归决策</strong>：取K个邻居的平均值</p>
+<h3 id="KNN的工作流程"><a href="#KNN的工作流程" class="headerlink" title="KNN的工作流程"></a>KNN的工作流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. 计算测试样本与所有训练样本的距离</span><br><span class="line">2. 按距离排序，选择最近的K个样本</span><br><span class="line">3. 统计K个邻居的类别</span><br><span class="line">4. 分类：多数投票决定类别</span><br><span class="line">5. 回归：计算邻居的平均值</span><br></pre></td></tr></table></figure>
+
+<h3 id="KNN的特点"><a href="#KNN的特点" class="headerlink" title="KNN的特点"></a>KNN的特点</h3><table>
+<thead>
+<tr>
+<th>特点</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>惰性学习</td>
+<td>不显式学习模型，存储训练数据</td>
+</tr>
+<tr>
+<td>非参数方法</td>
+<td>不假设数据分布</td>
+</tr>
+<tr>
+<td>简单直观</td>
+<td>算法逻辑简单</td>
+</tr>
+<tr>
+<td>计算成本高</td>
+<td>每次预测需计算所有距离</td>
+</tr>
+</tbody></table>
+<h3 id="KNN的几何理解"><a href="#KNN的几何理解" class="headerlink" title="KNN的几何理解"></a>KNN的几何理解</h3><p>在特征空间中，KNN的决策边界由邻居分布决定：</p>
+<ul>
+<li>K小：决策边界复杂（可能过拟合）</li>
+<li>K大：决策边界平滑（可能欠拟合）</li>
+</ul>
+<h2 id="距离度量方法"><a href="#距离度量方法" class="headerlink" title="距离度量方法"></a>距离度量方法</h2><h3 id="欧氏距离"><a href="#欧氏距离" class="headerlink" title="欧氏距离"></a>欧氏距离</h3><p>最常用的距离度量：</p>
+<p>$d(\mathbf{x}, \mathbf{z}) &#x3D; \sqrt{\sum_{i&#x3D;1}^{n}(x_i - z_i)^2}$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">euclidean_distance</span>(<span class="params">x, z</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;欧氏距离&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> np.sqrt(np.<span class="built_in">sum</span>((x - z) ** <span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+
+<h3 id="曼哈顿距离"><a href="#曼哈顿距离" class="headerlink" title="曼哈顿距离"></a>曼哈顿距离</h3><p>沿坐标轴方向的距离：</p>
+<p>$d(\mathbf{x}, \mathbf{z}) &#x3D; \sum_{i&#x3D;1}^{n}|x_i - z_i|$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">manhattan_distance</span>(<span class="params">x, z</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;曼哈顿距离&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(np.<span class="built_in">abs</span>(x - z))</span><br></pre></td></tr></table></figure>
+
+<h3 id="切比雪夫距离"><a href="#切比雪夫距离" class="headerlink" title="切比雪夫距离"></a>切比雪夫距离</h3><p>各坐标差的最大值：</p>
+<p>$d(\mathbf{x}, \mathbf{z}) &#x3D; \max_i |x_i - z_i|$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">chebyshev_distance</span>(<span class="params">x, z</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;切比雪夫距离&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">max</span>(np.<span class="built_in">abs</span>(x - z))</span><br></pre></td></tr></table></figure>
+
+<h3 id="闵可夫斯基距离"><a href="#闵可夫斯基距离" class="headerlink" title="闵可夫斯基距离"></a>闵可夫斯基距离</h3><p>通用距离度量：</p>
+<p>$d(\mathbf{x}, \mathbf{z}) &#x3D; \left(\sum_{i&#x3D;1}^{n}|x_i - z_i|^p\right)^{1&#x2F;p}$</p>
+<ul>
+<li>$p&#x3D;1$：曼哈顿距离</li>
+<li>$p&#x3D;2$：欧氏距离</li>
+<li>$p&#x3D;\infty$：切比雪夫距离</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">minkowski_distance</span>(<span class="params">x, z, p=<span class="number">2</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;闵可夫斯基距离&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> np.power(np.<span class="built_in">sum</span>(np.power(np.<span class="built_in">abs</span>(x - z), p)), <span class="number">1</span>/p)</span><br></pre></td></tr></table></figure>
+
+<h3 id="余弦距离"><a href="#余弦距离" class="headerlink" title="余弦距离"></a>余弦距离</h3><p>用于文本等高维数据：</p>
+<p>$d(\mathbf{x}, \mathbf{z}) &#x3D; 1 - \frac{\mathbf{x}^T\mathbf{z}}{|\mathbf{x}||\mathbf{z}|}$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">cosine_distance</span>(<span class="params">x, z</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;余弦距离&quot;&quot;&quot;</span></span><br><span class="line">    cosine_sim = np.dot(x, z) / (np.linalg.norm(x) * np.linalg.norm(z))</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span> - cosine_sim</span><br></pre></td></tr></table></figure>
+
+<h3 id="汉明距离"><a href="#汉明距离" class="headerlink" title="汉明距离"></a>汉明距离</h3><p>用于离散特征，计算不同位置的数目：</p>
+<p>$d(\mathbf{x}, \mathbf{z}) &#x3D; \sum_{i&#x3D;1}^{n} \mathbb{1}[x_i \neq z_i]$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">hamming_distance</span>(<span class="params">x, z</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;汉明距离&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(x != z)</span><br></pre></td></tr></table></figure>
+
+<h3 id="距离度量选择指南"><a href="#距离度量选择指南" class="headerlink" title="距离度量选择指南"></a>距离度量选择指南</h3><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐距离</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>连续特征，低维</td>
+<td>欧氏距离</td>
+</tr>
+<tr>
+<td>连续特征，高维</td>
+<td>曼哈顿距离</td>
+</tr>
+<tr>
+<td>文本、稀疏数据</td>
+<td>余弦距离</td>
+</tr>
+<tr>
+<td>离散特征</td>
+<td>汉明距离</td>
+</tr>
+<tr>
+<td>不确定</td>
+<td>尝试多种距离</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsClassifier</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不同距离度量</span></span><br><span class="line"><span class="keyword">for</span> metric <span class="keyword">in</span> [<span class="string">&#x27;euclidean&#x27;</span>, <span class="string">&#x27;manhattan&#x27;</span>, <span class="string">&#x27;chebyshev&#x27;</span>, <span class="string">&#x27;minkowski&#x27;</span>]:</span><br><span class="line">    knn = KNeighborsClassifier(n_neighbors=<span class="number">5</span>, metric=metric, p=<span class="number">3</span> <span class="keyword">if</span> metric==<span class="string">&#x27;minkowski&#x27;</span> <span class="keyword">else</span> <span class="number">2</span>)</span><br><span class="line">    knn.fit(X_train, y_train)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;metric&#125;</span>: 准确率=<span class="subst">&#123;knn.score(X_test, y_test):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="K值选择策略"><a href="#K值选择策略" class="headerlink" title="K值选择策略"></a>K值选择策略</h2><h3 id="K值的影响"><a href="#K值的影响" class="headerlink" title="K值的影响"></a>K值的影响</h3><p><strong>K值对决策边界的影响</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>K值</th>
+<th>决策边界</th>
+<th>风险</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>K&#x3D;1</td>
+<td>非常复杂</td>
+<td>过拟合</td>
+</tr>
+<tr>
+<td>K小</td>
+<td>较复杂</td>
+<td>可能过拟合</td>
+</tr>
+<tr>
+<td>K大</td>
+<td>较平滑</td>
+<td>可能欠拟合</td>
+</tr>
+<tr>
+<td>K&#x3D;N</td>
+<td>极平滑</td>
+<td>总是预测多数类</td>
+</tr>
+</tbody></table>
+<h3 id="K-1的情况"><a href="#K-1的情况" class="headerlink" title="K&#x3D;1的情况"></a>K&#x3D;1的情况</h3><p>最近邻分类：</p>
+<ul>
+<li>决策边界是训练样本的 Voronoi 图边界</li>
+<li>对噪声敏感</li>
+<li>容易过拟合</li>
+</ul>
+<h3 id="最优K值选择"><a href="#最优K值选择" class="headerlink" title="最优K值选择"></a>最优K值选择</h3><p><strong>交叉验证法</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> cross_val_score</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试不同K值</span></span><br><span class="line">k_values = <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">31</span>)</span><br><span class="line">cv_scores = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> k_values:</span><br><span class="line">    knn = KNeighborsClassifier(n_neighbors=k)</span><br><span class="line">    scores = cross_val_score(knn, X_train, y_train, cv=<span class="number">5</span>)</span><br><span class="line">    cv_scores.append(scores.mean())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最优K</span></span><br><span class="line">best_k = k_values[np.argmax(cv_scores)]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;最优K值: <span class="subst">&#123;best_k&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;最高交叉验证分数: <span class="subst">&#123;<span class="built_in">max</span>(cv_scores):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p><strong>可视化K值选择</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">plt.plot(k_values, cv_scores)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;K Value&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;Cross-Validation Accuracy&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;K值选择&#x27;</span>)</span><br><span class="line">plt.scatter(best_k, <span class="built_in">max</span>(cv_scores), color=<span class="string">&#x27;red&#x27;</span>, s=<span class="number">100</span>, label=<span class="string">f&#x27;Best K=<span class="subst">&#123;best_k&#125;</span>&#x27;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<h3 id="K值选择原则"><a href="#K值选择原则" class="headerlink" title="K值选择原则"></a>K值选择原则</h3><table>
+<thead>
+<tr>
+<th>数据特点</th>
+<th>K值建议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>样本少</td>
+<td>较小K值</td>
+</tr>
+<tr>
+<td>样本多</td>
+<td>较大K值</td>
+</tr>
+<tr>
+<td>噪声多</td>
+<td>较大K值</td>
+</tr>
+<tr>
+<td>类别不平衡</td>
+<td>考虑加权投票</td>
+</tr>
+</tbody></table>
+<h3 id="经验法则"><a href="#经验法则" class="headerlink" title="经验法则"></a>经验法则</h3><ul>
+<li>通常选择奇数K（避免平票）</li>
+<li>一般 $K \leq \sqrt{N}$（N为样本数）</li>
+<li>通过交叉验证确定最优K</li>
+</ul>
+<h2 id="权重分配方法"><a href="#权重分配方法" class="headerlink" title="权重分配方法"></a>权重分配方法</h2><h3 id="均权投票"><a href="#均权投票" class="headerlink" title="均权投票"></a>均权投票</h3><p>所有邻居权重相同：</p>
+<ul>
+<li>统计K个邻居中各类别的数量</li>
+<li>选择数量最多的类别</li>
+</ul>
+<h3 id="距离加权投票"><a href="#距离加权投票" class="headerlink" title="距离加权投票"></a>距离加权投票</h3><p>邻居权重与距离相关：<br>$w_i &#x3D; \frac{1}{d_i}$ 或 $w_i &#x3D; \frac{1}{d_i^2}$</p>
+<p><strong>加权投票</strong>：<br>$\hat{y} &#x3D; \arg\max_c \sum_{i \in N_k} w_i \mathbb{1}[y_i &#x3D; c]$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsClassifier</span><br><span class="line"></span><br><span class="line"><span class="comment"># 均权</span></span><br><span class="line">knn_uniform = KNeighborsClassifier(n_neighbors=<span class="number">5</span>, weights=<span class="string">&#x27;uniform&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 距离加权</span></span><br><span class="line">knn_distance = KNeighborsClassifier(n_neighbors=<span class="number">5</span>, weights=<span class="string">&#x27;distance&#x27;</span>)</span><br><span class="line"></span><br><span class="line">knn_uniform.fit(X_train, y_train)</span><br><span class="line">knn_distance.fit(X_train, y_train)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;均权准确率: <span class="subst">&#123;knn_uniform.score(X_test, y_test):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;加权准确率: <span class="subst">&#123;knn_distance.score(X_test, y_test):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="自定义权重函数"><a href="#自定义权重函数" class="headerlink" title="自定义权重函数"></a>自定义权重函数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">custom_weights</span>(<span class="params">distances</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;自定义权重函数&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 距离小于阈值的权重高</span></span><br><span class="line">    threshold = <span class="number">1.0</span></span><br><span class="line">    weights = np.where(distances &lt; threshold, <span class="number">1.0</span>, <span class="number">0.5</span>)</span><br><span class="line">    <span class="keyword">return</span> weights</span><br><span class="line"></span><br><span class="line">knn_custom = KNeighborsClassifier(n_neighbors=<span class="number">5</span>, weights=custom_weights)</span><br><span class="line">knn_custom.fit(X_train, y_train)</span><br></pre></td></tr></table></figure>
+
+<h3 id="加权的优势"><a href="#加权的优势" class="headerlink" title="加权的优势"></a>加权的优势</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>考虑距离信息</td>
+<td>近邻更重要</td>
+</tr>
+<tr>
+<td>减少噪声影响</td>
+<td>远距离样本影响小</td>
+</tr>
+<tr>
+<td>更合理的决策</td>
+<td>综合考虑距离和类别</td>
+</tr>
+</tbody></table>
+<h2 id="KD树优化"><a href="#KD树优化" class="headerlink" title="KD树优化"></a>KD树优化</h2><h3 id="KNN的计算问题"><a href="#KNN的计算问题" class="headerlink" title="KNN的计算问题"></a>KNN的计算问题</h3><p>朴素KNN每次预测需要计算与所有训练样本的距离：</p>
+<ul>
+<li>时间复杂度：O(n × d)（n样本数，d特征数）</li>
+<li>对大规模数据效率低</li>
+</ul>
+<h3 id="KD树"><a href="#KD树" class="headerlink" title="KD树"></a>KD树</h3><p>KD树是一种空间划分数据结构，加速最近邻搜索。</p>
+<p><strong>构建过程</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. 选择方差最大的特征作为分裂轴</span><br><span class="line">2. 选择该特征的中位数作为分裂点</span><br><span class="line">3. 将数据分为两部分</span><br><span class="line">4. 对子集递归构建子树</span><br></pre></td></tr></table></figure>
+
+<h3 id="KD树的结构"><a href="#KD树的结构" class="headerlink" title="KD树的结构"></a>KD树的结构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">        (5, 3)</span><br><span class="line">       /      \</span><br><span class="line">   (2, 4)    (8, 7)</span><br><span class="line">   /    \    /    \</span><br><span class="line">(1,2) (3,4) (6,5) (9,6)</span><br></pre></td></tr></table></figure>
+
+<h3 id="KD树搜索"><a href="#KD树搜索" class="headerlink" title="KD树搜索"></a>KD树搜索</h3><p><strong>最近邻搜索</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. 从根节点开始，沿树向下找到包含查询点的叶节点</span><br><span class="line">2. 计算叶节点中最近邻</span><br><span class="line">3. 回溯检查是否有更近的点</span><br><span class="line">4. 利用超平面剪枝</span><br></pre></td></tr></table></figure>
+
+<h3 id="KD树的效率"><a href="#KD树的效率" class="headerlink" title="KD树的效率"></a>KD树的效率</h3><table>
+<thead>
+<tr>
+<th>情况</th>
+<th>时间复杂度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>低维数据</td>
+<td>O(log n)</td>
+</tr>
+<tr>
+<td>高维数据</td>
+<td>接近 O(n)</td>
+</tr>
+</tbody></table>
+<h3 id="Ball树"><a href="#Ball树" class="headerlink" title="Ball树"></a>Ball树</h3><p>对高维数据更有效：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsClassifier</span><br><span class="line"></span><br><span class="line"><span class="comment"># KD树</span></span><br><span class="line">knn_kd = KNeighborsClassifier(n_neighbors=<span class="number">5</span>, algorithm=<span class="string">&#x27;kd_tree&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Ball树</span></span><br><span class="line">knn_ball = KNeighborsClassifier(n_neighbors=<span class="number">5</span>, algorithm=<span class="string">&#x27;ball_tree&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 暴力搜索</span></span><br><span class="line">knn_brute = KNeighborsClassifier(n_neighbors=<span class="number">5</span>, algorithm=<span class="string">&#x27;brute&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 自动选择</span></span><br><span class="line">knn_auto = KNeighborsClassifier(n_neighbors=<span class="number">5</span>, algorithm=<span class="string">&#x27;auto&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="算法选择指南"><a href="#算法选择指南" class="headerlink" title="算法选择指南"></a>算法选择指南</h3><table>
+<thead>
+<tr>
+<th>数据特点</th>
+<th>推荐算法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>小数据（&lt;30样本）</td>
+<td>brute</td>
+</tr>
+<tr>
+<td>低维（&lt;20特征）</td>
+<td>kd_tree</td>
+</tr>
+<tr>
+<td>高维（&gt;20特征）</td>
+<td>ball_tree</td>
+</tr>
+<tr>
+<td>不确定</td>
+<td>auto</td>
+</tr>
+</tbody></table>
+<h2 id="案例实践"><a href="#案例实践" class="headerlink" title="案例实践"></a>案例实践</h2><h3 id="KNN分类示例"><a href="#KNN分类示例" class="headerlink" title="KNN分类示例"></a>KNN分类示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_iris</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler</span><br><span class="line"><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score, classification_report</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载数据</span></span><br><span class="line">iris = load_iris()</span><br><span class="line">X, y = iris.data, iris.target</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据划分</span></span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 标准化（KNN对尺度敏感）</span></span><br><span class="line">scaler = StandardScaler()</span><br><span class="line">X_train_scaled = scaler.fit_transform(X_train)</span><br><span class="line">X_test_scaled = scaler.transform(X_test)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练KNN</span></span><br><span class="line">knn = KNeighborsClassifier(n_neighbors=<span class="number">5</span>, weights=<span class="string">&#x27;distance&#x27;</span>)</span><br><span class="line">knn.fit(X_train_scaled, y_train)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 预测</span></span><br><span class="line">y_pred = knn.predict(X_test_scaled)</span><br><span class="line">y_prob = knn.predict_proba(X_test_scaled)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 评估</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;准确率: <span class="subst">&#123;accuracy_score(y_test, y_pred):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n分类报告:&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(classification_report(y_test, y_pred))</span><br></pre></td></tr></table></figure>
+
+<h3 id="K值选择实验"><a href="#K值选择实验" class="headerlink" title="K值选择实验"></a>K值选择实验</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> cross_val_score</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不同K值的交叉验证分数</span></span><br><span class="line">k_range = <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">31</span>)</span><br><span class="line">k_scores = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> k <span class="keyword">in</span> k_range:</span><br><span class="line">    knn = KNeighborsClassifier(n_neighbors=k)</span><br><span class="line">    scores = cross_val_score(knn, X_train_scaled, y_train, cv=<span class="number">5</span>, scoring=<span class="string">&#x27;accuracy&#x27;</span>)</span><br><span class="line">    k_scores.append(scores.mean())</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可视化</span></span><br><span class="line">plt.figure(figsize=(<span class="number">10</span>, <span class="number">6</span>))</span><br><span class="line">plt.plot(k_range, k_scores)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;K Value&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;Cross-Validation Accuracy&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;K值对准确率的影响&#x27;</span>)</span><br><span class="line">plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.show()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 最优K</span></span><br><span class="line">best_k = k_range[np.argmax(k_scores)]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;最优K值: <span class="subst">&#123;best_k&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="决策边界可视化"><a href="#决策边界可视化" class="headerlink" title="决策边界可视化"></a>决策边界可视化</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">plot_knn_decision_boundary</span>(<span class="params">X, y, k</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;绘制KNN决策边界&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler</span><br><span class="line">    </span><br><span class="line">    scaler = StandardScaler()</span><br><span class="line">    X_scaled = scaler.fit_transform(X)</span><br><span class="line">    </span><br><span class="line">    knn = KNeighborsClassifier(n_neighbors=k)</span><br><span class="line">    knn.fit(X_scaled, y)</span><br><span class="line">    </span><br><span class="line">    h = <span class="number">0.02</span></span><br><span class="line">    x_min, x_max = X_scaled[:, <span class="number">0</span>].<span class="built_in">min</span>() - <span class="number">1</span>, X_scaled[:, <span class="number">0</span>].<span class="built_in">max</span>() + <span class="number">1</span></span><br><span class="line">    y_min, y_max = X_scaled[:, <span class="number">1</span>].<span class="built_in">min</span>() - <span class="number">1</span>, X_scaled[:, <span class="number">1</span>].<span class="built_in">max</span>() + <span class="number">1</span></span><br><span class="line">    xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))</span><br><span class="line">    </span><br><span class="line">    Z = knn.predict(np.c_[xx.ravel(), yy.ravel()])</span><br><span class="line">    Z = Z.reshape(xx.shape)</span><br><span class="line">    </span><br><span class="line">    plt.contourf(xx, yy, Z, alpha=<span class="number">0.3</span>)</span><br><span class="line">    plt.scatter(X_scaled[:, <span class="number">0</span>], X_scaled[:, <span class="number">1</span>], c=y, edgecolors=<span class="string">&#x27;k&#x27;</span>)</span><br><span class="line">    plt.xlabel(<span class="string">&#x27;Feature 1 (scaled)&#x27;</span>)</span><br><span class="line">    plt.ylabel(<span class="string">&#x27;Feature 2 (scaled)&#x27;</span>)</span><br><span class="line">    plt.title(<span class="string">f&#x27;KNN Decision Boundary (K=<span class="subst">&#123;k&#125;</span>)&#x27;</span>)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用前两个特征</span></span><br><span class="line">X_2d = iris.data[:, :<span class="number">2</span>]</span><br><span class="line">plot_knn_decision_boundary(X_2d, iris.target, k=<span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="KNN回归示例"><a href="#KNN回归示例" class="headerlink" title="KNN回归示例"></a>KNN回归示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsRegressor</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error, r2_score</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载回归数据</span></span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> fetch_california_housing</span><br><span class="line">data = fetch_california_housing()</span><br><span class="line">X, y = data.data[:<span class="number">500</span>], data.target[:<span class="number">500</span>]</span><br><span class="line"></span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 标准化</span></span><br><span class="line">scaler = StandardScaler()</span><br><span class="line">X_train_scaled = scaler.fit_transform(X_train)</span><br><span class="line">X_test_scaled = scaler.transform(X_test)</span><br><span class="line"></span><br><span class="line"><span class="comment"># KNN回归</span></span><br><span class="line">knn_reg = KNeighborsRegressor(n_neighbors=<span class="number">5</span>, weights=<span class="string">&#x27;distance&#x27;</span>)</span><br><span class="line">knn_reg.fit(X_train_scaled, y_train)</span><br><span class="line"></span><br><span class="line">y_pred = knn_reg.predict(X_test_scaled)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;RMSE: <span class="subst">&#123;np.sqrt(mean_squared_error(y_test, y_pred)):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;R²: <span class="subst">&#123;r2_score(y_test, y_pred):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="算法对比"><a href="#算法对比" class="headerlink" title="算法对比"></a>算法对比</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不同搜索算法的效率对比</span></span><br><span class="line">algorithms = [<span class="string">&#x27;brute&#x27;</span>, <span class="string">&#x27;kd_tree&#x27;</span>, <span class="string">&#x27;ball_tree&#x27;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用较大数据集</span></span><br><span class="line">X_large, y_large = make_classification(n_samples=<span class="number">5000</span>, n_features=<span class="number">20</span>, random_state=<span class="number">42</span>)</span><br><span class="line">X_train_l, X_test_l, y_train_l, y_test_l = train_test_split(X_large, y_large, test_size=<span class="number">0.2</span>)</span><br><span class="line"></span><br><span class="line">scaler = StandardScaler()</span><br><span class="line">X_train_l_scaled = scaler.fit_transform(X_train_l)</span><br><span class="line">X_test_l_scaled = scaler.transform(X_test_l)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> algo <span class="keyword">in</span> algorithms:</span><br><span class="line">    knn = KNeighborsClassifier(n_neighbors=<span class="number">5</span>, algorithm=algo)</span><br><span class="line">    </span><br><span class="line">    start = time.time()</span><br><span class="line">    knn.fit(X_train_l_scaled, y_train_l)</span><br><span class="line">    y_pred = knn.predict(X_test_l_scaled)</span><br><span class="line">    end = time.time()</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;algo&#125;</span>:&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;  准确率: <span class="subst">&#123;accuracy_score(y_test_l, y_pred):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;  时间: <span class="subst">&#123;end - start:<span class="number">.4</span>f&#125;</span>秒&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="KNN的优缺点"><a href="#KNN的优缺点" class="headerlink" title="KNN的优缺点"></a>KNN的优缺点</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><table>
+<thead>
+<tr>
+<th>优点</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>简单直观</td>
+<td>算法逻辑简单易懂</td>
+</tr>
+<tr>
+<td>无需训练</td>
+<td>存储数据即可，无训练过程</td>
+</tr>
+<tr>
+<td>适用于多类</td>
+<td>天然支持多分类</td>
+</tr>
+<tr>
+<td>可解释性</td>
+<td>通过邻居解释预测</td>
+</tr>
+</tbody></table>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><table>
+<thead>
+<tr>
+<th>缺点</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>计算慢</td>
+<td>每次预测计算所有距离</td>
+</tr>
+<tr>
+<td>存储成本</td>
+<td>需存储所有训练数据</td>
+</tr>
+<tr>
+<td>维度诅咒</td>
+<td>高维数据效率下降</td>
+</tr>
+<tr>
+<td>尺度敏感</td>
+<td>需要特征标准化</td>
+</tr>
+<tr>
+<td>不平衡问题</td>
+<td>类别不平衡时偏向多数类</td>
+</tr>
+</tbody></table>
+<h3 id="维度诅咒"><a href="#维度诅咒" class="headerlink" title="维度诅咒"></a>维度诅咒</h3><p>当特征维度很高时：</p>
+<ul>
+<li>距离概念变得模糊</li>
+<li>所有样本距离相近</li>
+<li>KD树效率下降</li>
+</ul>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li>降维（PCA等）</li>
+<li>特征选择</li>
+<li>使用余弦距离</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>K近邻是基于实例的简单分类和回归算法。核心内容包括：</p>
+<ul>
+<li>KNN基本原理：找最近K个邻居投票决定</li>
+<li>距离度量：欧氏距离、曼哈顿距离、余弦距离等</li>
+<li>K值选择：通过交叉验证选择最优K</li>
+<li>权重分配：均权或距离加权投票</li>
+<li>KD树优化：加速最近邻搜索</li>
+</ul>
+<p>KNN简单但计算成本高，适合小规模低维数据。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/ml-introduction/">机器学习概述</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/linear-algebra/">线性代数基础</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/data-preprocessing/">数据预处理</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/decision-tree/">决策树</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2025/10/21/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/knn/" data-id="cuid_ZQ5xS1gc6p2wDK40bLxc" data-title="K近邻（KNN）" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/KNN/" rel="tag">KNN</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%88%86%E7%B1%BB%E7%AE%97%E6%B3%95/" rel="tag">分类算法</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/10/24/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/bayesian-classifier/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          贝叶斯分类器
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/10/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/logistic-regression/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">逻辑回归</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><span class="category-list-count">77</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">50</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/LM-2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/17/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/02/">二月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">一月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a><span class="archive-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        All content licensed under CC BY 4.0
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

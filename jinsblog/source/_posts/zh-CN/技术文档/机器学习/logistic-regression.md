@@ -1,6 +1,6 @@
 ---
 title: 逻辑回归
-date: 2026-05-01
+date: 2025-10-18
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 逻辑回归, 分类算法]

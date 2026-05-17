@@ -1,6 +1,6 @@
 ---
 title: 上下文学习与提示工程
-date: 2026-04-11
+date: 2026-02-14
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 大模型, 提示工程]

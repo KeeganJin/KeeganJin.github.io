@@ -20,7 +20,17 @@
       "Bash(cp -r node_modules/hexo-theme-redefine/source themes/hexo-theme-redefine/)",
       "Bash(Get-ChildItem -Path \"E:\\\\Projects\\\\KeeganJin.github.io\\\\docs\\\\2026\\\\05\\\\10\\\\zh-CN\" -Recurse -Filter \"*.html\")",
       "Bash(Select-Object -First 10)",
-      "Bash(python fix_math_dates.py)"
+      "Bash(python fix_math_dates.py)",
+      "Skill(frontend-design:frontend-design)",
+      "Skill(frontend-design:frontend-design:*)",
+      "Bash(npm run *)",
+      "Bash(python update_dates.py)",
+      "Bash(powershell -ExecutionPolicy Bypass -File update_dates.ps1)",
+      "Bash(sed -i 's/date: 2026-05-10/date: 2026-04-25/' agent-security.md)",
+      "Bash(sed -i 's/date: 2026-05-08/date: 2026-05-04/' OpenClaw拆解.md)",
+      "Bash(sed -i 's/date: 2026-05-14/date: 2026-02-05/' LM-2-模型架构.md)",
+      "Bash(sed -i 's/date: 2026-05-17/date: 2026-05-10/' 多模态.md)",
+      "Bash(sed -i 's/date: 2026-05-11/date: 2026-05-13/' 树模型.md)"
     ]
   }
 }

@@ -1,6 +1,6 @@
 ---
 title: 特征工程
-date: 2026-04-21
+date: 2025-11-04
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 特征工程, 特征选择]

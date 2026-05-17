@@ -1,6 +1,6 @@
 ---
 title: Boosting基础
-date: 2026-04-14
+date: 2025-11-13
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 集成学习, Boosting]

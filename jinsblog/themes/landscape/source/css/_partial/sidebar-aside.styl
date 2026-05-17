@@ -1,27 +1,130 @@
 #sidebar
   @media mq-normal
     column(sidebar-column)
+    padding-left: gutter-width
+    padding-right: 0
 
 .widget-wrap
-  margin: block-margin 0
+  margin: 24px 0
 
 .widget-title
-  @extend $block-caption
+  font-family: font-serif
+  font-size: 13px
+  font-weight: 700
+  color: #1A202C
+  text-transform: none
+  letter-spacing: 1px
+  margin-bottom: 12px
+  padding-bottom: 8px
+  border-bottom: 2px solid color-link
 
 .widget
   color: color-sidebar-text
-  text-shadow: 0 1px #fff
-  background: color-widget-background
-  box-shadow: 0 -1px 4px color-widget-border inset
-  border: 1px solid color-widget-border
-  padding: 15px
-  border-radius: 3px
+  font-family: font-sans
+  font-size: 13px
+  background: transparent
+  border: none
+  padding: 0
   a
-    color: color-link
+    color: color-default
     text-decoration: none
+    transition: color 0.3s ease
+    display: block
+    padding: 6px 0
     &:hover
-      text-decoration: underline
+      color: color-link
   ul, ol, dl
+    list-style: none
+    margin: 0
+    padding: 0
     ul, ol, dl
-      margin-left: 15px
-      list-style: disc
+      margin-left: 16px
+      padding-left: 12px
+
+// Category widget - clean nested style
+.category-list
+  .category-list-item
+    margin-bottom: 2px
+
+.category-list-link
+  font-size: 13px
+  color: color-default
+  display: block
+  padding: 4px 0
+  position: relative
+  &:before
+    content: ""
+    display: none
+
+// Nested categories (子分类)
+.category-list-child
+  margin-top: 4px
+  padding-left: 16px
+  border-left: 1px solid color-border
+  .category-list-link
+    font-size: 12px
+    color: color-grey
+    &:hover
+      color: color-link
+
+.category-list-count
+  font-size: 11px
+  color: color-grey
+  float: right
+  margin-top: 2px
+
+// Archive widget - minimal
+.archive-list
+  .archive-list-item
+    margin-bottom: 2px
+
+.archive-list-link
+  font-size: 13px
+  display: block
+  padding: 4px 0
+
+.archive-list-count
+  font-size: 11px
+  color: color-grey
+  float: right
+
+// Recent posts widget - elegant
+.recent-posts-list
+  .recent-posts-item
+    margin-bottom: 8px
+    &:last-child
+      margin-bottom: 0
+
+.recent-posts-link
+  font-family: font-serif
+  font-size: 13px
+  color: color-default
+  line-height: 1.4
+  display: block
+  padding: 4px 0
+  border-bottom: 1px solid color-border
+  &:hover
+    color: color-link
+
+// Tag widget - badge style
+.tag-list
+  display: flex
+  flex-wrap: wrap
+  gap: 6px
+
+.tag-list-item
+  display: inline-block
+
+.tag-list-link
+  display: inline-block
+  padding: 3px 10px
+  background: #FFFFFF
+  color: color-grey
+  border: 1px solid color-border
+  border-radius: radius-sm
+  font-size: 11px
+  transition: all 0.3s ease
+  &:hover
+    background: color-link
+    color: #FFFFFF
+    border-color: color-link

@@ -1,6 +1,6 @@
 ---
 title: 分布式训练
-date: 2026-04-19
+date: 2026-02-17
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 分布式训练, 并行策略]

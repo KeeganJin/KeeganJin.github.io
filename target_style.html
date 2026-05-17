@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexo 博客风格设计与实时预览器</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Noto Serif SC for Nordic Zen look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for standard icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Vue 3 for reactive live editing -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Marked for real-time Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        /* Custom scrollbar for editor & preview */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.5);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(156, 163, 175, 0.7);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 overflow-hidden h-screen w-screen flex flex-col">
+
+    <div id="app" class="flex flex-col h-full w-full" v-cloak>
+        <!-- Top Navigation Bar -->
+        <header class="bg-slate-950 border-b border-slate-800 px-6 py-3 flex items-center justify-between shrink-0">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-600 p-2 rounded-lg text-white">
+                    <i class="fa-solid fa-feather-pointed text-lg animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-wide">Hexo Digital Garden Architect</h1>
+                    <p class="text-xs text-slate-400">交互式博客风格探索器 & 源码自动生成器</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button @click="downloadZip" class="bg-amber-600 hover:bg-amber-500 transition-colors text-white text-xs font-semibold py-2 px-4 rounded-lg flex items-center space-x-2 shadow-lg shadow-amber-900/30">
+                    <i class="fa-solid fa-download"></i>
+                    <span>打包下载博客源文件</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="flex flex-1 overflow-hidden">
+            <!-- Left Panel: Style Designer & File Explorer -->
+            <section class="w-2/5 border-r border-slate-800 bg-slate-950 flex flex-col overflow-hidden">
+                <!-- Tab Switching Header -->
+                <div class="flex border-b border-slate-800 text-sm">
+                    <button 
+                        @click="activeTab = 'style'" 
+                        :class="activeTab === 'style' ? 'border-amber-500 text-amber-400 bg-slate-900/40' : 'border-transparent text-slate-400 hover:text-slate-200'"
+                        class="flex-1 py-3 px-4 border-b-2 font-medium transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-palette"></i>
+                        <span>风格设计师</span>
+                    </button>
+                    <button 
+                        @click="activeTab = 'files'" 
+                        :class="activeTab === 'files' ? 'border-amber-500 text-amber-400 bg-slate-900/40' : 'border-transparent text-slate-400 hover:text-slate-200'"
+                        class="flex-1 py-3 px-4 border-b-2 font-medium transition-all flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <span>源文件管理 (Markdown / Yaml)</span>
+                    </button>
+                </div>
+
+                <!-- Tab Content: Style Customization -->
+                <div v-if="activeTab === 'style'" class="flex-1 overflow-y-auto p-6 space-y-6">
+                    <div>
+                        <h2 class="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wider">选择核心视觉主题</h2>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div 
+                                v-for="(theme, key) in themes" 
+                                :key="key"
+                                @click="selectTheme(key)"
+                                :class="currentThemeId === key ? 'border-2 border-amber-500 ring-2 ring-amber-500/20' : 'border border-slate-800 hover:border-slate-700'"
+                                class="bg-slate-900 p-3 rounded-xl cursor-pointer transition-all flex flex-col justify-between">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-semibold text-xs text-slate-200">{{ theme.name }}</span>
+                                    <span class="w-3 h-3 rounded-full" :style="{ backgroundColor: theme.primary }"></span>
+                                </div>
+                                <p class="text-[11px] text-slate-400 leading-relaxed">{{ theme.desc }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Custom Layout Options -->
+                    <div class="border-t border-slate-800 pt-5">
+                        <h2 class="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wider">布局定制</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs text-slate-400 block mb-2">侧边栏位置 (Sidebar Position)</label>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <button 
+                                        @click="styleConfig.sidebar = 'left'"
+                                        :class="styleConfig.sidebar === 'left' ? 'bg-amber-600/20 text-amber-300 border border-amber-500/50' : 'bg-slate-900 text-slate-400 border border-slate-800 hover:bg-slate-800'"
+                                        class="py-2 rounded-lg text-xs transition-all">
+                                        左侧 (Left)
+                                    </button>
+                                    <button 
+                                        @click="styleConfig.sidebar = 'right'"
+                                        :class="styleConfig.sidebar === 'right' ? 'bg-amber-600/20 text-amber-300 border border-amber-500/50' : 'bg-slate-900 text-slate-400 border border-slate-800 hover:bg-slate-800'"
+                                        class="py-2 rounded-lg text-xs transition-all">
+                                        右侧 (Right)
+                                    </button>
+                                    <button 
+                                        @click="styleConfig.sidebar = 'none'"
+                                        :class="styleConfig.sidebar === 'none' ? 'bg-amber-600/20 text-amber-300 border border-amber-500/50' : 'bg-slate-900 text-slate-400 border border-slate-800 hover:bg-slate-800'"
+                                        class="py-2 rounded-lg text-xs transition-all">
+                                        无侧栏 (None)
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="text-xs text-slate-400 block mb-2">文章卡片圆角 (Border Radius)</label>
+                                <div class="grid grid-cols-4 gap-2">
+                                    <button 
+                                        v-for="radius in ['none', 'sm', 'md', 'lg']"
+                                        :key="radius"
+                                        @click="styleConfig.radius = radius"
+                                        :class="styleConfig.radius === radius ? 'bg-amber-600/20 text-amber-300 border border-amber-500/50' : 'bg-slate-900 text-slate-400 border border-slate-800 hover:bg-slate-800'"
+                                        class="py-1.5 rounded-lg text-xs capitalize transition-all">
+                                        {{ radius }}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Typography Font Switcher -->
+                            <div>
+                                <label class="text-xs text-slate-400 block mb-2">正文英文字体 (Body Typography)</label>
+                                <select 
+                                    v-model="styleConfig.fontFamily"
+                                    class="w-full bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-300 p-2.5 outline-none focus:border-indigo-500">
+                                    <option value="font-sans">无衬线现代：Inter / Segoe UI</option>
+                                    <option value="font-serif">优雅衬线：Noto Serif SC / Georgia</option>
+                                    <option value="font-mono">程序员极客：Fira Code / JetBrains Mono</option>
+                                </select>
+                            </div>
+
+                            <!-- Interactive Toggle for animations -->
+                            <div class="flex items-center justify-between p-3 bg-slate-900/50 rounded-xl border border-slate-800/80">
+                                <div>
+                                    <h4 class="text-xs font-semibold text-slate-200">文章加载动画</h4>
+                                    <p class="text-[11px] text-slate-500">在加载文章列表时渲染渐变淡入动画</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" v-model="styleConfig.enableAnimate" class="sr-only peer">
+                                    <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-amber-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Layout Preview of the structure -->
+                    <div class="border-t border-slate-800 pt-5">
+                        <h2 class="text-sm font-semibold text-slate-300 mb-3 uppercase tracking-wider">当前博客架构</h2>
+                        <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+                            <div class="flex items-center text-xs text-amber-400 font-semibold mb-2">
+                                <i class="fa-solid fa-diagram-project mr-2"></i>
+                                <span>目录结构映射</span>
+                            </div>
+                            <div class="space-y-1.5 text-xs text-slate-300 font-mono pl-2">
+                                <div class="flex items-center"><i class="fa-solid fa-folder text-yellow-500 mr-2"></i> 随笔 (Essays)</div>
+                                <div class="flex items-center"><i class="fa-solid fa-folder text-yellow-500 mr-2"></i> 技术文档 (Tech Docs)</div>
+                                <div class="flex items-center pl-4 border-l border-slate-700 ml-1.5 py-0.5"><i class="fa-solid fa-folder-open text-blue-400 mr-2"></i> Agent <span class="text-slate-500 ml-2">({{ countPosts('Agent') }} 篇)</span></div>
+                                <div class="flex items-center pl-4 border-l border-slate-700 ml-1.5"><i class="fa-solid fa-folder-open text-blue-400 mr-2"></i> 机器学习 (ML) <span class="text-slate-500 ml-2">({{ countPosts('机器学习') }} 篇)</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Live File Explorer & Editor -->
+                <div v-if="activeTab === 'files'" class="flex-1 flex flex-col overflow-hidden">
+                    <div class="flex flex-1 overflow-hidden">
+                        <!-- Tiny Side-file selector -->
+                        <div class="w-1/3 border-r border-slate-800/80 bg-slate-950/80 overflow-y-auto text-xs">
+                            <div class="p-3 font-semibold text-slate-500 uppercase tracking-wider border-b border-slate-800/80">文件树</div>
+                            
+                            <div class="p-2 space-y-1">
+                                <!-- Global config -->
+                                <button 
+                                    @click="selectFile('config')"
+                                    :class="activeFile === 'config' ? 'bg-slate-900 text-amber-400 font-medium' : 'text-slate-400 hover:bg-slate-900/50 hover:text-slate-200'"
+                                    class="w-full text-left p-2 rounded flex items-center space-x-1.5">
+                                    <i class="fa-solid fa-gear text-slate-500"></i>
+                                    <span class="truncate">_config.yml</span>
+                                </button>
+
+                                <div class="text-slate-600 text-[10px] uppercase font-bold tracking-wider pt-2 pl-2">posts/</div>
+                                
+                                <button 
+                                    v-for="(post, id) in posts" 
+                                    :key="id"
+                                    @click="selectFile(id)"
+                                    :class="activeFile === id ? 'bg-slate-900 text-amber-400 font-medium' : 'text-slate-400 hover:bg-slate-900/50 hover:text-slate-200'"
+                                    class="w-full text-left p-2 rounded flex items-center space-x-1.5 pl-4">
+                                    <i class="fa-regular fa-file-lines text-slate-500"></i>
+                                    <span class="truncate">{{ post.fileName }}</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Live Editor -->
+                        <div class="flex-1 flex flex-col overflow-hidden bg-slate-900">
+                            <div class="px-4 py-2 border-b border-slate-800/80 bg-slate-950 flex items-center justify-between">
+                                <span class="text-xs font-mono text-amber-400">{{ getActiveFileName() }}</span>
+                                <span class="text-[10px] bg-slate-800 text-slate-400 py-0.5 px-2 rounded-full uppercase">Markdown</span>
+                            </div>
+                            <textarea 
+                                v-model="editorContent"
+                                @input="updateFileContent"
+                                class="flex-1 w-full bg-slate-900 text-slate-200 p-4 font-mono text-xs leading-relaxed resize-none outline-none focus:ring-0 border-none"
+                                placeholder="输入代码 or Markdown...">
+                            </textarea>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-slate-950 border-t border-slate-800 text-[11px] text-slate-500 flex items-center">
+                        <i class="fa-solid fa-circle-info text-amber-500 mr-2"></i>
+                        <span>提示：修改此处 Markdown 内容，右侧博客预览将实时热重载更新。</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Live Hexo Blog Preview Frame -->
+            <section class="flex-1 bg-slate-900 p-6 flex flex-col items-center justify-center overflow-hidden">
+                <!-- Browser Bar -->
+                <div class="w-full max-w-5xl bg-slate-950 rounded-t-xl border-t border-x border-slate-800/80 p-3 flex items-center space-x-4 shrink-0 shadow-2xl">
+                    <!-- Triple dots mock -->
+                    <div class="flex space-x-1.5">
+                        <span class="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
+                        <span class="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
+                    </div>
+                    <!-- Mock Browser Address Bar -->
+                    <div class="flex-1 bg-slate-900/80 border border-slate-800/80 rounded-lg py-1 px-4 text-xs text-slate-400 font-mono flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <i class="fa-solid fa-lock text-emerald-500 text-[10px]"></i>
+                            <span>https://yoursite.github.io/{{ currentRoute }}</span>
+                        </div>
+                        <i class="fa-solid fa-rotate-right text-slate-600 hover:text-slate-400 cursor-pointer"></i>
+                    </div>
+                </div>
+
+                <!-- Live Container of Simulated Hexo Site -->
+                <div class="w-full max-w-5xl flex-1 bg-white border-x border-b border-slate-800/80 overflow-y-auto relative text-slate-800" :style="getThemeBaseStyles()">
+                    
+                    <!-- Blog Header Navigation -->
+                    <header class="border-b transition-all duration-300 py-6 px-8 flex flex-col md:flex-row md:items-center md:justify-between" :style="getThemeHeaderStyles()">
+                        <div>
+                            <h1 class="text-2xl font-bold tracking-tight mb-1" :style="{ color: activeTheme.titleColor }">{{ blogTitle }}</h1>
+                            <p class="text-sm opacity-70 italic">{{ blogSubtitle }}</p>
+                        </div>
+                        <!-- Hexo Menu System -->
+                        <nav class="flex items-center space-x-6 mt-4 md:mt-0 font-medium text-sm">
+                            <a @click.prevent="currentRoute = ''" href="#" :style="getMenuItemStyle('')" class="transition-colors pb-1 flex items-center space-x-1">
+                                <i class="fa-solid fa-house text-xs opacity-80"></i>
+                                <span>首页</span>
+                            </a>
+                            <a @click.prevent="currentRoute = 'categories/'" href="#" :style="getMenuItemStyle('categories/')" class="transition-colors pb-1 flex items-center space-x-1">
+                                <i class="fa-solid fa-folder-tree text-xs opacity-80"></i>
+                                <span>大页面分类</span>
+                            </a>
+                            <a @click.prevent="currentRoute = 'about/'" href="#" :style="getMenuItemStyle('about/')" class="transition-colors pb-1 flex items-center space-x-1">
+                                <i class="fa-solid fa-user-astronaut text-xs opacity-80"></i>
+                                <span>关于我</span>
+                            </a>
+                        </nav>
+                    </header>
+
+                    <!-- Core Content Layout -->
+                    <div class="max-w-6xl mx-auto flex flex-col" :class="getLayoutClass()">
+                        
+                        <!-- Main Content Stream -->
+                        <div class="flex-1 p-8 overflow-hidden">
+                            <!-- ROUTE 1: Home Post Stream -->
+                            <div v-if="currentRoute === ''" class="space-y-8">
+                                <div class="text-xs font-semibold uppercase tracking-wider mb-2" :style="{ color: activeTheme.primary }">最新发表</div>
+                                
+                                <div v-for="(post, id) in posts" :key="id" 
+                                     :style="getCardStyle()" 
+                                     class="p-6 border transition-all duration-300 hover:shadow-lg flex flex-col justify-between group">
+                                    <div>
+                                        <div class="flex items-center space-x-2 text-xs mb-3 text-slate-500">
+                                            <span><i class="fa-regular fa-calendar mr-1"></i>{{ post.date }}</span>
+                                            <span>•</span>
+                                            <!-- Nested Categories visual indicators -->
+                                            <span class="flex items-center text-xs">
+                                                <i class="fa-regular fa-folder mr-1"></i>
+                                                <span v-for="(cat, idx) in post.categories" :key="idx" class="hover:underline cursor-pointer" @click.stop="filterByCategory(cat)">
+                                                    {{ cat }}{{ idx < post.categories.length - 1 ? ' / ' : '' }}
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <h3 @click="viewPost(id)" class="text-xl font-bold mb-3 cursor-pointer group-hover:text-amber-700 transition-colors" :style="{ color: activeTheme.titleColor }">
+                                            {{ post.title }}
+                                        </h3>
+                                        <p class="text-sm opacity-80 line-clamp-3 mb-4 leading-relaxed">
+                                            {{ getPostSnippet(post.content) }}
+                                        </p>
+                                    </div>
+                                    <div class="flex items-center justify-between mt-2 pt-4 border-t border-slate-100">
+                                        <div class="flex space-x-1.5">
+                                            <span v-for="tag in post.tags" :key="tag" class="text-xs px-2.5 py-0.5 rounded-full" :style="{ backgroundColor: activeTheme.badgeBg, color: activeTheme.primary }">
+                                                #{{ tag }}
+                                            </span>
+                                        </div>
+                                        <button @click="viewPost(id)" class="text-xs font-bold flex items-center space-x-1 transition-all" :style="{ color: activeTheme.primary }">
+                                            <span>阅读全文</span>
+                                            <i class="fa-solid fa-arrow-right-long transition-transform group-hover:translate-x-1"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ROUTE 2: Interactive Categories Tree -->
+                            <div v-else-if="currentRoute.startsWith('categories/')" class="space-y-6">
+                                <div class="border-b pb-4 mb-6">
+                                    <h2 class="text-2xl font-bold" :style="{ color: activeTheme.titleColor }">全部分类</h2>
+                                    <p class="text-xs opacity-70 mt-1">这里收录了我的技术栈分类和日常生活感想</p>
+                                </div>
+
+                                <!-- Dynamic nested Categories layout requested by User -->
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Category Root Card 1: Technical Documents -->
+                                    <div class="p-6 bg-stone-100/50 rounded-xl border border-stone-200/80 shadow-sm" :style="{ borderRadius: getRadiusStyle() }">
+                                        <div class="flex items-center justify-between mb-4 pb-2 border-b border-stone-200">
+                                            <span class="text-base font-bold flex items-center" :style="{ color: activeTheme.titleColor }">
+                                                <i class="fa-solid fa-laptop-code mr-2" :style="{ color: activeTheme.primary }"></i>
+                                                技术文档
+                                            </span>
+                                            <span class="text-xs bg-stone-200/80 text-slate-700 px-2 py-0.5 rounded-full font-semibold">
+                                                {{ countPostsByParentCategory('技术文档') }} 篇
+                                            </span>
+                                        </div>
+                                        
+                                        <!-- Children categories nested under Technical Documents -->
+                                        <div class="space-y-4">
+                                            <!-- Agent Subcategory -->
+                                            <div class="pl-4 border-l-2 border-amber-600/30">
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <span class="text-xs font-bold text-slate-700 flex items-center">
+                                                        <i class="fa-solid fa-robot mr-1.5 text-amber-700"></i>
+                                                        Agent
+                                                    </span>
+                                                    <span class="text-[10px] text-slate-500">{{ countPosts('Agent') }} 篇</span>
+                                                </div>
+                                                <ul class="space-y-1.5 pl-4">
+                                                    <li v-for="post in getPostsBySubcategory('Agent')" :key="post.title" class="text-xs">
+                                                        <a @click.prevent="viewPostByObject(post)" href="#" class="text-amber-800 hover:underline flex items-center justify-between">
+                                                            <span class="truncate max-w-[180px]">• {{ post.title }}</span>
+                                                            <span class="text-[10px] text-slate-400">{{ post.date }}</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+                                            <!-- Machine learning Subcategory -->
+                                            <div class="pl-4 border-l-2 border-amber-600/30">
+                                                <div class="flex items-center justify-between mb-2">
+                                                    <span class="text-xs font-bold text-slate-700 flex items-center">
+                                                        <i class="fa-solid fa-brain mr-1.5 text-amber-700"></i>
+                                                        机器学习
+                                                    </span>
+                                                    <span class="text-[10px] text-slate-500">{{ countPosts('机器学习') }} 篇</span>
+                                                </div>
+                                                <ul class="space-y-1.5 pl-4">
+                                                    <li v-for="post in getPostsBySubcategory('机器学习')" :key="post.title" class="text-xs">
+                                                        <a @click.prevent="viewPostByObject(post)" href="#" class="text-amber-800 hover:underline flex items-center justify-between">
+                                                            <span class="truncate max-w-[180px]">• {{ post.title }}</span>
+                                                            <span class="text-[10px] text-slate-400">{{ post.date }}</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Category Root Card 2: Essays (随笔) -->
+                                    <div class="p-6 bg-stone-100/50 rounded-xl border border-stone-200/80 shadow-sm flex flex-col justify-between" :style="{ borderRadius: getRadiusStyle() }">
+                                        <div>
+                                            <div class="flex items-center justify-between mb-4 pb-2 border-b border-stone-200">
+                                                <span class="text-base font-bold flex items-center" :style="{ color: activeTheme.titleColor }">
+                                                    <i class="fa-solid fa-pen-nib mr-2" :style="{ color: activeTheme.primary }"></i>
+                                                    随笔
+                                                </span>
+                                                <span class="text-xs bg-stone-200/80 text-slate-700 px-2 py-0.5 rounded-full font-semibold">
+                                                    {{ countPosts('随笔') }} 篇
+                                                </span>
+                                            </div>
+                                            <!-- Simple list for top level category -->
+                                            <ul class="space-y-2 pl-2">
+                                                <li v-for="post in getPostsBySubcategory('随笔')" :key="post.title" class="text-xs">
+                                                    <a @click.prevent="viewPostByObject(post)" href="#" class="text-amber-800 hover:underline flex items-center justify-between py-1 border-b border-dashed border-stone-200">
+                                                        <span><i class="fa-regular fa-comment-dots mr-1.5 text-slate-400"></i>{{ post.title }}</span>
+                                                        <span class="text-[10px] text-slate-400">{{ post.date }}</span>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="mt-4 pt-4 text-center bg-white border border-stone-200/60 rounded-lg p-2">
+                                            <p class="text-[10px] text-slate-500">“记录技术深度，保留生活温度。”</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ROUTE 3: Detailed Post View -->
+                            <div v-else-if="currentRoute.startsWith('post/')" class="space-y-6">
+                                <button @click="currentRoute = ''" class="inline-flex items-center space-x-1.5 text-xs font-semibold mb-2 hover:opacity-80" :style="{ color: activeTheme.primary }">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                    <span>返回主页</span>
+                                </button>
+
+                                <article class="prose max-w-none">
+                                    <div class="border-b pb-6 mb-6">
+                                        <h1 class="text-3xl font-extrabold tracking-tight mb-3 leading-tight" :style="{ color: activeTheme.titleColor }">
+                                            {{ currentPostObj.title }}
+                                        </h1>
+                                        <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500">
+                                            <span class="flex items-center"><i class="fa-regular fa-calendar mr-1.5"></i>{{ currentPostObj.date }}</span>
+                                            <span class="flex items-center">
+                                                <i class="fa-regular fa-folder mr-1.5"></i>
+                                                {{ currentPostObj.categories.join(' / ') }}
+                                            </span>
+                                            <div class="flex gap-1">
+                                                <span v-for="tag in currentPostObj.tags" :key="tag" class="px-2 py-0.5 rounded bg-stone-100 text-stone-600 text-[10px]">
+                                                    #{{ tag }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Rendered Markdown Body -->
+                                    <div class="text-sm leading-relaxed text-slate-700 space-y-4 font-normal" v-html="renderMarkdown(currentPostObj.content)" :class="styleConfig.fontFamily">
+                                    </div>
+                                </article>
+                            </div>
+
+                            <!-- ROUTE 4: About Me -->
+                            <div v-else-if="currentRoute === 'about/'" class="space-y-6">
+                                <div class="border-b pb-4">
+                                    <h2 class="text-2xl font-bold" :style="{ color: activeTheme.titleColor }">关于我</h2>
+                                    <p class="text-xs opacity-70 mt-1">工程师、撰稿人与开源探索者</p>
+                                </div>
+                                <div class="flex flex-col md:flex-row gap-6 items-start mt-6">
+                                    <div class="w-24 h-24 rounded-full bg-stone-100 border-2 border-stone-300 flex items-center justify-center shrink-0">
+                                        <i class="fa-solid fa-user text-3xl text-stone-500"></i>
+                                    </div>
+                                    <div class="space-y-3 text-sm text-slate-700 leading-relaxed">
+                                        <p class="font-semibold text-slate-900 text-base">你好，我是我的数字花园主人！</p>
+                                        <p>我是一个专注于大模型 Agent 架构开发和传统机器学习算法集成的算法工程师。写博客是我的“费曼学习法”实践场——唯有系统地输出，方能确信深刻理解。</p>
+                                        <p>你在这个预览里能看到我写得两级嵌套文章树结构，全部都是使用 Hexo 框架配合特定的多级分类（Front-matter）特性自动生成编译而来的。</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sidebar Panel (Conditionally Positioned) -->
+                        <aside 
+                            v-if="styleConfig.sidebar !== 'none'"
+                            :class="styleConfig.sidebar === 'left' ? 'order-first md:border-r border-stone-200/80 bg-stone-50/50' : 'md:border-l border-stone-200/80 bg-stone-50/50'"
+                            class="w-full md:w-80 p-8 shrink-0">
+                            
+                            <!-- Profile Mini-Widget -->
+                            <div class="text-center pb-6 border-b border-stone-200/60 mb-6">
+                                <div class="w-16 h-16 rounded-full bg-stone-200 mx-auto mb-3 flex items-center justify-center" :style="{ border: '2px solid ' + activeTheme.primary }">
+                                    <i class="fa-solid fa-feather-pointed text-xl" :style="{ color: activeTheme.primary }"></i>
+                                </div>
+                                <h3 class="font-bold text-sm text-slate-800">开发者数字园地</h3>
+                                <p class="text-xs text-slate-500 mt-1 leading-relaxed">分享 Agent 推理及大规模机器学习部署经验</p>
+                            </div>
+
+                            <!-- Category Quick View Widget -->
+                            <div class="mb-6">
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">多层级分类</h4>
+                                <ul class="space-y-2 text-xs">
+                                    <li>
+                                        <div class="flex justify-between font-semibold text-slate-700 cursor-pointer hover:text-amber-800" @click="currentRoute = 'categories/'">
+                                            <span>📁 技术文档</span>
+                                            <span>{{ countPostsByParentCategory('技术文档') }}</span>
+                                        </div>
+                                        <ul class="pl-4 mt-1.5 space-y-1 border-l border-stone-200">
+                                            <li class="flex justify-between text-slate-500 hover:text-amber-800 cursor-pointer" @click="currentRoute = 'categories/'">
+                                                <span>• Agent</span>
+                                                <span>{{ countPosts('Agent') }}</span>
+                                            </li>
+                                            <li class="flex justify-between text-slate-500 hover:text-amber-800 cursor-pointer" @click="currentRoute = 'categories/'">
+                                                <span>• 机器学习</span>
+                                                <span>{{ countPosts('机器学习') }}</span>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="pt-1">
+                                        <div class="flex justify-between font-semibold text-slate-700 cursor-pointer hover:text-amber-800" @click="currentRoute = 'categories/'">
+                                            <span>📁 随笔</span>
+                                            <span>{{ countPosts('随笔') }}</span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- Social / Badge Container -->
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">连接社交媒介</h4>
+                                <div class="flex items-center space-x-3 text-slate-400">
+                                    <a class="hover:text-slate-800 transition-colors" href="#"><i class="fa-brands fa-github text-base"></i></a>
+                                    <a class="hover:text-slate-800 transition-colors" href="#"><i class="fa-brands fa-x-twitter text-base"></i></a>
+                                    <a class="hover:text-slate-800 transition-colors" href="#"><i class="fa-solid fa-envelope text-base"></i></a>
+                                </div>
+                            </div>
+                        </aside>
+
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const { createApp, ref, computed, watch } = Vue;
+
+        createApp({
+            setup() {
+                // Active configuration options
+                const activeTab = ref('style');
+                const currentRoute = ref(''); // empty is home, 'categories/', 'post/{id}', 'about/'
+                const currentPostId = ref('tech-agent-sample');
+
+                // Global Config Mock
+                const blogTitle = ref('我的数字花园');
+                const blogSubtitle = ref('技术沉淀与生活碎碎念');
+
+                // Available Themes
+                const themes = {
+                    zen: {
+                        name: '北欧极简白 (Nordic Zen)',
+                        desc: '高对比度衬线设计，温润舒适。极佳的书写与阅读体验。',
+                        bg: '#FAF8F5',
+                        text: '#2D3748',
+                        headerBg: '#FFFFFF',
+                        primary: '#B87D4B', // Warm ochre
+                        titleColor: '#1A202C',
+                        badgeBg: '#F3ECE3',
+                        cardBg: '#FFFFFF',
+                        fontFamily: 'font-serif'
+                    },
+                    geek: {
+                        name: '极客终端黑 (Geek Terminal)',
+                        desc: '黑绿白配色，极度舒适。硬核黑客与后台研发的经典归宿。',
+                        bg: '#0B0F19',
+                        text: '#8392A5',
+                        headerBg: '#020617',
+                        primary: '#10B981', // emerald
+                        titleColor: '#F8FAFC',
+                        badgeBg: '#064E3B',
+                        cardBg: '#111827',
+                        fontFamily: 'font-mono'
+                    },
+                    slate: {
+                        name: '科技现代蓝 (Modern Tech Slate)',
+                        desc: '当下最流行的 SaaS 产品风，靛蓝调、简洁清晰。',
+                        bg: '#F8FAFC',
+                        text: '#334155',
+                        headerBg: '#FFFFFF',
+                        primary: '#4F46E5', // indigo
+                        titleColor: '#0F172A',
+                        badgeBg: '#EEF2FF',
+                        cardBg: '#FFFFFF',
+                        fontFamily: 'font-sans'
+                    },
+                    retro: {
+                        name: '温暖复古绿 (Retro Warm)',
+                        desc: '温润舒适的书本色，古朴温润的墨绿色调，优雅舒适。',
+                        bg: '#F4EFE6',
+                        text: '#3C403D',
+                        headerBg: '#E9E3D5',
+                        primary: '#2B5F43', // deep forest green
+                        titleColor: '#1A3324',
+                        badgeBg: '#E0D8C3',
+                        cardBg: '#FCFAF5',
+                        fontFamily: 'font-serif'
+                    }
+                };
+
+                const currentThemeId = ref('zen'); // Default set to 'zen' as requested
+                const activeTheme = computed(() => themes[currentThemeId.value]);
+
+                // Config modifiers
+                const styleConfig = ref({
+                    sidebar: 'left', // Default set to 'left' as requested
+                    radius: 'md', // none, sm, md, lg
+                    fontFamily: 'font-serif', // Default matched to serif for Zen
+                    enableAnimate: true
+                });
+
+                // Select a core theme and match variables
+                const selectTheme = (themeId) => {
+                    currentThemeId.value = themeId;
+                    styleConfig.value.fontFamily = themes[themeId].fontFamily;
+                };
+
+                // Post collection structure reflecting user categories request
+                const posts = ref({
+                    'tech-agent-sample': {
+                        fileName: 'tech-agent-sample.md',
+                        title: '构建基于大语言模型的自主智能体 (Agent) 极简指南',
+                        date: '2026-05-17',
+                        categories: ['技术文档', 'Agent'],
+                        tags: ['Agent', 'LLM', 'AI'],
+                        content: `---
+title: 构建基于大语言模型的自主智能体 (Agent) 极简指南
+date: 2026-05-17
+categories:
+  - [技术文档, Agent]
+tags:
+  - Agent
+  - LLM
+  - AI
+---
+
+# 构建基于大语言模型的自主智能体 (Agent)
+
+这是一篇关于大模型 Agent 的样板技术文档。
+
+## 什么是 Agent？
+在当前的 AI 语境下，**Agent（智能体）** 是指一个能够感知环境、进行自主思考（推理、规划），并调用外部工具来执行任务以达到特定目标的程序系统。
+
+### 核心组成部分
+1. **大脑 (Brain / LLM)**：作为核心控制器，负责理解输入、检索记忆和进行下一步决策。
+2. **规划 (Planning)**：
+   * 反思与自我批评（Self-Reflection）
+   * 子任务拆解（Chain-of-Thought / Tree-of-Thought）
+3. **记忆 (Memory)**：
+   * 短期记忆（上下文信息）
+   * 长期记忆（向量数据库/外部检索）
+4. **工具 (Tools)**：API、计算器、网页搜索、本地脚本等。
+
+\`\`\`python
+# 典型 Agent 推理主循环
+class SimpleAgent:
+    def __init__(self, brain, tools):
+        self.brain = brain
+        self.tools = tools
+        
+    def execute(self, goal):
+        steps = []
+        while not self.is_goal_met(goal, steps):
+            action = self.brain.plan_next_step(goal, steps)
+            result = self.tools[action.name].run(action.args)
+            steps.append((action, result))
+\`\`\`
+`
+                    },
+                    'tech-ml-sample': {
+                        fileName: 'tech-ml-sample.md',
+                        title: '深入理解 Transformer 架构中的多头自注意力机制',
+                        date: '2026-05-16',
+                        categories: ['技术文档', '机器学习'],
+                        tags: ['机器学习', '深度学习', 'Transformer'],
+                        content: `---
+title: 深入理解 Transformer 架构中的多头自注意力机制
+date: 2026-05-16
+categories:
+  - [技术文档, 机器学习]
+tags:
+  - 机器学习
+  - 深度学习
+  - Transformer
+---
+
+# 深入理解 Transformer 多头自注意力机制
+
+这是一篇关于机器学习领域的样板技术文档。
+
+## 什么是 Self-Attention？
+自注意力机制（Self-Attention）允许序列中的每个位置在计算其表征时，都对其他所有位置进行“关照”。其数学计算公式如下：
+
+$$
+\\text{Attention}(Q, K, V) = \\text{softmax}\\left(\\frac{QK^T}{\\sqrt{d_k}}\\right)V
+$$
+
+### 为什么要多头（Multi-Head）？
+多头注意力机制允许模型在不同的表示子空间中，共同关注来自不同位置的上下文信息。
+
+1. **并行计算**：将维度拆分为 $h$ 个头并行计算。
+2. **多视角关注**：一个头可能关注局部代词指代，另一个头关注全局动宾关系。
+`
+                    },
+                    'essay-sample': {
+                        fileName: 'essay-sample.md',
+                        title: '周末碎碎念：数字化时代的知识输入与输出',
+                        date: '2026-05-15',
+                        categories: ['随笔'],
+                        tags: ['个人成长', '随感'],
+                        content: `---
+title: 周末碎碎念：数字化时代的知识输入与输出
+date: 2026-05-15
+categories:
+  - 随笔
+tags:
+  - 个人成长
+  - 随感
+---
+
+# 数字化时代的知识输入与输出
+
+这是一篇日常随笔的样板。
+
+## 为什么要搭建个人博客？
+在这个社交媒体信息碎片化的时代，能够静下心来系统地写一篇结构完整、逻辑清晰的文章变得越来越稀缺。
+
+* **输入并不等于拥有**：读完一本书、看完几篇技术文章，如果不经过大脑的重新组织 and 输出，它们很快就会在记忆中消退。
+* **写作是最好的思考**：用文字把复杂的概念（比如 Agent、神经网络）解释给别人听，是检验自己是否真正掌握的最好标准（费曼学习法）。
+
+希望这片数字花园能见证我的技术成长与日常生活。
+`
+                    }
+                });
+
+                const activeFile = ref('config');
+                const editorContent = ref('');
+
+                // Load content to editor initially
+                const loadFileToEditor = () => {
+                    if (activeFile.value === 'config') {
+                        editorContent.value = `title: "${blogTitle.value}"\nsubtitle: "${blogSubtitle.value}"\ncategory_map:\n  技术文档: tech\n  机器学习: ml\n  随笔: essays\n\n# 当前启用的风格主题\nactive_theme: "${currentThemeId.value}"\nsidebar: "${styleConfig.value.sidebar}"\nradius: "${styleConfig.value.radius}"\n`;
+                    } else {
+                        editorContent.value = posts.value[activeFile.value]?.content || '';
+                    }
+                };
+
+                // Watch file switching to update the textarea
+                watch(activeFile, () => {
+                    loadFileToEditor();
+                }, { immediate: true });
+
+                // Synchronize edited values back to preview state
+                const updateFileContent = () => {
+                    if (activeFile.value === 'config') {
+                        // Safely parse simple title and subtitle from yml editor
+                        const titleMatch = editorContent.value.match(/title:\s*["']([^"']+)["']/);
+                        const subMatch = editorContent.value.match(/subtitle:\s*["']([^"']+)["']/);
+                        const themeMatch = editorContent.value.match(/active_theme:\s*["']([^"']+)["']/);
+                        const sidebarMatch = editorContent.value.match(/sidebar:\s*["']([^"']+)["']/);
+                        const radiusMatch = editorContent.value.match(/radius:\s*["']([^"']+)["']/);
+
+                        if (titleMatch) blogTitle.value = titleMatch[1];
+                        if (subMatch) blogSubtitle.value = subMatch[1];
+                        if (themeMatch && themes[themeMatch[1]]) currentThemeId.value = themeMatch[1];
+                        if (sidebarMatch) styleConfig.value.sidebar = sidebarMatch[1];
+                        if (radiusMatch) styleConfig.value.radius = radiusMatch[1];
+                    } else {
+                        const post = posts.value[activeFile.value];
+                        if (post) {
+                            post.content = editorContent.value;
+                            // Dynamically update fields based on front matter
+                            const titleMatch = editorContent.value.match(/title:\s*(.*)/);
+                            if (titleMatch) post.title = titleMatch[1].replace(/["']/g, '');
+                        }
+                    }
+                };
+
+                const selectFile = (fileId) => {
+                    activeFile.value = fileId;
+                };
+
+                const getActiveFileName = () => {
+                    if (activeFile.value === 'config') return '_config.yml';
+                    return `source/_posts/${posts.value[activeFile.value]?.fileName}`;
+                };
+
+                // Helpers for category tree rendering
+                const countPosts = (categoryName) => {
+                    return Object.values(posts.value).filter(p => p.categories.includes(categoryName)).length;
+                };
+
+                const countPostsByParentCategory = (parentName) => {
+                    return Object.values(posts.value).filter(p => p.categories[0] === parentName).length;
+                };
+
+                const getPostsBySubcategory = (subCatName) => {
+                    return Object.values(posts.value).filter(p => p.categories.includes(subCatName));
+                };
+
+                // Dynamic styling compute functions
+                const getThemeBaseStyles = () => {
+                    return {
+                        backgroundColor: activeTheme.value.bg,
+                        color: activeTheme.value.text,
+                        fontFamily: styleConfig.value.fontFamily === 'font-sans' ? 'Inter, sans-serif' : styleConfig.value.fontFamily === 'font-serif' ? 'Noto Serif SC, Georgia, serif' : 'Fira Code, monospace'
+                    };
+                };
+
+                const getThemeHeaderStyles = () => {
+                    return {
+                        backgroundColor: activeTheme.value.headerBg,
+                        borderBottomColor: currentThemeId.value === 'geek' ? '#1E293B' : '#E2E8F0'
+                    };
+                };
+
+                const getMenuItemStyle = (route) => {
+                    const isActive = currentRoute.value === route;
+                    return {
+                        color: isActive ? activeTheme.value.primary : activeTheme.value.text,
+                        borderBottomColor: isActive ? activeTheme.value.primary : 'transparent',
+                        fontWeight: isActive ? '700' : '500'
+                    };
+                };
+
+                const getCardStyle = () => {
+                    return {
+                        backgroundColor: activeTheme.value.cardBg,
+                        borderColor: currentThemeId.value === 'geek' ? '#1E293B' : '#E2E8F0',
+                        borderRadius: getRadiusStyle()
+                    };
+                };
+
+                const getRadiusStyle = () => {
+                    switch (styleConfig.value.radius) {
+                        case 'none': return '0px';
+                        case 'sm': return '4px';
+                        case 'lg': return '16px';
+                        default: return '8px'; // md
+                    }
+                };
+
+                const getLayoutClass = () => {
+                    if (styleConfig.value.sidebar === 'none') return '';
+                    return 'md:flex-row';
+                };
+
+                // Route action controllers
+                const currentPostObj = ref({});
+                const viewPost = (id) => {
+                    currentPostObj.value = posts.value[id];
+                    currentRoute.value = `post/${id}`;
+                };
+
+                const viewPostByObject = (postObj) => {
+                    currentPostObj.value = postObj;
+                    // Find key matching post object
+                    const key = Object.keys(posts.value).find(k => posts.value[k].title === postObj.title);
+                    currentRoute.value = `post/${key || 'tech-agent-sample'}`;
+                };
+
+                const filterByCategory = (catName) => {
+                    currentRoute.value = 'categories/';
+                };
+
+                // Parse standard markdown safely for preview
+                const renderMarkdown = (rawContent) => {
+                    if (!rawContent) return '';
+                    // Remove Front matter header to render only the core markdown text
+                    const cleanMarkdown = rawContent.replace(/^---[\s\S]*?---/, '');
+                    return marked.parse(cleanMarkdown);
+                };
+
+                const getPostSnippet = (content) => {
+                    const clean = content.replace(/^---[\s\S]*?---/, '').replace(/[#*`]/g, '').trim();
+                    return clean.substring(0, 140) + '...';
+                };
+
+                // Download actual configured Hexo Workspace package files as individual textual downloads
+                const downloadZip = () => {
+                    // Generate a master markdown output summarizing the configuration so the user can easily copy
+                    let configOutput = `# Generated Hexo Config Workspace\n\n`;
+                    configOutput += `## _config.yml\n\`\`\`yaml\n`;
+                    configOutput += `title: "${blogTitle.value}"\n`;
+                    configOutput += `subtitle: "${blogSubtitle.value}"\n`;
+                    configOutput += `language: zh-CN\n`;
+                    configOutput += `permalink: :category/:title.html\n`;
+                    configOutput += `category_map:\n  技术文档: tech\n  机器学习: ml\n  随笔: essays\n\`\`\`\n\n`;
+
+                    // Loop through and append post markdowns
+                    Object.keys(posts.value).forEach(k => {
+                        const post = posts.value[k];
+                        configOutput += `## source/_posts/${post.fileName}\n\`\`\`markdown\n`;
+                        configOutput += post.content;
+                        configOutput += `\n\`\`\`\n\n`;
+                    });
+
+                    // Trigger simple browser helper to copy code and download
+                    const element = document.createElement('a');
+                    const file = new Blob([configOutput], {type: 'text/plain;charset=utf-8'});
+                    element.href = URL.createObjectURL(file);
+                    element.download = 'hexo-styled-garden-package.txt';
+                    document.body.appendChild(element);
+                    element.click();
+                    document.body.removeChild(element);
+                };
+
+                return {
+                    activeTab,
+                    currentRoute,
+                    blogTitle,
+                    blogSubtitle,
+                    themes,
+                    currentThemeId,
+                    activeTheme,
+                    styleConfig,
+                    posts,
+                    activeFile,
+                    editorContent,
+                    currentPostObj,
+                    selectTheme,
+                    selectFile,
+                    updateFileContent,
+                    getActiveFileName,
+                    countPosts,
+                    countPostsByParentCategory,
+                    getPostsBySubcategory,
+                    getThemeBaseStyles,
+                    getThemeHeaderStyles,
+                    getMenuItemStyle,
+                    getCardStyle,
+                    getRadiusStyle,
+                    getLayoutClass,
+                    viewPost,
+                    viewPostByObject,
+                    filterByCategory,
+                    renderMarkdown,
+                    getPostSnippet,
+                    downloadZip
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 ---
 title: 多 Agent 系统概述
-date: 2026-05-10
+date: 2026-03-28
 categories: [技术文档, Agent]
 lang: zh-CN
 tags: [Agent, Multi-Agent, 系统协作]

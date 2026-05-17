@@ -1,6 +1,6 @@
 ---
 title: 大模型架构演进
-date: 2026-04-30
+date: 2026-02-01
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 大模型, LLM]

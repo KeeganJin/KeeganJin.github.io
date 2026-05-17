@@ -1,6 +1,6 @@
 ---
 title: Semantic Kernel 实践
-date: 2026-05-10
+date: 2026-03-25
 categories: [技术文档, Agent]
 lang: zh-CN
 tags: [Agent, Semantic Kernel, Microsoft]

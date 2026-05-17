@@ -1,6 +1,6 @@
 ---
 title: Agent 与传统软件工程
-date: 2026-05-10
+date: 2026-04-19
 categories: [技术文档, Agent]
 lang: zh-CN
 tags: [Agent, 软件工程, 微服务]

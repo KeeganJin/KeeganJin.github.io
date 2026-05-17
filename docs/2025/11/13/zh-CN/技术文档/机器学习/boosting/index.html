@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Boosting基础 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Boosting原理Boosting的基本思想Boosting是一种串行集成方法，逐步提升模型性能。 核心思想：  从弱学习器开始 每次迭代关注前序模型的错误 最终组合所有模型  类比：学生做错题本，反复练习错误题目。 Boosting vs Bagging   方面 Bagging Boosting    训练方式 并行 串行   主要作用 降低方差 降低偏差   基学习器 独立 依赖前序">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Boosting基础">
+<meta property="og:url" content="https://keeganjin.github.io/2025/11/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/boosting/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="Boosting原理Boosting的基本思想Boosting是一种串行集成方法，逐步提升模型性能。 核心思想：  从弱学习器开始 每次迭代关注前序模型的错误 最终组合所有模型  类比：学生做错题本，反复练习错误题目。 Boosting vs Bagging   方面 Bagging Boosting    训练方式 并行 串行   主要作用 降低方差 降低偏差   基学习器 独立 依赖前序">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-11-12T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-17T16:20:27.828Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="Boosting">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="集成学习">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+
+  <!-- Nordic Zen Fonts: Noto Serif SC for elegant reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+
+  <!-- MathJax for math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$', '$'], ['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Life Notes</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/机器学习/boosting" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/11/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/boosting/" class="article-date">
+  <time class="dt-published" datetime="2025-11-12T16:00:00.000Z" itemprop="datePublished">2025-11-13</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Boosting基础
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="Boosting原理"><a href="#Boosting原理" class="headerlink" title="Boosting原理"></a>Boosting原理</h2><h3 id="Boosting的基本思想"><a href="#Boosting的基本思想" class="headerlink" title="Boosting的基本思想"></a>Boosting的基本思想</h3><p>Boosting是一种串行集成方法，逐步提升模型性能。</p>
+<p><strong>核心思想</strong>：</p>
+<ul>
+<li>从弱学习器开始</li>
+<li>每次迭代关注前序模型的错误</li>
+<li>最终组合所有模型</li>
+</ul>
+<p><strong>类比</strong>：学生做错题本，反复练习错误题目。</p>
+<h3 id="Boosting-vs-Bagging"><a href="#Boosting-vs-Bagging" class="headerlink" title="Boosting vs Bagging"></a>Boosting vs Bagging</h3><table>
+<thead>
+<tr>
+<th>方面</th>
+<th>Bagging</th>
+<th>Boosting</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>训练方式</td>
+<td>并行</td>
+<td>串行</td>
+</tr>
+<tr>
+<td>主要作用</td>
+<td>降低方差</td>
+<td>降低偏差</td>
+</tr>
+<tr>
+<td>基学习器</td>
+<td>独立</td>
+<td>依赖前序</td>
+</tr>
+<tr>
+<td>样本权重</td>
+<td>均等</td>
+<td>动态调整</td>
+</tr>
+<tr>
+<td>组合方式</td>
+<td>平均&#x2F;投票</td>
+<td>加权组合</td>
+</tr>
+</tbody></table>
+<h3 id="Boosting的理论基础"><a href="#Boosting的理论基础" class="headerlink" title="Boosting的理论基础"></a>Boosting的理论基础</h3><p><strong>弱学习器定理</strong>：</p>
+<ul>
+<li>多个弱学习器可以组合成强学习器</li>
+<li>弱学习器：性能略好于随机猜测</li>
+<li>Boosting正是实现这一理论的方法</li>
+</ul>
+<h3 id="Boosting的关键要素"><a href="#Boosting的关键要素" class="headerlink" title="Boosting的关键要素"></a>Boosting的关键要素</h3><ol>
+<li><strong>基学习器</strong>：通常是决策树</li>
+<li><strong>样本权重</strong>：动态调整样本重要性</li>
+<li><strong>模型权重</strong>：每个模型的贡献权重</li>
+<li><strong>组合策略</strong>：如何组合所有模型</li>
+</ol>
+<h2 id="加法模型与前向分步算法"><a href="#加法模型与前向分步算法" class="headerlink" title="加法模型与前向分步算法"></a>加法模型与前向分步算法</h2><h3 id="加法模型"><a href="#加法模型" class="headerlink" title="加法模型"></a>加法模型</h3><p>Boosting可以表示为加法模型：</p>
+<p>$f(\mathbf{x}) &#x3D; \sum_{m&#x3D;1}^{M} \beta_m b(\mathbf{x}; \gamma_m)$</p>
+<p>其中：</p>
+<ul>
+<li>$b(\mathbf{x}; \gamma_m)$：基学习器</li>
+<li>$\beta_m$：基学习器权重</li>
+<li>$\gamma_m$：基学习器参数</li>
+</ul>
+<h3 id="前向分步算法"><a href="#前向分步算法" class="headerlink" title="前向分步算法"></a>前向分步算法</h3><p>逐步学习加法模型的各个部分：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">初始化 f_0(x) = 0</span><br><span class="line"></span><br><span class="line">for m = 1 to M:</span><br><span class="line">    (β_m, γ_m) = argmin L(y, f_&#123;m-1&#125;(x) + β b(x; γ))</span><br><span class="line">    f_m(x) = f_&#123;m-1&#125;(x) + β_m b(x; γ_m)</span><br><span class="line"></span><br><span class="line">最终模型 f(x) = f_M(x)</span><br></pre></td></tr></table></figure>
+
+<h3 id="前向分步的优势"><a href="#前向分步的优势" class="headerlink" title="前向分步的优势"></a>前向分步的优势</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>简化优化</td>
+<td>每次只优化一个基学习器</td>
+</tr>
+<tr>
+<td>可解释</td>
+<td>每步添加一个可解释部分</td>
+</tr>
+<tr>
+<td>灵活</td>
+<td>可选择不同损失函数</td>
+</tr>
+</tbody></table>
+<h3 id="损失函数选择"><a href="#损失函数选择" class="headerlink" title="损失函数选择"></a>损失函数选择</h3><table>
+<thead>
+<tr>
+<th>任务</th>
+<th>损失函数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>回归</td>
+<td>MSE、MAE</td>
+</tr>
+<tr>
+<td>分类</td>
+<td>0-1损失、指数损失、对数损失</td>
+</tr>
+</tbody></table>
+<p>不同损失函数对应不同Boosting算法：</p>
+<ul>
+<li>指数损失 → AdaBoost</li>
+<li>对数损失 → Boosting Tree（分类）</li>
+<li>MSE → GBDT（回归）</li>
+</ul>
+<h2 id="AdaBoost算法详解"><a href="#AdaBoost算法详解" class="headerlink" title="AdaBoost算法详解"></a>AdaBoost算法详解</h2><h3 id="AdaBoost原理"><a href="#AdaBoost原理" class="headerlink" title="AdaBoost原理"></a>AdaBoost原理</h3><p>AdaBoost（Adaptive Boosting）通过调整样本权重来提升模型。</p>
+<p><strong>核心机制</strong>：</p>
+<ul>
+<li>错误分类样本权重增加</li>
+<li>正确分类样本权重减少</li>
+<li>每个模型根据准确率获得权重</li>
+</ul>
+<h3 id="AdaBoost算法流程"><a href="#AdaBoost算法流程" class="headerlink" title="AdaBoost算法流程"></a>AdaBoost算法流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">初始化样本权重 D_1(i) = 1/n</span><br><span class="line"></span><br><span class="line">for m = 1 to M:</span><br><span class="line">    1. 用权重 D_m 训练弱学习器 G_m(x)</span><br><span class="line">    2. 计算 G_m 的加权错误率 e_m</span><br><span class="line">    3. 计算模型权重 α_m = 1/2 log((1-e_m)/e_m)</span><br><span class="line">    4. 更新样本权重：</span><br><span class="line">       正确分类: D_&#123;m+1&#125;(i) = D_m(i) * exp(-α_m)</span><br><span class="line">       错误分类: D_&#123;m+1&#125;(i) = D_m(i) * exp(α_m)</span><br><span class="line">    5. 归一化权重</span><br><span class="line"></span><br><span class="line">最终模型: f(x) = sign(Σ α_m G_m(x))</span><br></pre></td></tr></table></figure>
+
+<h3 id="AdaBoost公式推导"><a href="#AdaBoost公式推导" class="headerlink" title="AdaBoost公式推导"></a>AdaBoost公式推导</h3><p><strong>加权错误率</strong>：<br>$e_m &#x3D; \sum_{i&#x3D;1}^{n} D_m(i) \cdot \mathbb{1}[y_i \neq G_m(x_i)]$</p>
+<p><strong>模型权重</strong>：<br>$\alpha_m &#x3D; \frac{1}{2}\ln\frac{1-e_m}{e_m}$</p>
+<p><strong>样本权重更新</strong>：<br>$D_{m+1}(i) &#x3D; \frac{D_m(i) \cdot \exp(-\alpha_m y_i G_m(x_i))}{Z_m}$</p>
+<p>其中 $Z_m$ 是归一化因子。</p>
+<h3 id="AdaBoost的损失函数"><a href="#AdaBoost的损失函数" class="headerlink" title="AdaBoost的损失函数"></a>AdaBoost的损失函数</h3><p>AdaBoost使用指数损失：</p>
+<p>$L(y, f(x)) &#x3D; \exp(-y f(x))$</p>
+<p><strong>性质</strong>：</p>
+<ul>
+<li>当 $y f(x) &gt; 0$（正确分类），损失 &lt; 1</li>
+<li>当 $y f(x) &lt; 0$（错误分类），损失 &gt; 1</li>
+<li>惩罚错误分类更重</li>
+</ul>
+<h3 id="AdaBoost示例"><a href="#AdaBoost示例" class="headerlink" title="AdaBoost示例"></a>AdaBoost示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> AdaBoostClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> make_classification</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据</span></span><br><span class="line">X, y = make_classification(n_samples=<span class="number">500</span>, n_features=<span class="number">20</span>, random_state=<span class="number">42</span>)</span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># AdaBoost</span></span><br><span class="line">ada = AdaBoostClassifier(</span><br><span class="line">    base_estimator=DecisionTreeClassifier(max_depth=<span class="number">1</span>),  <span class="comment"># 决策树桩</span></span><br><span class="line">    n_estimators=<span class="number">50</span>,</span><br><span class="line">    learning_rate=<span class="number">1.0</span>,</span><br><span class="line">    random_state=<span class="number">42</span></span><br><span class="line">)</span><br><span class="line">ada.fit(X_train, y_train)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 预测</span></span><br><span class="line">y_pred = ada.predict(X_test)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;准确率: <span class="subst">&#123;accuracy_score(y_test, y_pred):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看模型权重</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n各基学习器权重:&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> i, weight <span class="keyword">in</span> <span class="built_in">enumerate</span>(ada.estimator_weights_[:<span class="number">10</span>]):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;模型<span class="subst">&#123;i+<span class="number">1</span>&#125;</span>: 权重=<span class="subst">&#123;weight:<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="AdaBoost的特点"><a href="#AdaBoost的特点" class="headerlink" title="AdaBoost的特点"></a>AdaBoost的特点</h3><table>
+<thead>
+<tr>
+<th>特点</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>自适应</td>
+<td>自动调整样本和模型权重</td>
+</tr>
+<tr>
+<td>简单基学习器</td>
+<td>通常用决策树桩</td>
+</tr>
+<tr>
+<td>快速收敛</td>
+<td>通常需要较少迭代</td>
+</tr>
+<tr>
+<td>对噪声敏感</td>
+<td>可能过拟合噪声数据</td>
+</tr>
+</tbody></table>
+<h3 id="AdaBoost调参"><a href="#AdaBoost调参" class="headerlink" title="AdaBoost调参"></a>AdaBoost调参</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 调整参数</span></span><br><span class="line">param_grid = &#123;</span><br><span class="line">    <span class="string">&#x27;n_estimators&#x27;</span>: [<span class="number">10</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">200</span>],</span><br><span class="line">    <span class="string">&#x27;learning_rate&#x27;</span>: [<span class="number">0.1</span>, <span class="number">0.5</span>, <span class="number">1.0</span>, <span class="number">2.0</span>],</span><br><span class="line">    <span class="string">&#x27;base_estimator__max_depth&#x27;</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">grid_search = GridSearchCV(</span><br><span class="line">    AdaBoostClassifier(base_estimator=DecisionTreeClassifier()),</span><br><span class="line">    param_grid,</span><br><span class="line">    cv=<span class="number">5</span></span><br><span class="line">)</span><br><span class="line">grid_search.fit(X_train, y_train)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;最优参数: <span class="subst">&#123;grid_search.best_params_&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Boosting与Bagging对比"><a href="#Boosting与Bagging对比" class="headerlink" title="Boosting与Bagging对比"></a>Boosting与Bagging对比</h2><h3 id="对比分析"><a href="#对比分析" class="headerlink" title="对比分析"></a>对比分析</h3><table>
+<thead>
+<tr>
+<th>方面</th>
+<th>Boosting</th>
+<th>Bagging</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>训练方式</td>
+<td>串行，依赖前序</td>
+<td>并行，独立</td>
+</tr>
+<tr>
+<td>主要作用</td>
+<td>降低偏差</td>
+<td>降低方差</td>
+</tr>
+<tr>
+<td>适用基学习器</td>
+<td>弱学习器</td>
+<td>强学习器</td>
+</tr>
+<tr>
+<td>样本权重</td>
+<td>动态调整</td>
+<td>均等</td>
+</tr>
+<tr>
+<td>计算效率</td>
+<td>较低</td>
+<td>较高</td>
+</tr>
+<tr>
+<td>过拟合风险</td>
+<td>较高</td>
+<td>较低</td>
+</tr>
+</tbody></table>
+<h3 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h3><table>
+<thead>
+<tr>
+<th>Boosting适用</th>
+<th>Bagging适用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>基学习器弱</td>
+<td>基学习器强</td>
+</tr>
+<tr>
+<td>偏差主导</td>
+<td>方差主导</td>
+</tr>
+<tr>
+<td>数据较干净</td>
+<td>数据噪声多</td>
+</tr>
+<tr>
+<td>追求高精度</td>
+<td>追求稳定性</td>
+</tr>
+</tbody></table>
+<h3 id="组合使用"><a href="#组合使用" class="headerlink" title="组合使用"></a>组合使用</h3><p>有时可以结合两者：</p>
+<ul>
+<li>先用Bagging训练多个强学习器</li>
+<li>再用Boosting组合这些学习器</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> BaggingClassifier, AdaBoostClassifier</span><br><span class="line"></span><br><span class="line"><span class="comment"># Bagging + Boosting组合</span></span><br><span class="line">bag_ada = AdaBoostClassifier(</span><br><span class="line">    base_estimator=BaggingClassifier(</span><br><span class="line">        base_estimator=DecisionTreeClassifier(),</span><br><span class="line">        n_estimators=<span class="number">10</span></span><br><span class="line">    ),</span><br><span class="line">    n_estimators=<span class="number">10</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Boosting的发展演进"><a href="#Boosting的发展演进" class="headerlink" title="Boosting的发展演进"></a>Boosting的发展演进</h2><h3 id="Boosting算法演进"><a href="#Boosting算法演进" class="headerlink" title="Boosting算法演进"></a>Boosting算法演进</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1995: AdaBoost (Freund &amp; Schapire)</span><br><span class="line">  ↓</span><br><span class="line">2000: GBDT (Breiman, Friedman)</span><br><span class="line">  ↓</span><br><span class="line">2001: Gradient Boosting (Friedman)</span><br><span class="line">  ↓</span><br><span class="line">2014: XGBoost (Chen &amp; Guestrin)</span><br><span class="line">  ↓</span><br><span class="line">2017: LightGBM (Microsoft)</span><br><span class="line">  ↓</span><br><span class="line">2018: CatBoost (Yandex)</span><br></pre></td></tr></table></figure>
+
+<h3 id="各算法特点对比"><a href="#各算法特点对比" class="headerlink" title="各算法特点对比"></a>各算法特点对比</h3><table>
+<thead>
+<tr>
+<th>算法</th>
+<th>主要改进</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AdaBoost</td>
+<td>样本权重自适应调整</td>
+</tr>
+<tr>
+<td>GBDT</td>
+<td>梯度下降优化</td>
+</tr>
+<tr>
+<td>XGBoost</td>
+<td>二阶优化、正则化、并行</td>
+</tr>
+<tr>
+<td>LightGBM</td>
+<td>GOSS、EFB、Leaf-wise</td>
+</tr>
+<tr>
+<td>CatBoost</td>
+<td>类别特征处理、Ordered Boosting</td>
+</tr>
+</tbody></table>
+<h2 id="案例实践"><a href="#案例实践" class="headerlink" title="案例实践"></a>案例实践</h2><h3 id="AdaBoost分类示例"><a href="#AdaBoost分类示例" class="headerlink" title="AdaBoost分类示例"></a>AdaBoost分类示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> load_iris</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> AdaBoostClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score, classification_report</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据</span></span><br><span class="line">iris = load_iris()</span><br><span class="line">X, y = iris.data, iris.target</span><br><span class="line"></span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># AdaBoost</span></span><br><span class="line">ada = AdaBoostClassifier(</span><br><span class="line">    base_estimator=DecisionTreeClassifier(max_depth=<span class="number">2</span>),</span><br><span class="line">    n_estimators=<span class="number">50</span>,</span><br><span class="line">    random_state=<span class="number">42</span></span><br><span class="line">)</span><br><span class="line">ada.fit(X_train, y_train)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 预测</span></span><br><span class="line">y_pred = ada.predict(X_test)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;准确率: <span class="subst">&#123;accuracy_score(y_test, y_pred):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n分类报告:&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(classification_report(y_test, y_pred))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 模型权重分析</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n前10个模型权重:&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(ada.estimator_weights_[:<span class="number">10</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 累积学习过程可视化</span></span><br><span class="line">scores = []</span><br><span class="line"><span class="keyword">for</span> i, estimator <span class="keyword">in</span> <span class="built_in">enumerate</span>(ada.estimators_):</span><br><span class="line">    <span class="comment"># 单个模型预测</span></span><br><span class="line">    y_pred_single = estimator.predict(X_test)</span><br><span class="line">    score = accuracy_score(y_test, y_pred_single)</span><br><span class="line">    scores.append(score)</span><br><span class="line">    </span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;\n单棵树平均准确率: <span class="subst">&#123;np.mean(scores):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;AdaBoost准确率: <span class="subst">&#123;accuracy_score(y_test, y_pred):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="AdaBoost回归示例"><a href="#AdaBoost回归示例" class="headerlink" title="AdaBoost回归示例"></a>AdaBoost回归示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> AdaBoostRegressor</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error, r2_score</span><br><span class="line"></span><br><span class="line"><span class="comment"># AdaBoost回归</span></span><br><span class="line">ada_reg = AdaBoostRegressor(</span><br><span class="line">    n_estimators=<span class="number">50</span>,</span><br><span class="line">    learning_rate=<span class="number">0.1</span>,</span><br><span class="line">    loss=<span class="string">&#x27;linear&#x27;</span>,  <span class="comment"># 损失函数：linear, square, exponential</span></span><br><span class="line">    random_state=<span class="number">42</span></span><br><span class="line">)</span><br><span class="line">ada_reg.fit(X_train, y_train)</span><br><span class="line"></span><br><span class="line">y_pred = ada_reg.predict(X_test)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;RMSE: <span class="subst">&#123;np.sqrt(mean_squared_error(y_test, y_pred)):4f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;R²: <span class="subst">&#123;r2_score(y_test, y_pred):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="学习率的影响"><a href="#学习率的影响" class="headerlink" title="学习率的影响"></a>学习率的影响</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">learning_rates = [<span class="number">0.01</span>, <span class="number">0.1</span>, <span class="number">0.5</span>, <span class="number">1.0</span>, <span class="number">2.0</span>]</span><br><span class="line">train_scores = []</span><br><span class="line">test_scores = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> lr <span class="keyword">in</span> learning_rates:</span><br><span class="line">    ada = AdaBoostClassifier(n_estimators=<span class="number">50</span>, learning_rate=lr, random_state=<span class="number">42</span>)</span><br><span class="line">    ada.fit(X_train, y_train)</span><br><span class="line">    train_scores.append(ada.score(X_train, y_train))</span><br><span class="line">    test_scores.append(ada.score(X_test, y_test))</span><br><span class="line"></span><br><span class="line">plt.figure(figsize=(<span class="number">10</span>, <span class="number">6</span>))</span><br><span class="line">plt.plot(learning_rates, train_scores, label=<span class="string">&#x27;Train&#x27;</span>)</span><br><span class="line">plt.plot(learning_rates, test_scores, label=<span class="string">&#x27;Test&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;Learning Rate&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;Accuracy&#x27;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.title(<span class="string">&#x27;Learning Rate Impact on AdaBoost&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<h3 id="迭代次数的影响"><a href="#迭代次数的影响" class="headerlink" title="迭代次数的影响"></a>迭代次数的影响</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">n_estimators_range = [<span class="number">10</span>, <span class="number">20</span>, <span class="number">50</span>, <span class="number">100</span>, <span class="number">200</span>]</span><br><span class="line">test_scores = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> n_estimators_range:</span><br><span class="line">    ada = AdaBoostClassifier(n_estimators=n, random_state=<span class="number">42</span>)</span><br><span class="line">    ada.fit(X_train, y_train)</span><br><span class="line">    test_scores.append(ada.score(X_test, y_test))</span><br><span class="line"></span><br><span class="line">plt.plot(n_estimators_range, test_scores)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;Number of Estimators&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;Accuracy&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;Effect of Number of Estimators&#x27;</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Boosting是串行集成方法，逐步降低模型偏差。核心内容包括：</p>
+<ul>
+<li>Boosting原理：串行训练，关注前序模型错误</li>
+<li>加法模型与前向分步算法：理论基础</li>
+<li>AdaBoost算法：样本权重自适应调整，模型权重加权组合</li>
+<li>Boosting与Bagging对比：降低偏差 vs 降低方差</li>
+</ul>
+<p>AdaBoost是最经典的Boosting算法，是理解GBDT、XGBoost等算法的基础。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/ensemble-learning/">集成学习概述</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/random-forest/">随机森林</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/gbdt/">GBDT梯度提升树</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/xgboost/">XGBoost算法详解</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2025/11/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/boosting/" data-id="cuidexhJPSSekAdrG64pwhEBe" data-title="Boosting基础" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Boosting/" rel="tag">Boosting</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/" rel="tag">集成学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/11/16/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/random-forest/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          随机森林
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/11/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/ensemble-learning/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">集成学习概述</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><span class="category-list-count">77</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">50</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/LM-2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/17/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/02/">二月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">一月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a><span class="archive-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        All content licensed under CC BY 4.0
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

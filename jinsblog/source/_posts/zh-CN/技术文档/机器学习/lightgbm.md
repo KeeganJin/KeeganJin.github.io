@@ -1,6 +1,6 @@
 ---
 title: LightGBM算法详解
-date: 2026-04-27
+date: 2025-11-25
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 集成学习, LightGBM]

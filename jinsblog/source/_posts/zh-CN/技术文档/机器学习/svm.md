@@ -1,6 +1,6 @@
 ---
 title: 支持向量机（SVM）
-date: 2026-04-21
+date: 2025-10-27
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, SVM, 分类算法]

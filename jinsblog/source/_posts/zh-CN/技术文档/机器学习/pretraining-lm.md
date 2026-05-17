@@ -1,6 +1,6 @@
 ---
 title: 预训练语言模型
-date: 2026-05-10
+date: 2026-02-08
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 大模型, 预训练]

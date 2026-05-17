@@ -1,6 +1,6 @@
 ---
 title: 神经网络入门
-date: 2026-05-07
+date: 2025-12-01
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 神经网络, 深度学习]

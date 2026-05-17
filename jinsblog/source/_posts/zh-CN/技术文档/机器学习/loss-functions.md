@@ -1,6 +1,6 @@
 ---
 title: 损失函数详解
-date: 2026-05-02
+date: 2025-12-10
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 神经网络, 损失函数]

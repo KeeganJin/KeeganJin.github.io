@@ -1,6 +1,6 @@
 ---
 title: LSTM与GRU
-date: 2026-05-03
+date: 2025-12-26
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 深度学习, LSTM]

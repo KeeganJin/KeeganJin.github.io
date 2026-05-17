@@ -1,6 +1,6 @@
 ---
 title: 卷积神经网络（CNN）
-date: 2026-04-15
+date: 2025-12-20
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 深度学习, CNN]

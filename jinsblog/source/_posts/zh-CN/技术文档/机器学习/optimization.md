@@ -1,6 +1,6 @@
 ---
 title: 优化理论基础
-date: 2026-05-09
+date: 2025-12-16
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 数学基础, 优化理论]

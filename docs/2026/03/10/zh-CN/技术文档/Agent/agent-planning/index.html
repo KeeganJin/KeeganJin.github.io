@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Agent 规划与推理 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="规划的定义与必要性规划（Planning）是 Agent 将复杂任务分解为可执行步骤的过程。没有规划能力，Agent 面对复杂任务时会不知所措或盲目行动。 为什么需要规划？ 任务复杂性：复杂任务无法一步完成，需要分解 行动有序性：某些步骤有依赖关系，需确定顺序 资源有限性：规划可以优化资源使用 结果可控性：规划让行动有预期，便于验证  规划的作用   作用 描述    任务分解 将大任务拆解为小任">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent 规划与推理">
+<meta property="og:url" content="https://keeganjin.github.io/2026/03/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-planning/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="规划的定义与必要性规划（Planning）是 Agent 将复杂任务分解为可执行步骤的过程。没有规划能力，Agent 面对复杂任务时会不知所措或盲目行动。 为什么需要规划？ 任务复杂性：复杂任务无法一步完成，需要分解 行动有序性：某些步骤有依赖关系，需确定顺序 资源有限性：规划可以优化资源使用 结果可控性：规划让行动有预期，便于验证  规划的作用   作用 描述    任务分解 将大任务拆解为小任">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-03-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-17T16:21:17.062Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="CoT">
+<meta property="article:tag" content="Planning">
+<meta property="article:tag" content="ReAct">
+<meta property="article:tag" content="Reasoning">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+
+  <!-- Nordic Zen Fonts: Noto Serif SC for elegant reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+
+  <!-- MathJax for math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$', '$'], ['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Life Notes</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/Agent/agent-planning" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/03/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-planning/" class="article-date">
+  <time class="dt-published" datetime="2026-03-09T16:00:00.000Z" itemprop="datePublished">2026-03-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Agent 规划与推理
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="规划的定义与必要性"><a href="#规划的定义与必要性" class="headerlink" title="规划的定义与必要性"></a>规划的定义与必要性</h2><p>规划（Planning）是 Agent 将复杂任务分解为可执行步骤的过程。没有规划能力，Agent 面对复杂任务时会不知所措或盲目行动。</p>
+<h3 id="为什么需要规划？"><a href="#为什么需要规划？" class="headerlink" title="为什么需要规划？"></a>为什么需要规划？</h3><ol>
+<li><strong>任务复杂性</strong>：复杂任务无法一步完成，需要分解</li>
+<li><strong>行动有序性</strong>：某些步骤有依赖关系，需确定顺序</li>
+<li><strong>资源有限性</strong>：规划可以优化资源使用</li>
+<li><strong>结果可控性</strong>：规划让行动有预期，便于验证</li>
+</ol>
+<h3 id="规划的作用"><a href="#规划的作用" class="headerlink" title="规划的作用"></a>规划的作用</h3><table>
+<thead>
+<tr>
+<th>作用</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>任务分解</td>
+<td>将大任务拆解为小任务</td>
+</tr>
+<tr>
+<td>步骤排序</td>
+<td>确定任务执行的顺序</td>
+</tr>
+<tr>
+<td>资源分配</td>
+<td>决定每个步骤的资源投入</td>
+</tr>
+<tr>
+<td>预期设定</td>
+<td>设定每步的预期结果</td>
+</tr>
+<tr>
+<td>失败预案</td>
+<td>规划失败时的处理方式</td>
+</tr>
+</tbody></table>
+<h2 id="思维链（Chain-of-Thought-CoT）"><a href="#思维链（Chain-of-Thought-CoT）" class="headerlink" title="思维链（Chain of Thought, CoT）"></a>思维链（Chain of Thought, CoT）</h2><p>思维链是最基础的推理增强技术，通过引导 LLM 展示推理过程来提高复杂任务的准确性。</p>
+<h3 id="CoT-原理"><a href="#CoT-原理" class="headerlink" title="CoT 原理"></a>CoT 原理</h3><p>传统提示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">问题：小明有5个苹果，给了小红2个，又买了3个，现在有多少个？</span><br><span class="line">回答：6个</span><br></pre></td></tr></table></figure>
+
+<p>CoT 提示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">问题：小明有5个苹果，给了小红2个，又买了3个，现在有多少个？</span><br><span class="line">让我们一步步思考：</span><br><span class="line">1. 小明最初有5个苹果</span><br><span class="line">2. 给了小红2个后，还剩5-2=3个</span><br><span class="line">3. 又买了3个，现在有3+3=6个</span><br><span class="line">答案：6个</span><br></pre></td></tr></table></figure>
+
+<h3 id="CoT-的作用"><a href="#CoT-的作用" class="headerlink" title="CoT 的作用"></a>CoT 的作用</h3><ul>
+<li><strong>提高准确性</strong>：复杂推理任务准确率显著提升</li>
+<li><strong>过程透明</strong>：展示推理过程，便于调试</li>
+<li><strong>错误定位</strong>：容易发现推理错误的位置</li>
+</ul>
+<h3 id="CoT-提示技巧"><a href="#CoT-提示技巧" class="headerlink" title="CoT 提示技巧"></a>CoT 提示技巧</h3><h4 id="零样本-CoT"><a href="#零样本-CoT" class="headerlink" title="零样本 CoT"></a>零样本 CoT</h4><p>直接要求模型展示思考过程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">请一步步思考并回答以下问题：</span><br><span class="line">[问题内容]</span><br></pre></td></tr></table></figure>
+
+<h4 id="少样本-CoT"><a href="#少样本-CoT" class="headerlink" title="少样本 CoT"></a>少样本 CoT</h4><p>提供示例展示推理过程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">示例问题：一箱苹果24个，分给6个人每人几个？</span><br><span class="line">示例推理：</span><br><span class="line">1. 总共有24个苹果</span><br><span class="line">2. 要分给6个人</span><br><span class="line">3. 每人得到24/6=4个苹果</span><br><span class="line">答案：每人4个</span><br><span class="line"></span><br><span class="line">现在请用同样的方式推理以下问题：</span><br><span class="line">[新问题]</span><br></pre></td></tr></table></figure>
+
+<h3 id="CoT-在-Agent-中的应用"><a href="#CoT-在-Agent-中的应用" class="headerlink" title="CoT 在 Agent 中的应用"></a>CoT 在 Agent 中的应用</h3><p>Agent 使用 CoT 进行任务分析：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">plan_with_cot</span>(<span class="params">task</span>):</span><br><span class="line">    prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    任务：<span class="subst">&#123;task&#125;</span></span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    请一步步分析这个任务：</span></span><br><span class="line"><span class="string">    1. 理解任务目标</span></span><br><span class="line"><span class="string">    2. 分析需要什么信息</span></span><br><span class="line"><span class="string">    3. 确定需要哪些工具</span></span><br><span class="line"><span class="string">    4. 规划执行步骤</span></span><br><span class="line"><span class="string">    5. 预期每步的结果</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    请展示你的思考过程：</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    </span><br><span class="line">    reasoning = llm.generate(prompt)</span><br><span class="line">    <span class="keyword">return</span> parse_plan(reasoning)</span><br></pre></td></tr></table></figure>
+
+<h2 id="ReAct-模式（Reasoning-Acting）"><a href="#ReAct-模式（Reasoning-Acting）" class="headerlink" title="ReAct 模式（Reasoning + Acting）"></a>ReAct 模式（Reasoning + Acting）</h2><p>ReAct 是一种结合推理和行动的 Agent 模式，交替进行思考和执行。</p>
+<h3 id="ReAct-原理"><a href="#ReAct-原理" class="headerlink" title="ReAct 原理"></a>ReAct 原理</h3><p>ReAct 的核心是 <strong>Thought → Action → Observation</strong> 循环：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Thought: 我需要查询北京的天气信息</span><br><span class="line">Action: search(&quot;北京天气&quot;)</span><br><span class="line">Observation: 北京今天晴，气温25°C</span><br><span class="line"></span><br><span class="line">Thought: 用户问的是今天天气，我已获得信息</span><br><span class="line">Action: finish(&quot;北京今天晴天，气温25°C&quot;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="ReAct-流程图"><a href="#ReAct-流程图" class="headerlink" title="ReAct 流程图"></a>ReAct 流程图</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────┐</span><br><span class="line">│  用户任务   │</span><br><span class="line">└─────────────┘</span><br><span class="line">      ↓</span><br><span class="line">┌─────────────┐</span><br><span class="line">│ Thought     │ ← 思考下一步该做什么</span><br><span class="line">│ (推理)      │</span><br><span class="line">└─────────────┘</span><br><span class="line">      ↓</span><br><span class="line">┌─────────────┐</span><br><span class="line">│ Action      │ ← 决定执行什么行动</span><br><span class="line">│ (行动决策)  │</span><br><span class="line">└─────────────┘</span><br><span class="line">      ↓</span><br><span class="line">┌─────────────┐</span><br><span class="line">│ Observation │ ← 观察行动结果</span><br><span class="line">│ (结果观察)  │</span><br><span class="line">└─────────────┘</span><br><span class="line">      ↓</span><br><span class="line">   循环继续...</span><br></pre></td></tr></table></figure>
+
+<h3 id="ReAct-示例"><a href="#ReAct-示例" class="headerlink" title="ReAct 示例"></a>ReAct 示例</h3><p><strong>任务</strong>：查找《三体》作者并获得其最新作品</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Thought 1: 我需要先查找《三体》的作者信息</span><br><span class="line">Action 1: search(&quot;三体小说作者&quot;)</span><br><span class="line">Observation 1: 《三体》作者是刘慈欣</span><br><span class="line"></span><br><span class="line">Thought 2: 现在我知道了作者是刘慈欣，需要查找他的最新作品</span><br><span class="line">Action 2: search(&quot;刘慈欣最新作品&quot;)</span><br><span class="line">Observation 2: 刘慈欣最新作品是《球状闪电》重写版</span><br><span class="line"></span><br><span class="line">Thought 3: 我已获得所需信息，可以回答用户了</span><br><span class="line">Action 3: finish(&quot;《三体》作者是刘慈欣，其最新作品是《球状闪电》重写版&quot;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="ReAct-实现框架"><a href="#ReAct-实现框架" class="headerlink" title="ReAct 实现框架"></a>ReAct 实现框架</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ReActAgent</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, tools</span>):</span><br><span class="line">        <span class="variable language_">self</span>.tools = tools</span><br><span class="line">        <span class="variable language_">self</span>.history = []</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self, task</span>):</span><br><span class="line">        <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">            <span class="comment"># 生成 Thought 和 Action</span></span><br><span class="line">            response = <span class="variable language_">self</span>.generate_thought_action()</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 解析 Action</span></span><br><span class="line">            action = <span class="variable language_">self</span>.parse_action(response)</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> action[<span class="string">&quot;name&quot;</span>] == <span class="string">&quot;finish&quot;</span>:</span><br><span class="line">                <span class="keyword">return</span> action[<span class="string">&quot;output&quot;</span>]</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 执行 Action</span></span><br><span class="line">            observation = <span class="variable language_">self</span>.execute_action(action)</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 记录历史</span></span><br><span class="line">            <span class="variable language_">self</span>.history.append(&#123;</span><br><span class="line">                <span class="string">&quot;thought&quot;</span>: response[<span class="string">&quot;thought&quot;</span>],</span><br><span class="line">                <span class="string">&quot;action&quot;</span>: action,</span><br><span class="line">                <span class="string">&quot;observation&quot;</span>: observation</span><br><span class="line">            &#125;)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">generate_thought_action</span>(<span class="params">self</span>):</span><br><span class="line">        prompt = <span class="variable language_">self</span>.build_prompt()</span><br><span class="line">        <span class="keyword">return</span> llm.generate(prompt)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">execute_action</span>(<span class="params">self, action</span>):</span><br><span class="line">        tool = <span class="variable language_">self</span>.tools[action[<span class="string">&quot;name&quot;</span>]]</span><br><span class="line">        <span class="keyword">return</span> tool.execute(action[<span class="string">&quot;params&quot;</span>])</span><br></pre></td></tr></table></figure>
+
+<h2 id="Plan-and-Execute-模式"><a href="#Plan-and-Execute-模式" class="headerlink" title="Plan-and-Execute 模式"></a>Plan-and-Execute 模式</h2><p>Plan-and-Execute 将规划与执行分离，先制定完整计划再执行。</p>
+<h3 id="基本流程"><a href="#基本流程" class="headerlink" title="基本流程"></a>基本流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Plan阶段: 分析任务 → 分解步骤 → 制定计划</span><br><span class="line">Execute阶段: 执行步骤 → 监控进度 → 处理异常</span><br></pre></td></tr></table></figure>
+
+<h3 id="Plan-and-Execute-vs-ReAct"><a href="#Plan-and-Execute-vs-ReAct" class="headerlink" title="Plan-and-Execute vs ReAct"></a>Plan-and-Execute vs ReAct</h3><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>ReAct</th>
+<th>Plan-and-Execute</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>规划时机</td>
+<td>步步规划</td>
+<td>先整体规划</td>
+</tr>
+<tr>
+<td>灵活性</td>
+<td>高，每步可调整</td>
+<td>低，计划固定</td>
+</tr>
+<tr>
+<td>效率</td>
+<td>每步需推理</td>
+<td>执行只需执行</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>不确定任务</td>
+<td>确定性任务</td>
+</tr>
+</tbody></table>
+<h3 id="Plan-and-Execute-流程"><a href="#Plan-and-Execute-流程" class="headerlink" title="Plan-and-Execute 流程"></a>Plan-and-Execute 流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────┐</span><br><span class="line">│           Plan Phase                │</span><br><span class="line">│  任务 → 分解 → 步骤1, 步骤2, ...    │</span><br><span class="line">└─────────────────────────────────────┘</span><br><span class="line">              ↓ 计划</span><br><span class="line">┌─────────────────────────────────────┐</span><br><span class="line">│         Execute Phase               │</span><br><span class="line">│  步骤1 → 步骤2 → 步骤3 → ...        │</span><br><span class="line">│     ↓      ↓      ↓                 │</span><br><span class="line">│   结果1  结果2  结果3                │</span><br><span class="line">└─────────────────────────────────────┘</span><br><span class="line">              ↓ 最终结果</span><br></pre></td></tr></table></figure>
+
+<h3 id="Plan-and-Execute-实现"><a href="#Plan-and-Execute-实现" class="headerlink" title="Plan-and-Execute 实现"></a>Plan-and-Execute 实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">PlanExecuteAgent</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">run</span>(<span class="params">self, task</span>):</span><br><span class="line">        <span class="comment"># Plan 阶段</span></span><br><span class="line">        plan = <span class="variable language_">self</span>.plan(task)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># Execute 阶段</span></span><br><span class="line">        results = []</span><br><span class="line">        <span class="keyword">for</span> step <span class="keyword">in</span> plan.steps:</span><br><span class="line">            result = <span class="variable language_">self</span>.execute_step(step)</span><br><span class="line">            results.append(result)</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 检查是否需要重新规划</span></span><br><span class="line">            <span class="keyword">if</span> <span class="variable language_">self</span>.need_replan(result):</span><br><span class="line">                plan = <span class="variable language_">self</span>.replan(task, results)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.aggregate_results(results)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">plan</span>(<span class="params">self, task</span>):</span><br><span class="line">        prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        任务：<span class="subst">&#123;task&#125;</span></span></span><br><span class="line"><span class="string">        </span></span><br><span class="line"><span class="string">        请制定详细计划：</span></span><br><span class="line"><span class="string">        1. 分解为具体步骤</span></span><br><span class="line"><span class="string">        2. 说明每步目标</span></span><br><span class="line"><span class="string">        3. 指定每步工具</span></span><br><span class="line"><span class="string">        4. 确定执行顺序</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        response = llm.generate(prompt)</span><br><span class="line">        <span class="keyword">return</span> parse_plan(response)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">execute_step</span>(<span class="params">self, step</span>):</span><br><span class="line">        <span class="keyword">return</span> execute_action(step.tool, step.params)</span><br></pre></td></tr></table></figure>
+
+<h3 id="动态重规划"><a href="#动态重规划" class="headerlink" title="动态重规划"></a>动态重规划</h3><p>执行中发现问题可以重新规划：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">need_replan</span>(<span class="params">self, result</span>):</span><br><span class="line">    <span class="comment"># 检查结果是否偏离预期</span></span><br><span class="line">    <span class="keyword">if</span> result.status == <span class="string">&quot;failed&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">if</span> result.deviation &gt; threshold:</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">replan</span>(<span class="params">self, task, completed_results</span>):</span><br><span class="line">    prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    原任务：<span class="subst">&#123;task&#125;</span></span></span><br><span class="line"><span class="string">    已完成：<span class="subst">&#123;completed_results&#125;</span></span></span><br><span class="line"><span class="string">    需要重新规划剩余步骤。</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> llm.generate(prompt)</span><br></pre></td></tr></table></figure>
+
+<h2 id="思维树（Tree-of-Thoughts-ToT）"><a href="#思维树（Tree-of-Thoughts-ToT）" class="headerlink" title="思维树（Tree of Thoughts, ToT）"></a>思维树（Tree of Thoughts, ToT）</h2><p>思维树通过探索多条推理路径来解决复杂问题。</p>
+<h3 id="ToT-原理"><a href="#ToT-原理" class="headerlink" title="ToT 原理"></a>ToT 原理</h3><p>CoT 是单条推理路径，ToT 是多条路径的树形结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">          问题</span><br><span class="line">           ↓</span><br><span class="line">  ┌────────┼────────┐</span><br><span class="line">  思路1    思路2    思路3</span><br><span class="line">   ↓       ↓       ↓</span><br><span class="line">方案1a  方案2a  方案3a</span><br><span class="line">方案1b  方案2b  方案3b</span><br><span class="line">   ↓       ↓       ↓</span><br><span class="line"> 评估    评估    评估</span><br><span class="line">   ↓       ↓       ↓</span><br><span class="line"> 选最优方案</span><br></pre></td></tr></table></figure>
+
+<h3 id="ToT-流程"><a href="#ToT-流程" class="headerlink" title="ToT 流程"></a>ToT 流程</h3><ol>
+<li><strong>生成</strong>：生成多个可能的思考路径</li>
+<li><strong>评估</strong>：评估每个路径的质量</li>
+<li><strong>搜索</strong>：选择最优路径继续探索</li>
+<li><strong>回溯</strong>：如果路径失败，回溯尝试其他路径</li>
+</ol>
+<h3 id="ToT-实现"><a href="#ToT-实现" class="headerlink" title="ToT 实现"></a>ToT 实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ToTAgent</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, max_depth=<span class="number">3</span>, breadth=<span class="number">3</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.max_depth = max_depth</span><br><span class="line">        <span class="variable language_">self</span>.breadth = breadth  <span class="comment"># 每层探索的分支数</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">solve</span>(<span class="params">self, problem</span>):</span><br><span class="line">        root = ThoughtNode(problem)</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.search(root)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">search</span>(<span class="params">self, node, depth=<span class="number">0</span></span>):</span><br><span class="line">        <span class="keyword">if</span> depth &gt;= <span class="variable language_">self</span>.max_depth:</span><br><span class="line">            <span class="keyword">return</span> <span class="variable language_">self</span>.evaluate(node)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 生成多个分支</span></span><br><span class="line">        branches = <span class="variable language_">self</span>.generate_branches(node, <span class="variable language_">self</span>.breadth)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 评估每个分支</span></span><br><span class="line">        evaluations = [<span class="variable language_">self</span>.evaluate(b) <span class="keyword">for</span> b <span class="keyword">in</span> branches]</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 选择最优分支继续探索</span></span><br><span class="line">        best_branch = <span class="variable language_">self</span>.select_best(branches, evaluations)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.search(best_branch, depth + <span class="number">1</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">generate_branches</span>(<span class="params">self, node, count</span>):</span><br><span class="line">        prompt = <span class="string">f&quot;生成<span class="subst">&#123;count&#125;</span>种不同的解决思路...&quot;</span></span><br><span class="line">        thoughts = llm.generate(prompt)</span><br><span class="line">        <span class="keyword">return</span> [ThoughtNode(t, parent=node) <span class="keyword">for</span> t <span class="keyword">in</span> thoughts]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">evaluate</span>(<span class="params">self, node</span>):</span><br><span class="line">        prompt = <span class="string">f&quot;评估这个思路的可行性：<span class="subst">&#123;node.thought&#125;</span>&quot;</span></span><br><span class="line">        <span class="keyword">return</span> llm.generate(prompt)</span><br></pre></td></tr></table></figure>
+
+<h3 id="ToT-适用场景"><a href="#ToT-适用场景" class="headerlink" title="ToT 适用场景"></a>ToT 适用场景</h3><ul>
+<li>需要创意解决方案的问题</li>
+<li>多种可能答案的问题</li>
+<li>单一路径容易走入歧途的问题</li>
+<li>可以逐步验证的问题</li>
+</ul>
+<h2 id="任务分解策略"><a href="#任务分解策略" class="headerlink" title="任务分解策略"></a>任务分解策略</h2><h3 id="分解原则"><a href="#分解原则" class="headerlink" title="分解原则"></a>分解原则</h3><ol>
+<li><strong>独立性</strong>：子任务尽量独立，减少依赖</li>
+<li><strong>原子性</strong>：子任务应是单一、明确的操作</li>
+<li><strong>可验证性</strong>：每个子任务有明确的完成标准</li>
+<li><strong>有序性</strong>：有依赖的任务按正确顺序排列</li>
+</ol>
+<h3 id="分解方法"><a href="#分解方法" class="headerlink" title="分解方法"></a>分解方法</h3><h4 id="按功能分解"><a href="#按功能分解" class="headerlink" title="按功能分解"></a>按功能分解</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">decompose_by_function</span>(<span class="params">task</span>):</span><br><span class="line">    prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    任务：<span class="subst">&#123;task&#125;</span></span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    按功能模块分解：</span></span><br><span class="line"><span class="string">    1. 数据获取模块</span></span><br><span class="line"><span class="string">    2. 数据处理模块</span></span><br><span class="line"><span class="string">    3. 分析模块</span></span><br><span class="line"><span class="string">    4. 输出模块</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> llm.generate(prompt)</span><br></pre></td></tr></table></figure>
+
+<h4 id="按时间分解"><a href="#按时间分解" class="headerlink" title="按时间分解"></a>按时间分解</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">decompose_by_time</span>(<span class="params">task</span>):</span><br><span class="line">    <span class="comment"># 按时间顺序分解任务</span></span><br><span class="line">    prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    任务：<span class="subst">&#123;task&#125;</span></span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    按时间顺序分解：</span></span><br><span class="line"><span class="string">    1. 第一步做什么</span></span><br><span class="line"><span class="string">    2. 第二步做什么</span></span><br><span class="line"><span class="string">    ...</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> llm.generate(prompt)</span><br></pre></td></tr></table></figure>
+
+<h4 id="按层级分解"><a href="#按层级分解" class="headerlink" title="按层级分解"></a>按层级分解</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">decompose_hierarchically</span>(<span class="params">task</span>):</span><br><span class="line">    <span class="comment"># 先分解大任务</span></span><br><span class="line">    main_steps = get_main_steps(task)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 每个大步骤继续分解</span></span><br><span class="line">    detailed_plan = []</span><br><span class="line">    <span class="keyword">for</span> step <span class="keyword">in</span> main_steps:</span><br><span class="line">        sub_steps = decompose_step(step)</span><br><span class="line">        detailed_plan.extend(sub_steps)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> detailed_plan</span><br></pre></td></tr></table></figure>
+
+<h3 id="任务依赖管理"><a href="#任务依赖管理" class="headerlink" title="任务依赖管理"></a>任务依赖管理</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">TaskDAG</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.tasks = &#123;&#125;</span><br><span class="line">        <span class="variable language_">self</span>.dependencies = &#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_task</span>(<span class="params">self, task_id, task_info</span>):</span><br><span class="line">        <span class="variable language_">self</span>.tasks[task_id] = task_info</span><br><span class="line">        <span class="variable language_">self</span>.dependencies[task_id] = []</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_dependency</span>(<span class="params">self, task_id, depends_on</span>):</span><br><span class="line">        <span class="variable language_">self</span>.dependencies[task_id].append(depends_on)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_execution_order</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment"># 拓扑排序</span></span><br><span class="line">        <span class="keyword">return</span> topological_sort(<span class="variable language_">self</span>.tasks, <span class="variable language_">self</span>.dependencies)</span><br></pre></td></tr></table></figure>
+
+<h2 id="规划与执行的反馈循环"><a href="#规划与执行的反馈循环" class="headerlink" title="规划与执行的反馈循环"></a>规划与执行的反馈循环</h2><h3 id="反馈机制"><a href="#反馈机制" class="headerlink" title="反馈机制"></a>反馈机制</h3><p>执行结果需要反馈给规划模块：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">feedback_loop</span>(<span class="params">plan, execution_result</span>):</span><br><span class="line">    <span class="keyword">if</span> execution_result.success:</span><br><span class="line">        <span class="comment"># 成功，继续下一步骤</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;continue&quot;</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="comment"># 失败，需要调整</span></span><br><span class="line">        <span class="keyword">if</span> execution_result.error_type == <span class="string">&quot;tool_error&quot;</span>:</span><br><span class="line">            <span class="comment"># 工具失败，尝试替代工具</span></span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;retry_with_alternative&quot;</span></span><br><span class="line">        <span class="keyword">elif</span> execution_result.error_type == <span class="string">&quot;unexpected_result&quot;</span>:</span><br><span class="line">            <span class="comment"># 结果不符预期，重新规划</span></span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;replan&quot;</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 其他错误</span></span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;handle_error&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="自我修正"><a href="#自我修正" class="headerlink" title="自我修正"></a>自我修正</h3><p>Agent 根据反馈自我修正：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">self_correction</span>(<span class="params">current_state, error</span>):</span><br><span class="line">    prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    当前状态：<span class="subst">&#123;current_state&#125;</span></span></span><br><span class="line"><span class="string">    遇到错误：<span class="subst">&#123;error&#125;</span></span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    请分析错误原因并提出修正方案：</span></span><br><span class="line"><span class="string">    1. 错误原因是什么？</span></span><br><span class="line"><span class="string">    2. 如何修正？</span></span><br><span class="line"><span class="string">    3. 是否需要调整后续计划？</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    correction = llm.generate(prompt)</span><br><span class="line">    <span class="keyword">return</span> apply_correction(correction)</span><br></pre></td></tr></table></figure>
+
+<h3 id="进度监控"><a href="#进度监控" class="headerlink" title="进度监控"></a>进度监控</h3><p>监控任务执行进度：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ProgressMonitor</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, plan</span>):</span><br><span class="line">        <span class="variable language_">self</span>.plan = plan</span><br><span class="line">        <span class="variable language_">self</span>.completed = []</span><br><span class="line">        <span class="variable language_">self</span>.current = <span class="literal">None</span></span><br><span class="line">        <span class="variable language_">self</span>.failed = []</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update</span>(<span class="params">self, step_id, status, result</span>):</span><br><span class="line">        <span class="keyword">if</span> status == <span class="string">&quot;completed&quot;</span>:</span><br><span class="line">            <span class="variable language_">self</span>.completed.append(step_id)</span><br><span class="line">        <span class="keyword">elif</span> status == <span class="string">&quot;failed&quot;</span>:</span><br><span class="line">            <span class="variable language_">self</span>.failed.append(step_id)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 计算进度</span></span><br><span class="line">        progress = <span class="built_in">len</span>(<span class="variable language_">self</span>.completed) / <span class="built_in">len</span>(<span class="variable language_">self</span>.plan.steps)</span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">            <span class="string">&quot;progress&quot;</span>: progress,</span><br><span class="line">            <span class="string">&quot;current_step&quot;</span>: <span class="variable language_">self</span>.current,</span><br><span class="line">            <span class="string">&quot;completed&quot;</span>: <span class="variable language_">self</span>.completed,</span><br><span class="line">            <span class="string">&quot;failed&quot;</span>: <span class="variable language_">self</span>.failed</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="规划失败的恢复机制"><a href="#规划失败的恢复机制" class="headerlink" title="规划失败的恢复机制"></a>规划失败的恢复机制</h2><h3 id="失败类型"><a href="#失败类型" class="headerlink" title="失败类型"></a>失败类型</h3><table>
+<thead>
+<tr>
+<th>失败类型</th>
+<th>原因</th>
+<th>处理方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工具执行失败</td>
+<td>工具返回错误</td>
+<td>重试或替代工具</td>
+</tr>
+<tr>
+<td>参数错误</td>
+<td>参数生成错误</td>
+<td>重新生成参数</td>
+</tr>
+<tr>
+<td>结果不符预期</td>
+<td>执行结果非预期</td>
+<td>重新规划</td>
+</tr>
+<tr>
+<td>步骤依赖失败</td>
+<td>前置步骤失败</td>
+<td>回溯或跳过</td>
+</tr>
+<tr>
+<td>超时</td>
+<td>执行时间过长</td>
+<td>中断并重新规划</td>
+</tr>
+</tbody></table>
+<h3 id="恢复策略"><a href="#恢复策略" class="headerlink" title="恢复策略"></a>恢复策略</h3><h4 id="重试"><a href="#重试" class="headerlink" title="重试"></a>重试</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">retry_with_backoff</span>(<span class="params">action, max_retries=<span class="number">3</span></span>):</span><br><span class="line">    <span class="keyword">for</span> attempt <span class="keyword">in</span> <span class="built_in">range</span>(max_retries):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            result = execute(action)</span><br><span class="line">            <span class="keyword">if</span> result.success:</span><br><span class="line">                <span class="keyword">return</span> result</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            wait_time = <span class="number">2</span> ** attempt</span><br><span class="line">            sleep(wait_time)</span><br><span class="line">    <span class="keyword">return</span> Failure(<span class="string">&quot;重试失败&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="替代方案"><a href="#替代方案" class="headerlink" title="替代方案"></a>替代方案</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">try_alternative</span>(<span class="params">failed_action</span>):</span><br><span class="line">    alternatives = get_alternative_tools(failed_action.tool)</span><br><span class="line">    <span class="keyword">for</span> alt_tool <span class="keyword">in</span> alternatives:</span><br><span class="line">        result = execute_with_alternative(alt_tool, failed_action.params)</span><br><span class="line">        <span class="keyword">if</span> result.success:</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line">    <span class="keyword">return</span> Failure(<span class="string">&quot;所有替代方案失败&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="回溯"><a href="#回溯" class="headerlink" title="回溯"></a>回溯</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">backtrack_to_safe_point</span>(<span class="params">current_state</span>):</span><br><span class="line">    <span class="comment"># 找到最后一个成功点</span></span><br><span class="line">    safe_point = find_last_success(current_state.history)</span><br><span class="line">    <span class="comment"># 重置到安全点</span></span><br><span class="line">    reset_to(safe_point)</span><br><span class="line">    <span class="comment"># 重新规划</span></span><br><span class="line">    <span class="keyword">return</span> replan_from(safe_point)</span><br></pre></td></tr></table></figure>
+
+<h4 id="任务降级"><a href="#任务降级" class="headerlink" title="任务降级"></a>任务降级</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">degrade_task</span>(<span class="params">original_task, failed_part</span>):</span><br><span class="line">    <span class="comment"># 如果部分失败，尝试完成剩余部分</span></span><br><span class="line">    remaining = get_remaining_subtasks(original_task, failed_part)</span><br><span class="line">    <span class="keyword">if</span> can_complete_partial(remaining):</span><br><span class="line">        <span class="keyword">return</span> execute_partial(remaining)</span><br><span class="line">    <span class="keyword">return</span> Failure(<span class="string">&quot;无法完成任何部分&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="规划框架对比"><a href="#规划框架对比" class="headerlink" title="规划框架对比"></a>规划框架对比</h2><table>
+<thead>
+<tr>
+<th>框架</th>
+<th>特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CoT</td>
+<td>简单、通用</td>
+<td>单步或简单多步任务</td>
+</tr>
+<tr>
+<td>ReAct</td>
+<td>灵活、交互式</td>
+<td>需要多次工具调用的任务</td>
+</tr>
+<tr>
+<td>Plan-Execute</td>
+<td>结构化、高效</td>
+<td>确定性、可分解的任务</td>
+</tr>
+<tr>
+<td>ToT</td>
+<td>探索式、创意</td>
+<td>需要多种方案的复杂问题</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>规划是 Agent 的核心能力之一。不同的规划模式适用于不同场景：CoT 适合简单推理，ReAct 适合需要工具调用的交互式任务，Plan-and-Execute 适合结构化任务，ToT 适合需要探索多种方案的复杂问题。</p>
+<p>好的规划系统需要：清晰的任务分解、合理的步骤排序、有效的反馈机制、完善的失败恢复。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-intro/">Agent 入门指南</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/tool-use/">工具调用机制详解</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-memory/">Agent 记忆系统</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/multi-agent-intro/">多 Agent 系统概述</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/03/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-planning/" data-id="cuidEmpVEujDpr_mfLLGlfjPX" data-title="Agent 规划与推理" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CoT/" rel="tag">CoT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Planning/" rel="tag">Planning</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ReAct/" rel="tag">ReAct</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Reasoning/" rel="tag">Reasoning</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/03/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-frameworks/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          Agent 框架概览
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/03/07/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-memory/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">Agent 记忆系统</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><span class="category-list-count">77</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">50</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/LM-2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/17/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/02/">二月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">一月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a><span class="archive-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        All content licensed under CC BY 4.0
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

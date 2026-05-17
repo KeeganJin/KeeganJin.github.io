@@ -1,6 +1,6 @@
 ---
 title: 机器学习概述
-date: 2026-05-04
+date: 2025-10-12
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 入门, 概述]

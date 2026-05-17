@@ -1,6 +1,6 @@
 ---
 title: 概率论基础
-date: 2026-04-10
+date: 2025-10-05
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 数学基础, 概率论]

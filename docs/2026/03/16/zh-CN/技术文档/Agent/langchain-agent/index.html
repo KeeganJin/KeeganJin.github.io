@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>LangChain Agent 实践 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="LangChain Agent 核心概念LangChain 的 Agent 系统基于以下核心组件： Agent 类型LangChain 提供多种 Agent 类型：    Agent 类型 描述 适用场景    Zero-shot Agent 无示例，直接执行 简单任务   Conversational Agent 支持对话记忆 多轮对话   Structured Tool Agent 支持多输入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LangChain Agent 实践">
+<meta property="og:url" content="https://keeganjin.github.io/2026/03/16/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/langchain-agent/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="LangChain Agent 核心概念LangChain 的 Agent 系统基于以下核心组件： Agent 类型LangChain 提供多种 Agent 类型：    Agent 类型 描述 适用场景    Zero-shot Agent 无示例，直接执行 简单任务   Conversational Agent 支持对话记忆 多轮对话   Structured Tool Agent 支持多输入">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-03-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-17T16:21:17.505Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="LangChain">
+<meta property="article:tag" content="LangGraph">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+
+  <!-- Nordic Zen Fonts: Noto Serif SC for elegant reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+
+  <!-- MathJax for math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$', '$'], ['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Life Notes</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/Agent/langchain-agent" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/03/16/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/langchain-agent/" class="article-date">
+  <time class="dt-published" datetime="2026-03-15T16:00:00.000Z" itemprop="datePublished">2026-03-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      LangChain Agent 实践
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="LangChain-Agent-核心概念"><a href="#LangChain-Agent-核心概念" class="headerlink" title="LangChain Agent 核心概念"></a>LangChain Agent 核心概念</h2><p>LangChain 的 Agent 系统基于以下核心组件：</p>
+<h3 id="Agent-类型"><a href="#Agent-类型" class="headerlink" title="Agent 类型"></a>Agent 类型</h3><p>LangChain 提供多种 Agent 类型：</p>
+<table>
+<thead>
+<tr>
+<th>Agent 类型</th>
+<th>描述</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Zero-shot Agent</td>
+<td>无示例，直接执行</td>
+<td>简单任务</td>
+</tr>
+<tr>
+<td>Conversational Agent</td>
+<td>支持对话记忆</td>
+<td>多轮对话</td>
+</tr>
+<tr>
+<td>Structured Tool Agent</td>
+<td>支持多输入工具</td>
+<td>复杂工具调用</td>
+</tr>
+<tr>
+<td>OpenAI Functions Agent</td>
+<td>使用 Function Calling</td>
+<td>OpenAI 模型</td>
+</tr>
+</tbody></table>
+<h3 id="核心组件"><a href="#核心组件" class="headerlink" title="核心组件"></a>核心组件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Agent: 决策组件，决定下一步行动</span><br><span class="line">AgentExecutor: 执行组件，管理 Agent 执行循环</span><br><span class="line">Tools: 工具集合，Agent 可调用的能力</span><br><span class="line">Prompt: 提示模板，引导 Agent 行为</span><br><span class="line">Memory: 记忆组件，维护对话上下文</span><br></pre></td></tr></table></figure>
+
+<h2 id="AgentExecutor-详解"><a href="#AgentExecutor-详解" class="headerlink" title="AgentExecutor 详解"></a>AgentExecutor 详解</h2><h3 id="AgentExecutor-基本结构"><a href="#AgentExecutor-基本结构" class="headerlink" title="AgentExecutor 基本结构"></a>AgentExecutor 基本结构</h3><p>AgentExecutor 是 Agent 的执行引擎：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.agents <span class="keyword">import</span> AgentExecutor</span><br><span class="line"></span><br><span class="line">agent_executor = AgentExecutor(</span><br><span class="line">    agent=agent,           <span class="comment"># Agent 组件</span></span><br><span class="line">    tools=tools,           <span class="comment"># 工具列表</span></span><br><span class="line">    memory=memory,         <span class="comment"># 记忆（可选）</span></span><br><span class="line">    verbose=<span class="literal">True</span>,          <span class="comment"># 显示执行过程</span></span><br><span class="line">    max_iterations=<span class="number">10</span>,     <span class="comment"># 最大迭代次数</span></span><br><span class="line">    handle_parsing_errors=<span class="literal">True</span>  <span class="comment"># 处理解析错误</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="AgentExecutor-执行流程"><a href="#AgentExecutor-执行流程" class="headerlink" title="AgentExecutor 执行流程"></a>AgentExecutor 执行流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. 接收输入</span><br><span class="line">2. Agent 分析输入，决定下一步行动</span><br><span class="line">3. 如果决定调用工具 → 执行工具 → 观察结果</span><br><span class="line">4. 如果决定输出 → 返回最终结果</span><br><span class="line">5. 重复步骤2-4，直到输出或达到最大迭代</span><br></pre></td></tr></table></figure>
+
+<h3 id="AgentExecutor-配置参数"><a href="#AgentExecutor-配置参数" class="headerlink" title="AgentExecutor 配置参数"></a>AgentExecutor 配置参数</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">agent_executor = AgentExecutor(</span><br><span class="line">    agent=agent,</span><br><span class="line">    tools=tools,</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 执行控制</span></span><br><span class="line">    max_iterations=<span class="number">10</span>,        <span class="comment"># 最大迭代次数</span></span><br><span class="line">    max_execution_time=<span class="number">30</span>,    <span class="comment"># 最大执行时间（秒）</span></span><br><span class="line">    early_stopping_method=<span class="string">&quot;generate&quot;</span>,  <span class="comment"># 早停策略</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 错误处理</span></span><br><span class="line">    handle_parsing_errors=<span class="literal">True</span>,  <span class="comment"># 处理解析错误</span></span><br><span class="line">    handle_tool_errors=<span class="literal">True</span>,     <span class="comment"># 处理工具错误</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 输出控制</span></span><br><span class="line">    return_intermediate_steps=<span class="literal">True</span>,  <span class="comment"># 返回中间步骤</span></span><br><span class="line">    verbose=<span class="literal">True</span>,                     <span class="comment"># 显示详细日志</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 记忆</span></span><br><span class="line">    memory=memory  <span class="comment"># 对话记忆</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="执行示例"><a href="#执行示例" class="headerlink" title="执行示例"></a>执行示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 执行 Agent</span></span><br><span class="line">result = agent_executor.invoke(&#123;</span><br><span class="line">    <span class="string">&quot;input&quot;</span>: <span class="string">&quot;北京今天天气怎么样？&quot;</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出结构</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;input&quot;</span>: <span class="string">&quot;北京今天天气怎么样？&quot;</span>,</span><br><span class="line">    <span class="string">&quot;output&quot;</span>: <span class="string">&quot;北京今天晴天，气温25°C&quot;</span>,</span><br><span class="line">    <span class="string">&quot;intermediate_steps&quot;</span>: [</span><br><span class="line">        (AgentAction(tool=<span class="string">&quot;search&quot;</span>, tool_input=<span class="string">&quot;北京天气&quot;</span>), <span class="string">&quot;北京晴天，25°C&quot;</span>)</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="工具定义与绑定"><a href="#工具定义与绑定" class="headerlink" title="工具定义与绑定"></a>工具定义与绑定</h2><h3 id="定义工具"><a href="#定义工具" class="headerlink" title="定义工具"></a>定义工具</h3><h4 id="使用-tool-装饰器"><a href="#使用-tool-装饰器" class="headerlink" title="使用 @tool 装饰器"></a>使用 @tool 装饰器</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.tools <span class="keyword">import</span> tool</span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">search_web</span>(<span class="params">query: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;搜索互联网获取信息。</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        query: 搜索关键词</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        搜索结果摘要</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    results = search_api(query)</span><br><span class="line">    <span class="keyword">return</span> format_results(results)</span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_weather</span>(<span class="params">city: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;获取指定城市的天气信息。</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        city: 女城市名称</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        天气描述</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> weather_api.get(city)</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用-Tool-类"><a href="#使用-Tool-类" class="headerlink" title="使用 Tool 类"></a>使用 Tool 类</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.tools <span class="keyword">import</span> Tool</span><br><span class="line"></span><br><span class="line">search_tool = Tool(</span><br><span class="line">    name=<span class="string">&quot;search&quot;</span>,</span><br><span class="line">    description=<span class="string">&quot;搜索互联网获取信息。输入搜索关键词，返回相关结果。&quot;</span>,</span><br><span class="line">    func=search_web</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">weather_tool = Tool(</span><br><span class="line">    name=<span class="string">&quot;get_weather&quot;</span>,</span><br><span class="line">    description=<span class="string">&quot;获取城市天气。输入城市名称，返回天气信息。&quot;</span>,</span><br><span class="line">    func=get_weather</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h4 id="使用-StructuredTool"><a href="#使用-StructuredTool" class="headerlink" title="使用 StructuredTool"></a>使用 StructuredTool</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.tools <span class="keyword">import</span> StructuredTool</span><br><span class="line"><span class="keyword">from</span> pydantic <span class="keyword">import</span> BaseModel</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">WeatherInput</span>(<span class="title class_ inherited__">BaseModel</span>):</span><br><span class="line">    city: <span class="built_in">str</span></span><br><span class="line">    unit: <span class="built_in">str</span> = <span class="string">&quot;celsius&quot;</span>  <span class="comment"># 温度单位</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_weather_structured</span>(<span class="params"><span class="built_in">input</span>: WeatherInput</span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="keyword">return</span> weather_api.get(<span class="built_in">input</span>.city, <span class="built_in">input</span>.unit)</span><br><span class="line"></span><br><span class="line">weather_tool = StructuredTool(</span><br><span class="line">    name=<span class="string">&quot;get_weather&quot;</span>,</span><br><span class="line">    description=<span class="string">&quot;获取城市天气，可指定温度单位&quot;</span>,</span><br><span class="line">    func=get_weather_structured,</span><br><span class="line">    args_schema=WeatherInput</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="工具集合"><a href="#工具集合" class="headerlink" title="工具集合"></a>工具集合</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">tools = [</span><br><span class="line">    search_tool,</span><br><span class="line">    weather_tool,</span><br><span class="line">    calculator_tool,</span><br><span class="line">    file_reader_tool</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+
+<h3 id="绑定工具到-Agent"><a href="#绑定工具到-Agent" class="headerlink" title="绑定工具到 Agent"></a>绑定工具到 Agent</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.agents <span class="keyword">import</span> create_openai_functions_agent</span><br><span class="line"><span class="keyword">from</span> langchain.chat_models <span class="keyword">import</span> ChatOpenAI</span><br><span class="line"></span><br><span class="line">llm = ChatOpenAI(model=<span class="string">&quot;gpt-4&quot;</span>)</span><br><span class="line"></span><br><span class="line">agent = create_openai_functions_agent(</span><br><span class="line">    llm=llm,</span><br><span class="line">    tools=tools,</span><br><span class="line">    prompt=prompt</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">agent_executor = AgentExecutor(agent=agent, tools=tools)</span><br></pre></td></tr></table></figure>
+
+<h2 id="LangGraph-状态机模型"><a href="#LangGraph-状态机模型" class="headerlink" title="LangGraph 状态机模型"></a>LangGraph 状态机模型</h2><h3 id="LangGraph-简介"><a href="#LangGraph-简介" class="headerlink" title="LangGraph 简介"></a>LangGraph 简介</h3><p>LangGraph 是 LangChain 的扩展，用于构建复杂 Agent 流程：</p>
+<ul>
+<li>基于状态图（StateGraph）</li>
+<li>支持循环、分支</li>
+<li>支持多 Agent 协作</li>
+<li>更细粒度的流程控制</li>
+</ul>
+<h3 id="状态图核心概念"><a href="#状态图核心概念" class="headerlink" title="状态图核心概念"></a>状态图核心概念</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.graph <span class="keyword">import</span> StateGraph</span><br><span class="line"></span><br><span class="line"><span class="comment"># 定义状态</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AgentState</span>(<span class="title class_ inherited__">TypedDict</span>):</span><br><span class="line">    messages: <span class="type">List</span>[Message]</span><br><span class="line">    current_step: <span class="built_in">str</span></span><br><span class="line">    tool_results: <span class="type">Dict</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建状态图</span></span><br><span class="line">graph = StateGraph(AgentState)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加节点</span></span><br><span class="line">graph.add_node(<span class="string">&quot;agent&quot;</span>, agent_node)</span><br><span class="line">graph.add_node(<span class="string">&quot;tool&quot;</span>, tool_node)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加边</span></span><br><span class="line">graph.add_edge(<span class="string">&quot;agent&quot;</span>, <span class="string">&quot;tool&quot;</span>)</span><br><span class="line">graph.add_edge(<span class="string">&quot;tool&quot;</span>, <span class="string">&quot;agent&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置入口和结束</span></span><br><span class="line">graph.set_entry_point(<span class="string">&quot;agent&quot;</span>)</span><br><span class="line">graph.set_finish_point(<span class="string">&quot;output&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译</span></span><br><span class="line">app = graph.<span class="built_in">compile</span>()</span><br></pre></td></tr></table></figure>
+
+<h3 id="状态图示例：简单-Agent"><a href="#状态图示例：简单-Agent" class="headerlink" title="状态图示例：简单 Agent"></a>状态图示例：简单 Agent</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.graph <span class="keyword">import</span> StateGraph, END</span><br><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> TypedDict, <span class="type">List</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AgentState</span>(<span class="title class_ inherited__">TypedDict</span>):</span><br><span class="line">    <span class="built_in">input</span>: <span class="built_in">str</span></span><br><span class="line">    messages: <span class="type">List</span>[<span class="built_in">str</span>]</span><br><span class="line">    tool_calls: <span class="type">List</span>[<span class="built_in">dict</span>]</span><br><span class="line">    output: <span class="built_in">str</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">agent_node</span>(<span class="params">state: AgentState</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Agent 决策节点&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># LLM 分析并决定行动</span></span><br><span class="line">    response = llm.invoke(state[<span class="string">&quot;messages&quot;</span>])</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> response.tool_calls:</span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="string">&quot;tool_calls&quot;</span>: response.tool_calls&#125;</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="string">&quot;output&quot;</span>: response.content&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tool_node</span>(<span class="params">state: AgentState</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;工具执行节点&quot;&quot;&quot;</span></span><br><span class="line">    results = []</span><br><span class="line">    <span class="keyword">for</span> call <span class="keyword">in</span> state[<span class="string">&quot;tool_calls&quot;</span>]:</span><br><span class="line">        tool = tools[call[<span class="string">&quot;name&quot;</span>]]</span><br><span class="line">        result = tool.invoke(call[<span class="string">&quot;args&quot;</span>])</span><br><span class="line">        results.append(result)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;tool_results&quot;</span>: results&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">should_continue</span>(<span class="params">state: AgentState</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;条件判断&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> state[<span class="string">&quot;output&quot;</span>]:</span><br><span class="line">        <span class="keyword">return</span> END</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;tool&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建图</span></span><br><span class="line">graph = StateGraph(AgentState)</span><br><span class="line">graph.add_node(<span class="string">&quot;agent&quot;</span>, agent_node)</span><br><span class="line">graph.add_node(<span class="string">&quot;tool&quot;</span>, tool_node)</span><br><span class="line"></span><br><span class="line">graph.set_entry_point(<span class="string">&quot;agent&quot;</span>)</span><br><span class="line">graph.add_conditional_edges(<span class="string">&quot;agent&quot;</span>, should_continue)</span><br><span class="line">graph.add_edge(<span class="string">&quot;tool&quot;</span>, <span class="string">&quot;agent&quot;</span>)</span><br><span class="line"></span><br><span class="line">app = graph.<span class="built_in">compile</span>()</span><br></pre></td></tr></table></figure>
+
+<h3 id="状态图示例：多-Agent"><a href="#状态图示例：多-Agent" class="headerlink" title="状态图示例：多 Agent"></a>状态图示例：多 Agent</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.graph <span class="keyword">import</span> StateGraph</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MultiAgentState</span>(<span class="title class_ inherited__">TypedDict</span>):</span><br><span class="line">    <span class="built_in">input</span>: <span class="built_in">str</span></span><br><span class="line">    researcher_result: <span class="built_in">str</span></span><br><span class="line">    writer_result: <span class="built_in">str</span></span><br><span class="line">    editor_result: <span class="built_in">str</span></span><br><span class="line">    final_output: <span class="built_in">str</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">researcher_node</span>(<span class="params">state</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;研究 Agent&quot;&quot;&quot;</span></span><br><span class="line">    result = researcher_agent.invoke(state[<span class="string">&quot;input&quot;</span>])</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;researcher_result&quot;</span>: result&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">writer_node</span>(<span class="params">state</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;写作 Agent&quot;&quot;&quot;</span></span><br><span class="line">    content = writer_agent.invoke(</span><br><span class="line">        <span class="string">f&quot;基于研究结果写作：<span class="subst">&#123;state[<span class="string">&#x27;researcher_result&#x27;</span>]&#125;</span>&quot;</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;writer_result&quot;</span>: content&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">editor_node</span>(<span class="params">state</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;编辑 Agent&quot;&quot;&quot;</span></span><br><span class="line">    edited = editor_agent.invoke(state[<span class="string">&quot;writer_result&quot;</span>])</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;final_output&quot;</span>: edited&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 构建多 Agent 图</span></span><br><span class="line">graph = StateGraph(MultiAgentState)</span><br><span class="line">graph.add_node(<span class="string">&quot;researcher&quot;</span>, researcher_node)</span><br><span class="line">graph.add_node(<span class="string">&quot;writer&quot;</span>, writer_node)</span><br><span class="line">graph.add_node(<span class="string">&quot;editor&quot;</span>, editor_node)</span><br><span class="line"></span><br><span class="line">graph.set_entry_point(<span class="string">&quot;researcher&quot;</span>)</span><br><span class="line">graph.add_edge(<span class="string">&quot;researcher&quot;</span>, <span class="string">&quot;writer&quot;</span>)</span><br><span class="line">graph.add_edge(<span class="string">&quot;writer&quot;</span>, <span class="string">&quot;editor&quot;</span>)</span><br><span class="line">graph.add_edge(<span class="string">&quot;editor&quot;</span>, END)</span><br><span class="line"></span><br><span class="line">app = graph.<span class="built_in">compile</span>()</span><br></pre></td></tr></table></figure>
+
+<h3 id="循环和分支"><a href="#循环和分支" class="headerlink" title="循环和分支"></a>循环和分支</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 循环示例</span></span><br><span class="line">graph.add_conditional_edges(</span><br><span class="line">    <span class="string">&quot;agent&quot;</span>,</span><br><span class="line">    <span class="keyword">lambda</span> state: <span class="string">&quot;continue&quot;</span> <span class="keyword">if</span> <span class="keyword">not</span> state[<span class="string">&quot;done&quot;</span>] <span class="keyword">else</span> END,</span><br><span class="line">    &#123;<span class="string">&quot;continue&quot;</span>: <span class="string">&quot;tool&quot;</span>, END: END&#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 分支示例</span></span><br><span class="line">graph.add_conditional_edges(</span><br><span class="line">    <span class="string">&quot;router&quot;</span>,</span><br><span class="line">    <span class="keyword">lambda</span> state: state[<span class="string">&quot;next_agent&quot;</span>],</span><br><span class="line">    &#123;<span class="string">&quot;researcher&quot;</span>: <span class="string">&quot;researcher&quot;</span>, <span class="string">&quot;writer&quot;</span>: <span class="string">&quot;writer&quot;</span>, <span class="string">&quot;editor&quot;</span>: <span class="string">&quot;editor&quot;</span>&#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h2 id="实战案例：构建问答-Agent"><a href="#实战案例：构建问答-Agent" class="headerlink" title="实战案例：构建问答 Agent"></a>实战案例：构建问答 Agent</h2><h3 id="定义目标"><a href="#定义目标" class="headerlink" title="定义目标"></a>定义目标</h3><p>构建一个能够回答问题的 Agent，具备：</p>
+<ul>
+<li>搜索能力（获取实时信息）</li>
+<li>计算（精确计算）</li>
+<li>天气查询（天气信息）</li>
+</ul>
+<h3 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h3><h4 id="1-定义工具"><a href="#1-定义工具" class="headerlink" title="1. 定义工具"></a>1. 定义工具</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.tools <span class="keyword">import</span> tool</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">search_web</span>(<span class="params">query: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;搜索互联网获取实时信息&quot;&quot;&quot;</span></span><br><span class="line">    response = requests.get(<span class="string">f&quot;https://api.search.com/search?q=<span class="subst">&#123;query&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="keyword">return</span> response.json()[<span class="string">&quot;results&quot;</span>][<span class="number">0</span>][<span class="string">&quot;content&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">calculate</span>(<span class="params">expression: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;执行数学计算&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        result = <span class="built_in">eval</span>(expression)  <span class="comment"># 实际应用需使用安全的计算方式</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">str</span>(result)</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;计算错误&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_weather</span>(<span class="params">city: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;获取城市天气&quot;&quot;&quot;</span></span><br><span class="line">    response = requests.get(<span class="string">f&quot;https://api.weather.com/<span class="subst">&#123;city&#125;</span>&quot;</span>)</span><br><span class="line">    data = response.json()</span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;<span class="subst">&#123;city&#125;</span>天气：<span class="subst">&#123;data[<span class="string">&#x27;weather&#x27;</span>]&#125;</span>, 温度：<span class="subst">&#123;data[<span class="string">&#x27;temp&#x27;</span>]&#125;</span>°C&quot;</span></span><br><span class="line"></span><br><span class="line">tools = [search_web, calculate, get_weather]</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-创建-Agent"><a href="#2-创建-Agent" class="headerlink" title="2. 创建 Agent"></a>2. 创建 Agent</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.chat_models <span class="keyword">import</span> ChatOpenAI</span><br><span class="line"><span class="keyword">from</span> langchain.agents <span class="keyword">import</span> create_openai_functions_agent</span><br><span class="line"><span class="keyword">from</span> langchain.prompts <span class="keyword">import</span> ChatPromptTemplate</span><br><span class="line"></span><br><span class="line">llm = ChatOpenAI(model=<span class="string">&quot;gpt-4&quot;</span>, temperature=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">prompt = ChatPromptTemplate.from_messages([</span><br><span class="line">    (<span class="string">&quot;system&quot;</span>, <span class="string">&quot;你是一个智能问答助手。使用工具获取信息来回答用户问题。&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;user&quot;</span>, <span class="string">&quot;&#123;input&#125;&quot;</span>)</span><br><span class="line">])</span><br><span class="line"></span><br><span class="line">agent = create_openai_functions_agent(llm, tools, prompt)</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-创建执行器"><a href="#3-创建执行器" class="headerlink" title="3. 创建执行器"></a>3. 创建执行器</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.agents <span class="keyword">import</span> AgentExecutor</span><br><span class="line"></span><br><span class="line">agent_executor = AgentExecutor(</span><br><span class="line">    agent=agent,</span><br><span class="line">    tools=tools,</span><br><span class="line">    verbose=<span class="literal">True</span>,</span><br><span class="line">    handle_parsing_errors=<span class="literal">True</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-测试运行"><a href="#4-测试运行" class="headerlink" title="4. 测试运行"></a>4. 测试运行</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试搜索</span></span><br><span class="line">result1 = agent_executor.invoke(&#123;<span class="string">&quot;input&quot;</span>: <span class="string">&quot;最新的AI新闻是什么？&quot;</span>&#125;)</span><br><span class="line"><span class="built_in">print</span>(result1[<span class="string">&quot;output&quot;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试计算</span></span><br><span class="line">result2 = agent_executor.invoke(&#123;<span class="string">&quot;input&quot;</span>: <span class="string">&quot;计算 123 * 456&quot;</span>&#125;)</span><br><span class="line"><span class="built_in">print</span>(result2[<span class="string">&quot;output&quot;</span>])</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试天气</span></span><br><span class="line">result3 = agent_executor.invoke(&#123;<span class="string">&quot;input&quot;</span>: <span class="string">&quot;北京今天天气怎么样？&quot;</span>&#125;)</span><br><span class="line"><span class="built_in">print</span>(result3[<span class="string">&quot;output&quot;</span>])</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加对话记忆"><a href="#添加对话记忆" class="headerlink" title="添加对话记忆"></a>添加对话记忆</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.memory <span class="keyword">import</span> ConversationBufferMemory</span><br><span class="line"></span><br><span class="line">memory = ConversationBufferMemory(</span><br><span class="line">    memory_key=<span class="string">&quot;chat_history&quot;</span>,</span><br><span class="line">    return_messages=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">agent_executor = AgentExecutor(</span><br><span class="line">    agent=agent,</span><br><span class="line">    tools=tools,</span><br><span class="line">    memory=memory,</span><br><span class="line">    verbose=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 多轮对话</span></span><br><span class="line">agent_executor.invoke(&#123;<span class="string">&quot;input&quot;</span>: <span class="string">&quot;北京天气怎么样？&quot;</span>&#125;)</span><br><span class="line">agent_executor.invoke(&#123;<span class="string">&quot;input&quot;</span>: <span class="string">&quot;那上海呢？&quot;</span>&#125;)  <span class="comment"># 会理解是在问天气</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用-LangGraph-构建"><a href="#使用-LangGraph-构建" class="headerlink" title="使用 LangGraph 构建"></a>使用 LangGraph 构建</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.graph <span class="keyword">import</span> StateGraph, END</span><br><span class="line"><span class="keyword">from</span> langgraph.checkpoint.memory <span class="keyword">import</span> MemorySaver</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">QAState</span>(<span class="title class_ inherited__">TypedDict</span>):</span><br><span class="line">    <span class="built_in">input</span>: <span class="built_in">str</span></span><br><span class="line">    messages: <span class="type">List</span>[Message]</span><br><span class="line">    tool_results: <span class="type">List</span>[<span class="built_in">str</span>]</span><br><span class="line">    output: <span class="built_in">str</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">agent_node</span>(<span class="params">state</span>):</span><br><span class="line">    messages = state[<span class="string">&quot;messages&quot;</span>] + [HumanMessage(content=state[<span class="string">&quot;input&quot;</span>])]</span><br><span class="line">    response = llm.bind_tools(tools).invoke(messages)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> response.tool_calls:</span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="string">&quot;tool_calls&quot;</span>: response.tool_calls, <span class="string">&quot;messages&quot;</span>: messages + [response]&#125;</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;output&quot;</span>: response.content, <span class="string">&quot;messages&quot;</span>: messages + [response]&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">tool_node</span>(<span class="params">state</span>):</span><br><span class="line">    results = []</span><br><span class="line">    <span class="keyword">for</span> call <span class="keyword">in</span> state[<span class="string">&quot;tool_calls&quot;</span>]:</span><br><span class="line">        tool_func = &#123;t.name: t <span class="keyword">for</span> t <span class="keyword">in</span> tools&#125;[call[<span class="string">&quot;name&quot;</span>]]</span><br><span class="line">        result = tool_func.invoke(call[<span class="string">&quot;args&quot;</span>])</span><br><span class="line">        results.append(result)</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;tool_results&quot;</span>: results&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">should_continue</span>(<span class="params">state</span>):</span><br><span class="line">    <span class="keyword">return</span> END <span class="keyword">if</span> state.get(<span class="string">&quot;output&quot;</span>) <span class="keyword">else</span> <span class="string">&quot;tool&quot;</span></span><br><span class="line"></span><br><span class="line">graph = StateGraph(QAState)</span><br><span class="line">graph.add_node(<span class="string">&quot;agent&quot;</span>, agent_node)</span><br><span class="line">graph.add_node(<span class="string">&quot;tool&quot;</span>, tool_node)</span><br><span class="line">graph.set_entry_point(<span class="string">&quot;agent&quot;</span>)</span><br><span class="line">graph.add_conditional_edges(<span class="string">&quot;agent&quot;</span>, should_continue)</span><br><span class="line">graph.add_edge(<span class="string">&quot;tool&quot;</span>, <span class="string">&quot;agent&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加记忆</span></span><br><span class="line">checkpointer = MemorySaver()</span><br><span class="line">app = graph.<span class="built_in">compile</span>(checkpointer=checkpointer)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用</span></span><br><span class="line">config = &#123;<span class="string">&quot;configurable&quot;</span>: &#123;<span class="string">&quot;thread_id&quot;</span>: <span class="string">&quot;user1&quot;</span>&#125;&#125;</span><br><span class="line">result = app.invoke(&#123;<span class="string">&quot;input&quot;</span>: <span class="string">&quot;北京天气怎么样？&quot;</span>&#125;, config)</span><br></pre></td></tr></table></figure>
+
+<h2 id="LangChain-Agent-最佳实践"><a href="#LangChain-Agent-最佳实践" class="headerlink" title="LangChain Agent 最佳实践"></a>LangChain Agent 最佳实践</h2><h3 id="工具设计"><a href="#工具设计" class="headerlink" title="工具设计"></a>工具设计</h3><ol>
+<li><strong>描述清晰</strong>：工具描述要准确说明用途</li>
+<li><strong>参数简洁</strong>：避免过多参数</li>
+<li><strong>返回格式</strong>：返回易于理解的结果</li>
+<li><strong>错误处理</strong>：优雅处理失败情况</li>
+</ol>
+<h3 id="Prompt-设计"><a href="#Prompt-设计" class="headerlink" title="Prompt 设计"></a>Prompt 设计</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">prompt = ChatPromptTemplate.from_messages([</span><br><span class="line">    (<span class="string">&quot;system&quot;</span>, <span class="string">&quot;&quot;&quot;你是一个智能助手。</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    规则：</span></span><br><span class="line"><span class="string">    1. 先思考需要什么信息</span></span><br><span class="line"><span class="string">    2. 使用合适的工具获取信息</span></span><br><span class="line"><span class="string">    3. 整合信息回答用户</span></span><br><span class="line"><span class="string">    4. 如果工具失败，说明原因</span></span><br><span class="line"><span class="string">    </span></span><br><span class="line"><span class="string">    可用工具：</span></span><br><span class="line"><span class="string">    - search: 搜索互联网</span></span><br><span class="line"><span class="string">    - calculate: 数学计算</span></span><br><span class="line"><span class="string">    - get_weather: 天气查询</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span>),</span><br><span class="line">    MessagesPlaceholder(variable_name=<span class="string">&quot;chat_history&quot;</span>),</span><br><span class="line">    (<span class="string">&quot;user&quot;</span>, <span class="string">&quot;&#123;input&#125;&quot;</span>)</span><br><span class="line">])</span><br></pre></td></tr></table></figure>
+
+<h3 id="执行控制"><a href="#执行控制" class="headerlink" title="执行控制"></a>执行控制</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">agent_executor = AgentExecutor(</span><br><span class="line">    agent=agent,</span><br><span class="line">    tools=tools,</span><br><span class="line">    max_iterations=<span class="number">5</span>,           <span class="comment"># 限制迭代次数</span></span><br><span class="line">    max_execution_time=<span class="number">60</span>,      <span class="comment"># 限制执行时间</span></span><br><span class="line">    handle_parsing_errors=<span class="literal">True</span>, <span class="comment"># 处理解析错误</span></span><br><span class="line">    handle_tool_errors=<span class="literal">True</span>     <span class="comment"># 处理工具错误</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="调试技巧"><a href="#调试技巧" class="headerlink" title="调试技巧"></a>调试技巧</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启用详细日志</span></span><br><span class="line">agent_executor = AgentExecutor(</span><br><span class="line">    agent=agent,</span><br><span class="line">    tools=tools,</span><br><span class="line">    verbose=<span class="literal">True</span>,</span><br><span class="line">    return_intermediate_steps=<span class="literal">True</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看中间步骤</span></span><br><span class="line">result = agent_executor.invoke(&#123;<span class="string">&quot;input&quot;</span>: <span class="string">&quot;问题&quot;</span>&#125;)</span><br><span class="line"><span class="keyword">for</span> step <span class="keyword">in</span> result[<span class="string">&quot;intermediate_steps&quot;</span>]:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Action: <span class="subst">&#123;step[<span class="number">0</span>].tool&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Input: <span class="subst">&#123;step[<span class="number">0</span>].tool_input&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Output: <span class="subst">&#123;step[<span class="number">1</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>LangChain Agent 基于 Agent + AgentExecutor + Tools 结构。LangGraph 扩展了 LangChain，支持复杂状态流转、多 Agent 协作。实战中需要精心设计工具、Prompt，控制执行参数，并做好错误处理。</p>
+<p>LangChain&#x2F;LangGraph 适合需要灵活控制流程、丰富工具集成的场景。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-frameworks/">Agent 框架概览</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/tool-use/">工具调用机制详解</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-planning/">Agent 规划与推理</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-debugging/">Agent 调试技巧</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/03/16/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/langchain-agent/" data-id="cuidWSmCzKjM8gmGhN5ZQ1XMN" data-title="LangChain Agent 实践" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Agent/" rel="tag">Agent</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LangChain/" rel="tag">LangChain</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/LangGraph/" rel="tag">LangGraph</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/03/19/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/autogen-agent/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          AutoGen 多 Agent 实践
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/03/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-frameworks/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">Agent 框架概览</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><span class="category-list-count">77</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">50</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/LM-2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/17/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/02/">二月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">一月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a><span class="archive-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        All content licensed under CC BY 4.0
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,6 +1,6 @@
 ---
 title: 正则化技术
-date: 2026-04-13
+date: 2025-12-13
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 神经网络, 正则化]

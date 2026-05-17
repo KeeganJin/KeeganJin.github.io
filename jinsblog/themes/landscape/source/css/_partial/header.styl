@@ -1,90 +1,109 @@
+// ========================================
+// Nordic Zen Header (北欧极简白头部)
+// ========================================
+// Clean, minimal, text-based header without banner
+
 #header
-  height: banner-height
-  position: relative
+  height: auto
+  padding: 48px 0 32px
+  background: #FFFFFF
   border-bottom: 1px solid color-border
+  position: relative
   &:before, &:after
-    content: ""
-    position: absolute
-    left: 0
-    right: 0
-    height: 40px
-  &:before
-    top: 0
-    background: linear-gradient(rgba(0, 0, 0, 0.2), transparent)
-  &:after
-    bottom: 0
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.2))
+    content: none  // 移除渐变效果
 
 #header-outer
-  height: 100%
+  height: auto
   position: relative
 
 #header-inner
   position: relative
   overflow: hidden
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  text-align: center
 
+// Banner removed for clean Nordic style
 #banner
-  position: absolute
-  top: 0
-  left: 0
-  width: 100%
-  height: 100%
-  background: url(banner-url) center #000
-  background-size: cover
-  z-index: -1
+  display: none
 
+// Title area - centered, elegant serif
 #header-title
   text-align: center
-  height: logo-size
-  position: absolute
-  top: 50%
-  left: 0
-  margin-top: logo-size * -0.5
+  position: relative
+  margin-bottom: 24px
 
 $logo-text
   text-decoration: none
-  color: #fff
-  font-weight: 300
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3)
+  color: #1A202C  // 深色标题
+  font-weight: 700
+  text-shadow: none
 
 #logo
   @extend $logo-text
+  font-family: font-serif
   font-size: logo-size
   line-height: logo-size
-  letter-spacing: 2px
+  letter-spacing: 3px
+  transition: color 0.3s ease
+  &:hover
+    color: color-link
 
 #subtitle
   @extend $logo-text
+  font-family: font-serif
   font-size: subtitle-size
   line-height: subtitle-size
-  letter-spacing: 1px
+  letter-spacing: 2px
+  color: color-grey
+  font-weight: 400
+  margin-top: 8px
+  opacity: 0.8
 
 #subtitle-wrap
   margin-top: subtitle-size
 
+// Navigation - clean underline style
 #main-nav
-  float: left
-  margin-left: -15px
+  float: none
+  text-align: center
+  margin-left: 0
 
 $nav-link
-  float: left
-  color: #fff
-  opacity: 0.6
+  color: color-default
   text-decoration: none
-  text-shadow: 0 1px rgba(0, 0, 0, 0.2)
-  transition: opacity 0.2s
-  display: block
-  padding: 20px 15px
+  transition: all 0.3s ease
+  display: inline-block
+  padding: 12px 20px
+  font-family: font-sans
+  font-size: 14px
+  font-weight: 500
+  letter-spacing: 1px
+  position: relative
   &:hover
-    opacity: 1
+    color: color-link
+  &.active
+    color: color-link
+    &:after
+      content: ''
+      position: absolute
+      bottom: 0
+      left: 50%
+      transform: translateX(-50%)
+      width: 24px
+      height: 2px
+      background: color-link
+      border-radius: 1px
 
 .nav-icon
   @extend $nav-link
   text-align: center
   font-size: font-size
-  width: font-size
-  height: font-size
-  padding: 20px 15px
+  width: auto
+  height: auto
+  padding: 12px 15px
   position: relative
   cursor: pointer
 
@@ -93,14 +112,16 @@ $nav-link
   font-weight: bold
   width: auto
   span
-    padding: 2px 6px
-    border: 1px solid rgba(255,255,255,0.5)
-    border-radius: 3px
+    padding: 4px 8px
+    border: 1px solid color-border
+    border-radius: 4px
+    transition: all 0.3s ease
+    &:hover
+      border-color: color-link
+      color: color-link
 
 .main-nav-link
   @extend $nav-link
-  font-weight: 300
-  letter-spacing: 1px
   @media mq-mobile
     display: none
 
@@ -108,42 +129,42 @@ $nav-link
   display: none
   @media mq-mobile
     display: block
+    position: absolute
+    top: 20px
+    left: 20px
 
 #sub-nav
-  float: right
-  margin-right: -15px
+  float: none
+  text-align: center
+  margin-right: 0
+  margin-top: 16px
 
+// Search form - minimal style
 #search-form-wrap
-  position: absolute
-  top: 15px
-  width: 150px
-  height: 30px
-  right: -150px
-  opacity: 0
-  transition: 0.2s ease-out
-  &.on
-    opacity: 1
-    right: 0
+  position: relative
+  width: 200px
+  margin: 0 auto
+  opacity: 1
+  right: 0
+  transition: 0.3s ease-out
   @media mq-mobile
     width: 100%
-    right: -100%
 
 .search-form
-  position: absolute
-  top: 0
-  left: 0
-  right: 0
-  background: #fff
-  padding: 5px 15px
-  border-radius: 15px
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3)
+  background: color-background
+  padding: 8px 16px
+  border-radius: radius-md
+  border: 1px solid color-border
+  transition: all 0.3s ease
+  &:hover, &:focus-within
+    border-color: color-link
 
 .search-form-input
   border: none
   background: none
   color: color-default
   width: 100%
-  font: 13px font-sans
+  font: 14px font-sans
   outline: none
   &::-webkit-search-results-decoration
   &::-webkit-search-cancel-button
@@ -152,12 +173,22 @@ $nav-link
 .search-form-submit
   position: absolute
   top: 50%
-  right: 10px
+  right: 12px
   margin-top: -7px
-  font: 13px font-icon
+  font: 14px font-icon
   border: none
   background: none
-  color: #bbb
+  color: color-grey
   cursor: pointer
+  transition: color 0.3s ease
   &:hover, &:focus
-    color: #777
+    color: color-link
+
+// Social links in header
+.header-link
+  color: color-grey
+  font-size: 16px
+  padding: 8px 12px
+  transition: color 0.3s ease
+  &:hover
+    color: color-link

@@ -1,6 +1,6 @@
 ---
 title: 变分自编码器（VAE）
-date: 2026-04-23
+date: 2026-01-11
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 深度学习, 生成模型, VAE]

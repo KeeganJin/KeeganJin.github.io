@@ -1,6 +1,6 @@
 ---
 title: 统计学基础
-date: 2026-04-20
+date: 2025-10-08
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 数学基础, 统计学]

@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>集成学习概述 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="集成学习核心思想什么是集成学习集成学习通过组合多个模型来提升整体性能。 核心思想：多个模型的组合往往比单个模型表现更好。 类比：就像专家团队比单个专家更能做出好的决策。 集成学习的基本框架123基学习器 → 集成策略 → 最终预测   ↑ 数据&#x2F;特征处理  组成要素：  基学习器：单个模型 集成策略：组合方式 多样性来源：如何保证模型差异  集成学习的优势   优势 描述    提升准确率 组合往">
+<meta property="og:type" content="article">
+<meta property="og:title" content="集成学习概述">
+<meta property="og:url" content="https://keeganjin.github.io/2025/11/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/ensemble-learning/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="集成学习核心思想什么是集成学习集成学习通过组合多个模型来提升整体性能。 核心思想：多个模型的组合往往比单个模型表现更好。 类比：就像专家团队比单个专家更能做出好的决策。 集成学习的基本框架123基学习器 → 集成策略 → 最终预测   ↑ 数据&#x2F;特征处理  组成要素：  基学习器：单个模型 集成策略：组合方式 多样性来源：如何保证模型差异  集成学习的优势   优势 描述    提升准确率 组合往">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-11-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-17T16:20:27.700Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="Boosting">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="集成学习">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+
+  <!-- Nordic Zen Fonts: Noto Serif SC for elegant reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+
+  <!-- MathJax for math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$', '$'], ['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Life Notes</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/机器学习/ensemble-learning" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2025/11/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/ensemble-learning/" class="article-date">
+  <time class="dt-published" datetime="2025-11-09T16:00:00.000Z" itemprop="datePublished">2025-11-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      集成学习概述
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="集成学习核心思想"><a href="#集成学习核心思想" class="headerlink" title="集成学习核心思想"></a>集成学习核心思想</h2><h3 id="什么是集成学习"><a href="#什么是集成学习" class="headerlink" title="什么是集成学习"></a>什么是集成学习</h3><p>集成学习通过组合多个模型来提升整体性能。</p>
+<p><strong>核心思想</strong>：多个模型的组合往往比单个模型表现更好。</p>
+<p><strong>类比</strong>：就像专家团队比单个专家更能做出好的决策。</p>
+<h3 id="集成学习的基本框架"><a href="#集成学习的基本框架" class="headerlink" title="集成学习的基本框架"></a>集成学习的基本框架</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">基学习器 → 集成策略 → 最终预测</span><br><span class="line">   ↑</span><br><span class="line"> 数据/特征处理</span><br></pre></td></tr></table></figure>
+
+<p><strong>组成要素</strong>：</p>
+<ol>
+<li><strong>基学习器</strong>：单个模型</li>
+<li><strong>集成策略</strong>：组合方式</li>
+<li><strong>多样性来源</strong>：如何保证模型差异</li>
+</ol>
+<h3 id="集成学习的优势"><a href="#集成学习的优势" class="headerlink" title="集成学习的优势"></a>集成学习的优势</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>提升准确率</td>
+<td>组合往往优于单个模型</td>
+</tr>
+<tr>
+<td>提高稳定性</td>
+<td>减少模型方差</td>
+</tr>
+<tr>
+<td>减少过拟合</td>
+<td>多模型平衡决策</td>
+</tr>
+<tr>
+<td>处理复杂问题</td>
+<td>不同模型捕捉不同模式</td>
+</tr>
+</tbody></table>
+<h2 id="偏差与方差分解"><a href="#偏差与方差分解" class="headerlink" title="偏差与方差分解"></a>偏差与方差分解</h2><h3 id="偏差-方差分解"><a href="#偏差-方差分解" class="headerlink" title="偏差-方差分解"></a>偏差-方差分解</h3><p>模型误差可以分解为：</p>
+<p>$E[(y - \hat{f}(\mathbf{x}))^2] &#x3D; Bias^2 + Variance + Irreducible Error$</p>
+<p><strong>各部分含义</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>组成</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>偏差</td>
+<td>预测值与真实值的系统偏差</td>
+</tr>
+<tr>
+<td>方差</td>
+<td>模型对数据变化的敏感度</td>
+</tr>
+<tr>
+<td>不可约误差</td>
+<td>数据本身的噪声</td>
+</tr>
+</tbody></table>
+<h3 id="偏差与方差的权衡"><a href="#偏差与方差的权衡" class="headerlink" title="偏差与方差的权衡"></a>偏差与方差的权衡</h3><p><strong>不同模型的偏差-方差特征</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>模型复杂度</th>
+<th>偏差</th>
+<th>方差</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>简单模型</td>
+<td>高</td>
+<td>低</td>
+</tr>
+<tr>
+<td>复杂模型</td>
+<td>低</td>
+<td>高</td>
+</tr>
+</tbody></table>
+<h3 id="集成学习如何降低误差"><a href="#集成学习如何降低误差" class="headerlink" title="集成学习如何降低误差"></a>集成学习如何降低误差</h3><table>
+<thead>
+<tr>
+<th>集成方法</th>
+<th>主要作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Bagging</td>
+<td>降低方差</td>
+</tr>
+<tr>
+<td>Boosting</td>
+<td>降低偏差和方差</td>
+</tr>
+<tr>
+<td>Stacking</td>
+<td>综合降低</td>
+</tr>
+</tbody></table>
+<h3 id="Bagging降低方差"><a href="#Bagging降低方差" class="headerlink" title="Bagging降低方差"></a>Bagging降低方差</h3><p><strong>原理</strong>：</p>
+<ul>
+<li>多个模型的平均预测方差小于单个模型</li>
+<li>独立模型方差：$\sigma^2$</li>
+<li>K个独立模型平均方差：$\sigma^2&#x2F;K$</li>
+</ul>
+<p><strong>实际中</strong>模型不完全独立，方差降低幅度有限。</p>
+<h3 id="Boosting降低偏差"><a href="#Boosting降低偏差" class="headerlink" title="Boosting降低偏差"></a>Boosting降低偏差</h3><p><strong>原理</strong>：</p>
+<ul>
+<li>逐步修正模型错误</li>
+<li>每个新模型专注于前序模型的不足</li>
+<li>最终模型组合更准确</li>
+</ul>
+<h2 id="集成策略分类"><a href="#集成策略分类" class="headerlink" title="集成策略分类"></a>集成策略分类</h2><h3 id="并行集成（Bagging）"><a href="#并行集成（Bagging）" class="headerlink" title="并行集成（Bagging）"></a>并行集成（Bagging）</h3><p><strong>特点</strong>：</p>
+<ul>
+<li>多个模型独立训练</li>
+<li>可以并行计算</li>
+<li>主要降低方差</li>
+</ul>
+<p><strong>代表</strong>：</p>
+<ul>
+<li>Bagging</li>
+<li>随机森林</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">训练数据 → 模型1 → 预测1</span><br><span class="line">   ↓      → 模型2 → 预测2    → 组合 → 最终预测</span><br><span class="line">   ↓      → 模型3 → 预测3</span><br></pre></td></tr></table></figure>
+
+<h3 id="串行集成（Boosting）"><a href="#串行集成（Boosting）" class="headerlink" title="串行集成（Boosting）"></a>串行集成（Boosting）</h3><p><strong>特点</strong>：</p>
+<ul>
+<li>模型按顺序训练</li>
+<li>后序模型依赖前序模型</li>
+<li>主要降低偏差</li>
+</ul>
+<p><strong>代表</strong>：</p>
+<ul>
+<li>AdaBoost</li>
+<li>GBDT</li>
+<li>XGBoost</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">训练数据 → 模型1 → 残差 → 模型2 → 残差 → 模型3 → 组合 → 最终预测</span><br></pre></td></tr></table></figure>
+
+<h3 id="混合集成（Stacking）"><a href="#混合集成（Stacking）" class="headerlink" title="混合集成（Stacking）"></a>混合集成（Stacking）</h3><p><strong>特点</strong>：</p>
+<ul>
+<li>使用不同类型的基学习器</li>
+<li>元模型组合基学习器预测</li>
+<li>层叠结构</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">训练数据 → 模型A → 预测A → </span><br><span class="line">          → 模型B → 预测B → 元模型 → 最终预测</span><br><span class="line">          → 模型C → 预测C →</span><br></pre></td></tr></table></figure>
+
+<h3 id="集成策略对比"><a href="#集成策略对比" class="headerlink" title="集成策略对比"></a>集成策略对比</h3><table>
+<thead>
+<tr>
+<th>方面</th>
+<th>Bagging</th>
+<th>Boosting</th>
+<th>Stacking</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>训练方式</td>
+<td>并行</td>
+<td>串行</td>
+<td>两阶段</td>
+</tr>
+<tr>
+<td>主要作用</td>
+<td>降低方差</td>
+<td>降低偏差</td>
+<td>综合优化</td>
+</tr>
+<tr>
+<td>基学习器</td>
+<td>同类</td>
+<td>同类</td>
+<td>可不同类</td>
+</tr>
+<tr>
+<td>计算复杂度</td>
+<td>低</td>
+<td>高</td>
+<td>中</td>
+</tr>
+</tbody></table>
+<h2 id="集成学习的优势-1"><a href="#集成学习的优势-1" class="headerlink" title="集成学习的优势"></a>集成学习的优势</h2><h3 id="为什么集成学习有效"><a href="#为什么集成学习有效" class="headerlink" title="为什么集成学习有效"></a>为什么集成学习有效</h3><p><strong>多样性原则</strong>：</p>
+<ul>
+<li>模型之间要有差异</li>
+<li>不同模型犯不同的错误</li>
+<li>组合可以互补</li>
+</ul>
+<p><strong>统计原因</strong>：</p>
+<ul>
+<li>训练数据有限，单个模型可能陷入局部最优</li>
+<li>多个模型从不同角度学习</li>
+</ul>
+<p><strong>计算原因</strong>：</p>
+<ul>
+<li>搜索空间大，单个模型难以找到最优</li>
+<li>多个模型可以覆盖更多搜索空间</li>
+</ul>
+<p><strong>表示原因</strong>：</p>
+<ul>
+<li>单个模型的表示能力有限</li>
+<li>组合可以扩展表示能力</li>
+</ul>
+<h3 id="多样性来源"><a href="#多样性来源" class="headerlink" title="多样性来源"></a>多样性来源</h3><table>
+<thead>
+<tr>
+<th>来源</th>
+<th>方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据扰动</td>
+<td>Bootstrap采样、交叉验证</td>
+</tr>
+<tr>
+<td>特征扰动</td>
+<td>特征子集选择</td>
+</tr>
+<tr>
+<td>算法扰动</td>
+<td>不同算法、不同参数</td>
+</tr>
+<tr>
+<td>输出扰动</td>
+<td>输出编码变换</td>
+</tr>
+</tbody></table>
+<h3 id="强弱学习器"><a href="#强弱学习器" class="headerlink" title="强弱学习器"></a>强弱学习器</h3><p><strong>弱学习器</strong>：性能略好于随机猜测<br><strong>强学习器</strong>：性能明显优于随机猜测</p>
+<p><strong>Boosting理论</strong>：</p>
+<ul>
+<li>多个弱学习器可以组合成强学习器</li>
+<li>这是Boosting算法的理论基础</li>
+</ul>
+<h2 id="集成学习的关键问题"><a href="#集成学习的关键问题" class="headerlink" title="集成学习的关键问题"></a>集成学习的关键问题</h2><h3 id="基学习器的选择"><a href="#基学习器的选择" class="headerlink" title="基学习器的选择"></a>基学习器的选择</h3><table>
+<thead>
+<tr>
+<th>考虑因素</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>算法类型</td>
+<td>决策树是常用选择</td>
+</tr>
+<tr>
+<td>模型复杂度</td>
+<td>Bagging选复杂模型，Boosting选简单模型</td>
+</tr>
+<tr>
+<td>稳定性</td>
+<td>不稳定模型（如决策树）适合Bagging</td>
+</tr>
+<tr>
+<td>计算成本</td>
+<td>考虑训练和预测效率</td>
+</tr>
+</tbody></table>
+<h3 id="集成规模"><a href="#集成规模" class="headerlink" title="集成规模"></a>集成规模</h3><p><strong>多少个基学习器</strong>？</p>
+<table>
+<thead>
+<tr>
+<th>集成方法</th>
+<th>建议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Bagging</td>
+<td>通常50-500个</td>
+</tr>
+<tr>
+<td>Boosting</td>
+<td>通常100-1000个</td>
+</tr>
+<tr>
+<td>Stacking</td>
+<td>通常3-10个不同类型</td>
+</tr>
+</tbody></table>
+<p><strong>过多的问题</strong>：</p>
+<ul>
+<li>计算成本增加</li>
+<li>可能边际效益递减</li>
+<li>可能增加方差（Boosting）</li>
+</ul>
+<h3 id="组合策略"><a href="#组合策略" class="headerlink" title="组合策略"></a>组合策略</h3><p><strong>组合方式</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>平均</td>
+<td>回归任务，预测值平均</td>
+</tr>
+<tr>
+<td>投票</td>
+<td>分类任务，多数投票</td>
+</tr>
+<tr>
+<td>加权平均</td>
+<td>根据模型性能加权</td>
+</tr>
+<tr>
+<td>加权投票</td>
+<td>根据模型性能加权投票</td>
+</tr>
+<tr>
+<td>学习</td>
+<td>元模型学习组合（Stacking）</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 平均组合</span></span><br><span class="line">y_pred = np.mean(predictions, axis=<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 投票组合</span></span><br><span class="line"><span class="keyword">from</span> scipy.stats <span class="keyword">import</span> mode</span><br><span class="line">y_pred = mode(predictions, axis=<span class="number">0</span>)[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加权平均</span></span><br><span class="line">weights = [<span class="number">0.3</span>, <span class="number">0.5</span>, <span class="number">0.2</span>]  <span class="comment"># 根据各模型性能设定</span></span><br><span class="line">y_pred = np.average(predictions, axis=<span class="number">0</span>, weights=weights)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Python集成学习框架"><a href="#Python集成学习框架" class="headerlink" title="Python集成学习框架"></a>Python集成学习框架</h2><h3 id="sklearn中的集成学习"><a href="#sklearn中的集成学习" class="headerlink" title="sklearn中的集成学习"></a>sklearn中的集成学习</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> (</span><br><span class="line">    BaggingClassifier,</span><br><span class="line">    RandomForestClassifier,</span><br><span class="line">    AdaBoostClassifier,</span><br><span class="line">    GradientBoostingClassifier,</span><br><span class="line">    VotingClassifier,</span><br><span class="line">    StackingClassifier</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Bagging</span></span><br><span class="line">bagging = BaggingClassifier(n_estimators=<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 随机森林</span></span><br><span class="line">rf = RandomForestClassifier(n_estimators=<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># AdaBoost</span></span><br><span class="line">ada = AdaBoostClassifier(n_estimators=<span class="number">50</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># GBDT</span></span><br><span class="line">gbdt = GradientBoostingClassifier(n_estimators=<span class="number">100</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 投票集成</span></span><br><span class="line">voting = VotingClassifier(</span><br><span class="line">    estimators=[(<span class="string">&#x27;lr&#x27;</span>, LogisticRegression()), (<span class="string">&#x27;rf&#x27;</span>, RandomForestClassifier())],</span><br><span class="line">    voting=<span class="string">&#x27;hard&#x27;</span>  <span class="comment"># 或 &#x27;soft&#x27;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Stacking</span></span><br><span class="line">stacking = StackingClassifier(</span><br><span class="line">    estimators=[(<span class="string">&#x27;lr&#x27;</span>, LogisticRegression()), (<span class="string">&#x27;rf&#x27;</span>, RandomForestClassifier())],</span><br><span class="line">    final_estimator=LogisticRegression()</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="简单集成示例"><a href="#简单集成示例" class="headerlink" title="简单集成示例"></a>简单集成示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> sklearn.datasets <span class="keyword">import</span> make_classification</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> accuracy_score</span><br><span class="line"><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeClassifier</span><br><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LogisticRegression</span><br><span class="line"><span class="keyword">from</span> sklearn.neighbors <span class="keyword">import</span> KNeighborsClassifier</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数据</span></span><br><span class="line">X, y = make_classification(n_samples=<span class="number">500</span>, n_features=<span class="number">20</span>, random_state=<span class="number">42</span>)</span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 多个模型</span></span><br><span class="line">models = &#123;</span><br><span class="line">    <span class="string">&#x27;Decision Tree&#x27;</span>: DecisionTreeClassifier(),</span><br><span class="line">    <span class="string">&#x27;Logistic Regression&#x27;</span>: LogisticRegression(),</span><br><span class="line">    <span class="string">&#x27;KNN&#x27;</span>: KNeighborsClassifier()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练和预测</span></span><br><span class="line">predictions = []</span><br><span class="line"><span class="keyword">for</span> name, model <span class="keyword">in</span> models.items():</span><br><span class="line">    model.fit(X_train, y_train)</span><br><span class="line">    y_pred = model.predict(X_test)</span><br><span class="line">    predictions.append(y_pred)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;<span class="subst">&#123;name&#125;</span>: <span class="subst">&#123;accuracy_score(y_test, y_pred):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 投票集成</span></span><br><span class="line">y_pred_vote = np.mean(predictions, axis=<span class="number">0</span>) &gt;= <span class="number">0.5</span>  <span class="comment"># 简单投票</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;\n投票集成: <span class="subst">&#123;accuracy_score(y_test, y_pred_vote):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>集成学习通过组合多个模型提升性能。核心内容包括：</p>
+<ul>
+<li>集成学习思想：组合优于单个模型</li>
+<li>偏差-方差分解：Bagging降低方差，Boosting降低偏差</li>
+<li>集成策略：并行（Bagging）、串行（Boosting）、混合（Stacking）</li>
+<li>多样性来源：数据、特征、算法扰动</li>
+<li>组合策略：平均、投票、学习</li>
+</ul>
+<p>集成学习是提升模型性能的重要技术。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/decision-tree/">决策树</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/random-forest/">随机森林</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/boosting/">Boosting基础</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/gbdt/">GBDT梯度提升树</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2025/11/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/ensemble-learning/" data-id="cuidScEupMUsUUPEJC9HMbcsO" data-title="集成学习概述" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Boosting/" rel="tag">Boosting</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9B%86%E6%88%90%E5%AD%A6%E4%B9%A0/" rel="tag">集成学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/11/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/boosting/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          Boosting基础
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/11/07/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/decision-tree/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">决策树</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><span class="category-list-count">77</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">50</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/LM-2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/17/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/02/">二月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">一月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a><span class="archive-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        All content licensed under CC BY 4.0
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

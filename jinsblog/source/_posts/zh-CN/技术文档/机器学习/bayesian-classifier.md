@@ -1,6 +1,6 @@
 ---
 title: 贝叶斯分类器
-date: 2026-04-13
+date: 2025-10-24
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 贝叶斯, 分类算法]

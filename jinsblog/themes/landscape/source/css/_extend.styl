@@ -1,3 +1,7 @@
+// ========================================
+// Nordic Zen Extensions (北欧极简白扩展样式)
+// ========================================
+
 $block-caption
   text-decoration: none
   text-transform: uppercase
@@ -6,14 +10,17 @@ $block-caption
   margin-bottom: 1em
   margin-left: 5px
   line-height: 1em
-  text-shadow: 0 1px #fff
-  font-weight: bold
+  font-weight: 600
+  font-family: font-sans
+  font-size: 12px
 
 $block
-  background: #fff
-  box-shadow: 1px 2px 3px #ddd
+  background: #FFFFFF
   border: 1px solid color-border
-  border-radius: 3px
+  border-radius: radius-md
+  transition: all 0.3s ease
+  &:hover
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08)
 
 $base-style
   h1
@@ -30,9 +37,11 @@ $base-style
     font-size: 1em
     color: color-grey
   hr
-    border: 1px dashed color-border
+    border: none
+    border-top: 1px dashed color-border
+    margin: 1.5em 0
   strong
-    font-weight: bold
+    font-weight: 700
   em, cite
     font-style: italic
   sup, sub
@@ -48,8 +57,9 @@ $base-style
     font-size: 0.85em
   acronym, abbr
     border-bottom: 1px dotted
+    cursor: help
   ul, ol, dl
-    margin: 0 20px
+    margin: 0 24px
     line-height: line-height
   ul, ol
     ul, ol
@@ -60,4 +70,4 @@ $base-style
   ol
     list-style: decimal
   dt
-    font-weight: bold
+    font-weight: 700

@@ -1,9 +1,9 @@
 ---
 title: Agent 框架概览
-date: 2026-05-10
+date: 2026-03-13
 categories: [技术文档, Agent]
 lang: zh-CN
-tags: [Agent, Framework, LangChain, AutoGen]
+tags: [Agent, Framework]
 ---
 
 ## Agent 框架的演进历史

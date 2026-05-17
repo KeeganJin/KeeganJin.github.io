@@ -1,90 +1,152 @@
+// ========================================
+// Nordic Zen Article (北欧极简白文章卡片)
+// ========================================
+// Rounded cards, warm background, serif typography
+
 .article
   margin: block-margin 0
 
 .article-inner
   @extend $block
+  background: #FFFFFF
+  border-radius: radius-md
+  border: 1px solid color-border
   overflow: hidden
+  transition: all 0.3s ease
+  &:hover
+    border-color: darken(color-border, 10%)
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08)
 
 .article-meta
   clearfix()
+  padding: 0 article-padding
 
 .article-date
-  @extend $block-caption
+  font-family: font-sans
+  font-size: 13px
+  color: color-grey
   float: left
+  letter-spacing: 0.5px
 
 .article-category
   float: left
   line-height: 1em
-  color: #ccc
-  text-shadow: 0 1px #fff
+  color: color-grey
   margin-left: 8px
   &:before
-    content: "\2022"
+    content: "•"
+    color: color-link
 
 .article-category-link
-  @extend $block-caption
-  margin: 0 12px 1em
+  font-family: font-sans
+  font-size: 13px
+  color: color-grey
+  margin: 0 8px 1em
+  transition: color 0.3s ease
+  &:hover
+    color: color-link
 
 .article-header
   padding: article-padding article-padding 0
 
 .article-title
   text-decoration: none
-  font-size: 2em
-  font-weight: bold
-  color: color-default
+  font-family: font-serif
+  font-size: 1.8em
+  font-weight: 700
+  color: #1A202C  // 深色标题
   line-height: line-height-title
-  transition: color 0.2s
+  transition: color 0.3s ease
+  letter-spacing: 1px
   a&:hover
     color: color-link
 
+// Article content - elegant serif reading
 .article-entry
   @extend $base-style
   clearfix()
+  font-family: font-serif
   color: color-default
   padding: 0 article-padding
   p, table
     line-height: line-height
     margin: line-height 0
   h1, h2, h3, h4, h5, h6
-    font-weight: bold
-  h1, h2, h3, h4, h5, h6
+    font-family: font-serif
+    font-weight: 700
+    color: #1A202C
     line-height: line-height-title
     margin: line-height-title 0
+    letter-spacing: 1px
+  h1
+    font-size: 1.6em
+    border-bottom: 2px solid color-border
+    padding-bottom: 12px
+  h2
+    font-size: 1.4em
+    border-bottom: 1px solid color-border
+    padding-bottom: 8px
+  h3
+    font-size: 1.2em
+  h4, h5, h6
+    font-size: 1em
   a
     color: color-link
     text-decoration: none
+    border-bottom: 1px solid transparent
+    transition: all 0.3s ease
     &:hover
-      text-decoration: underline
+      border-bottom-color: color-link
   ul, ol, dl
     margin-top: line-height
     margin-bottom: line-height
+    padding-left: 24px
+  ul
+    list-style-type: disc
+  ol
+    list-style-type: decimal
   img, video
     max-width: 100%
     height: auto
     display: block
-    margin: auto
+    margin: 1.5em auto
+    border-radius: radius-md
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)
   iframe
     border: none
+    border-radius: radius-md
   table
     width: 100%
     border-collapse: collapse
     border-spacing: 0
+    margin: 1.5em 0
+    border-radius: radius-md
+    overflow: hidden
   th
-    font-weight: bold
-    border-bottom: 3px solid color-border
-    padding-bottom: 0.5em
+    font-weight: 700
+    background: color-widget-background
+    color: #1A202C
+    border-bottom: 2px solid color-border
+    padding: 12px 16px
+    text-align: left
   td
     border-bottom: 1px solid color-border
-    padding: 10px 0
+    padding: 12px 16px
+  tr:last-child td
+    border-bottom: none
   blockquote
     font-family: font-serif
-    margin: line-height 20px
-    text-align: center
+    margin: line-height 24px
+    padding: 16px 24px
+    background: color-widget-background
+    border-left: 3px solid color-link
+    border-radius: radius-sm
+    color: color-default
     footer
       font-size: font-size
       margin: line-height 0
       font-family: font-sans
+      color: color-grey
       cite
         &:before
           content: "—"
@@ -106,12 +168,13 @@
     margin-top: 0.5em
     position: relative
     text-align: center
-  // http://webdesignerwall.com/tutorials/css-elastic-videos
+    font-family: font-sans
   .video-container
     position: relative
     padding-top: (9 / 16 * 100)% // 16:9 ratio
     height: 0
     overflow: hidden
+    border-radius: radius-md
     iframe, object, embed
       position: absolute
       top: 0
@@ -120,41 +183,69 @@
       height: 100%
       margin-top: 0
 
+// "Read More" button - warm ochre accent
 .article-more-link a
-  display: inline-block
+  display: inline-flex
+  align-items: center
   line-height: 1em
-  padding: 6px 15px
-  border-radius: 15px
-  background: color-background
-  color: color-grey
-  text-shadow: 0 1px #fff
+  padding: 10px 20px
+  border-radius: radius-md
+  background: #FFFFFF
+  color: color-link
+  border: 1px solid color-link
   text-decoration: none
+  font-family: font-sans
+  font-size: 14px
+  font-weight: 500
+  transition: all 0.3s ease
   &:hover
     background: color-link
-    color: #fff
-    text-decoration: none
-    text-shadow: 0 1px darken(color-link, 20%)
+    color: #FFFFFF
+    transform: translateX(4px)
+  &:after
+    content: "→"
+    margin-left: 8px
+    transition: transform 0.3s ease
+  &:hover:after
+    transform: translateX(4px)
 
 .article-footer
   clearfix()
   font-size: 0.85em
+  font-family: font-sans
   line-height: line-height
   border-top: 1px solid color-border
-  padding-top: line-height
+  padding: 16px article-padding
   margin: 0 article-padding article-padding
+  background: color-widget-background
+  border-radius: 0 0 radius-md radius-md
   a
     color: color-grey
     text-decoration: none
+    transition: color 0.3s ease
     &:hover
-      color: color-default
+      color: color-link
 
+// Tags - warm badge style
 .article-tag-list-item
   float: left
-  margin-right: 10px
+  margin-right: 8px
 
 .article-tag-list-link
+  display: inline-block
+  padding: 4px 12px
+  background: color-widget-background
+  color: color-link
+  border-radius: radius-sm
+  font-size: 12px
+  font-family: font-sans
+  transition: all 0.3s ease
+  &:hover
+    background: color-link
+    color: #FFFFFF
   &:before
     content: "#"
+    margin-right: 2px
 
 .article-comment-link
   float: right
@@ -168,28 +259,27 @@
   &:before
     padding-right: 6px
 
+// Article navigation
 #article-nav
   clearfix()
   position: relative
-  @media mq-normal
-    margin: block-margin 0
-    &:before
-      absolute-center(8px)
-      content: ""
-      border-radius: 50%
-      background: color-border
-      box-shadow: 0 1px 2px #fff
+  margin: block-margin 0
 
 .article-nav-link-wrap
   text-decoration: none
-  text-shadow: 0 1px #fff
   color: color-grey
+  font-family: font-sans
   box-sizing: border-box
+  padding: 16px
+  background: #FFFFFF
+  border: 1px solid color-border
+  border-radius: radius-md
   margin-top: block-margin
-  text-align: center
   display: block
+  transition: all 0.3s ease
   &:hover
-    color: color-default
+    border-color: color-link
+    color: color-link
   @media mq-normal
     width: 50%
     margin-top: 0
@@ -199,36 +289,40 @@
     float: left
     text-align: right
     padding-right: 20px
+    margin-right: 12px
 
 #article-nav-older
   @media mq-normal
     float: right
     text-align: left
     padding-left: 20px
+    margin-left: 12px
 
 .article-nav-caption
   text-transform: uppercase
   letter-spacing: 2px
   color: color-border
   line-height: 1em
-  font-weight: bold
-  #article-nav-newer &
-    margin-right: -2px
+  font-weight: 600
+  font-size: 12px
 
 .article-nav-title
-  font-size: 0.85em
+  font-size: 0.9em
   line-height: line-height
-  margin-top: 0.5em
+  margin-top: 8px
+  font-family: font-serif
 
+// Share box
 .article-share-box
   position: absolute
   display: none
-  background: #fff
-  box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.2)
-  border-radius: 3px
+  background: #FFFFFF
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15)
+  border-radius: radius-md
+  border: 1px solid color-border
   margin-left: -145px
   overflow: hidden
-  z-index: 1
+  z-index: 10
   &.on
     display: block
 
@@ -237,64 +331,60 @@
   background: none
   box-sizing: border-box
   font: 14px font-sans
-  padding: 0 15px
+  padding: 12px 16px
   color: color-default
   outline: none
   border: 1px solid color-border
-  border-radius: 3px 3px 0 0
-  height: 36px
-  line-height: 36px
+  border-radius: radius-md radius-md 0 0
 
 .article-share-links
   clearfix()
-  background: color-background
+  background: color-widget-background
 
 $article-share-link
   width: 50px
   height: 36px
-  display: block
+  display: flex
+  align-items: center
+  justify-content: center
   float: left
-  position: relative
-  color: #999
-  text-shadow: 0 1px #fff
+  color: color-grey
+  transition: all 0.3s ease
   .fa
-    font-size: 20px
-    absolute-center(@font-size)
-    text-align: center
+    font-size: 18px
   &:hover
-    color: #fff
+    color: #FFFFFF
 
 .article-share-twitter
   @extend $article-share-link
   &:hover
     background: color-twitter
-    text-shadow: 0 1px darken(color-twitter, 20%)
 
 .article-share-facebook
   @extend $article-share-link
   &:hover
     background: color-facebook
-    text-shadow: 0 1px darken(color-facebook, 20%)
 
 .article-share-pinterest
   @extend $article-share-link
   &:hover
     background: color-pinterest
-    text-shadow: 0 1px darken(color-pinterest, 20%)
 
 .article-share-linkedin
   @extend $article-share-link
   &:hover
     background: color-linkedin
-    text-shadow: 0 1px darken(color-linkedin, 20%)
 
+// Gallery
 .article-gallery
   background: #000
   position: relative
+  border-radius: radius-md
 
 .article-gallery-photos
   position: relative
   overflow: hidden
+  border-radius: radius-md
 
 .article-gallery-img
   display: none

@@ -1,6 +1,6 @@
 ---
 title: GBDT梯度提升树
-date: 2026-04-24
+date: 2025-11-19
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 集成学习, GBDT]

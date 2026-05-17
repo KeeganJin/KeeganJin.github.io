@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>上下文学习与提示工程 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="上下文学习（ICL）原理ICL的概念上下文学习（In-Context Learning, ICL）是大模型在提示中学习任务的能力。 特点：  无需参数更新 通过示例学习 即时适应任务  ICL的工作方式12345提示格式:[示例1输入] → [示例1输出][示例2输入] → [示例2输出]...[新输入] → [模型预测输出]  ICL vs 微调   方面 ICL 微调    参数更新 无 有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="上下文学习与提示工程">
+<meta property="og:url" content="https://keeganjin.github.io/2026/02/14/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/prompt-engineering/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="上下文学习（ICL）原理ICL的概念上下文学习（In-Context Learning, ICL）是大模型在提示中学习任务的能力。 特点：  无需参数更新 通过示例学习 即时适应任务  ICL的工作方式12345提示格式:[示例1输入] → [示例1输出][示例2输入] → [示例2输出]...[新输入] → [模型预测输出]  ICL vs 微调   方面 ICL 微调    参数更新 无 有">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-02-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-17T16:20:38.176Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="大模型">
+<meta property="article:tag" content="提示工程">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+
+  <!-- Nordic Zen Fonts: Noto Serif SC for elegant reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+
+  <!-- MathJax for math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$', '$'], ['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Life Notes</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/机器学习/prompt-engineering" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/02/14/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/prompt-engineering/" class="article-date">
+  <time class="dt-published" datetime="2026-02-13T16:00:00.000Z" itemprop="datePublished">2026-02-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      上下文学习与提示工程
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="上下文学习（ICL）原理"><a href="#上下文学习（ICL）原理" class="headerlink" title="上下文学习（ICL）原理"></a>上下文学习（ICL）原理</h2><h3 id="ICL的概念"><a href="#ICL的概念" class="headerlink" title="ICL的概念"></a>ICL的概念</h3><p>上下文学习（In-Context Learning, ICL）是大模型在提示中学习任务的能力。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>无需参数更新</li>
+<li>通过示例学习</li>
+<li>即时适应任务</li>
+</ul>
+<h3 id="ICL的工作方式"><a href="#ICL的工作方式" class="headerlink" title="ICL的工作方式"></a>ICL的工作方式</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">提示格式:</span><br><span class="line">[示例1输入] → [示例1输出]</span><br><span class="line">[示例2输入] → [示例2输出]</span><br><span class="line">...</span><br><span class="line">[新输入] → [模型预测输出]</span><br></pre></td></tr></table></figure>
+
+<h3 id="ICL-vs-微调"><a href="#ICL-vs-微调" class="headerlink" title="ICL vs 微调"></a>ICL vs 微调</h3><table>
+<thead>
+<tr>
+<th>方面</th>
+<th>ICL</th>
+<th>微调</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>参数更新</td>
+<td>无</td>
+<td>有</td>
+</tr>
+<tr>
+<td>训练时间</td>
+<td>无</td>
+<td>需训练</td>
+</tr>
+<tr>
+<td>示例需求</td>
+<td>提示中</td>
+<td>训练数据</td>
+</tr>
+<tr>
+<td>适应性</td>
+<td>即时</td>
+<td>需微调</td>
+</tr>
+</tbody></table>
+<h3 id="ICL的优势"><a href="#ICL的优势" class="headerlink" title="ICL的优势"></a>ICL的优势</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>即时使用</td>
+<td>无需训练</td>
+</tr>
+<tr>
+<td>灵活切换</td>
+<td>不同任务不同提示</td>
+</tr>
+<tr>
+<td>降低成本</td>
+<td>无训练成本</td>
+</tr>
+<tr>
+<td>试错方便</td>
+<td>快速迭代</td>
+</tr>
+</tbody></table>
+<h3 id="ICL的局限"><a href="#ICL的局限" class="headerlink" title="ICL的局限"></a>ICL的局限</h3><table>
+<thead>
+<tr>
+<th>局限</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>上下文有限</td>
+<td>示例数量受限</td>
+</tr>
+<tr>
+<td>不稳定</td>
+<td>效果依赖示例</td>
+</tr>
+<tr>
+<td>记忆有限</td>
+<td>不持久</td>
+</tr>
+</tbody></table>
+<h2 id="Prompt设计原则"><a href="#Prompt设计原则" class="headerlink" title="Prompt设计原则"></a>Prompt设计原则</h2><h3 id="Prompt的重要性"><a href="#Prompt的重要性" class="headerlink" title="Prompt的重要性"></a>Prompt的重要性</h3><p>Prompt直接影响模型输出质量。</p>
+<p><strong>影响因素</strong>：</p>
+<ul>
+<li>Prompt结构</li>
+<li>示例选择</li>
+<li>指令清晰度</li>
+</ul>
+<h3 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h3><table>
+<thead>
+<tr>
+<th>原则</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>清晰明确</td>
+<td>指令简洁易懂</td>
+</tr>
+<tr>
+<td>示例相关</td>
+<td>示例与任务相关</td>
+</tr>
+<tr>
+<td>格式统一</td>
+<td>输入输出格式一致</td>
+</tr>
+<tr>
+<td>避免歧义</td>
+<td>无模糊表述</td>
+</tr>
+</tbody></table>
+<h3 id="Prompt结构"><a href="#Prompt结构" class="headerlink" title="Prompt结构"></a>Prompt结构</h3><p><strong>标准结构</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1. 任务描述</span><br><span class="line">2. 格式说明</span><br><span class="line">3. 示例（可选）</span><br><span class="line">4. 待处理输入</span><br></pre></td></tr></table></figure>
+
+<h3 id="常见Prompt类型"><a href="#常见Prompt类型" class="headerlink" title="常见Prompt类型"></a>常见Prompt类型</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>指令型</td>
+<td>“请翻译以下文本…”</td>
+</tr>
+<tr>
+<td>示例型</td>
+<td>提供示例+输入</td>
+</tr>
+<tr>
+<td>角色型</td>
+<td>“作为翻译专家…”</td>
+</tr>
+</tbody></table>
+<h3 id="Prompt设计示例"><a href="#Prompt设计示例" class="headerlink" title="Prompt设计示例"></a>Prompt设计示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 翻译Prompt</span></span><br><span class="line">prompt = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">请将以下英文翻译为中文：</span></span><br><span class="line"><span class="string">Hello, how are you?</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 分类Prompt</span></span><br><span class="line">prompt = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">分类以下文本的情感：</span></span><br><span class="line"><span class="string">文本：这部电影太精彩了！</span></span><br><span class="line"><span class="string">情感：正面</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">文本：服务很差，很不满意。</span></span><br><span class="line"><span class="string">情感：负面</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">文本：产品质量一般。</span></span><br><span class="line"><span class="string">情感：？</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 角色Prompt</span></span><br><span class="line">prompt = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">作为一个专业的Python程序员，请解释以下代码：</span></span><br><span class="line"><span class="string">def factorial(n):</span></span><br><span class="line"><span class="string">    return 1 if n &lt;= 1 else n * factorial(n-1)</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Few-shot提示"><a href="#Few-shot提示" class="headerlink" title="Few-shot提示"></a>Few-shot提示</h2><h3 id="Few-shot概念"><a href="#Few-shot概念" class="headerlink" title="Few-shot概念"></a>Few-shot概念</h3><p>提供少量示例引导模型：</p>
+<p><strong>格式</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">示例1输入: ... </span><br><span class="line">示例1输出: ...</span><br><span class="line">示例2输入: ...</span><br><span class="line">示例2输出: ...</span><br><span class="line">新输入: ...</span><br><span class="line">输出: ?</span><br></pre></td></tr></table></figure>
+
+<h3 id="Few-shot示例数量"><a href="#Few-shot示例数量" class="headerlink" title="Few-shot示例数量"></a>Few-shot示例数量</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>示例数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Zero-shot</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Few-shot</td>
+<td>1-10</td>
+</tr>
+<tr>
+<td>Many-shot</td>
+<td>10+</td>
+</tr>
+</tbody></table>
+<h3 id="Few-shot效果"><a href="#Few-shot效果" class="headerlink" title="Few-shot效果"></a>Few-shot效果</h3><table>
+<thead>
+<tr>
+<th>示例数</th>
+<th>效果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>可能不稳定</td>
+</tr>
+<tr>
+<td>1-3</td>
+<td>有所改善</td>
+</tr>
+<tr>
+<td>5-10</td>
+<td>通常较好</td>
+</tr>
+<tr>
+<td>更多</td>
+<td>可能饱和</td>
+</tr>
+</tbody></table>
+<h3 id="Few-shot示例选择"><a href="#Few-shot示例选择" class="headerlink" title="Few-shot示例选择"></a>Few-shot示例选择</h3><p><strong>原则</strong>：</p>
+<ul>
+<li>代表任务特点</li>
+<li>覆盖不同情况</li>
+<li>格式一致</li>
+<li>避免偏见</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Few-shot情感分析</span></span><br><span class="line">prompt = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">对以下电影评论进行情感分类：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">评论：&quot;这部电影太棒了，强烈推荐！&quot;</span></span><br><span class="line"><span class="string">情感：正面</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">评论：&quot;太无聊了，浪费时间。&quot;</span></span><br><span class="line"><span class="string">情感：负面</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">评论：&quot;演员表演不错，但剧情拖沓。&quot;</span></span><br><span class="line"><span class="string">情感：中性</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">评论：&quot;视觉效果震撼，但内容空洞。&quot;</span></span><br><span class="line"><span class="string">情感：？</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Few-shot示例顺序"><a href="#Few-shot示例顺序" class="headerlink" title="Few-shot示例顺序"></a>Few-shot示例顺序</h3><p>示例顺序可能影响结果：</p>
+<ul>
+<li>按相似度排序</li>
+<li>随机顺序</li>
+<li>避免误导模式</li>
+</ul>
+<h2 id="Chain-of-Thought提示"><a href="#Chain-of-Thought提示" class="headerlink" title="Chain-of-Thought提示"></a>Chain-of-Thought提示</h2><h3 id="CoT概念"><a href="#CoT概念" class="headerlink" title="CoT概念"></a>CoT概念</h3><p>让模型展示推理过程：</p>
+<p><strong>格式</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">问题: ...</span><br><span class="line">推理步骤:</span><br><span class="line">1. ...</span><br><span class="line">2. ...</span><br><span class="line">...</span><br><span class="line">答案: ...</span><br></pre></td></tr></table></figure>
+
+<h3 id="CoT的优势"><a href="#CoT的优势" class="headerlink" title="CoT的优势"></a>CoT的优势</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>提高准确率</td>
+<td>步骤分解更准确</td>
+</tr>
+<tr>
+<td>可解释性</td>
+<td>推理过程可见</td>
+</tr>
+<tr>
+<td>复杂任务</td>
+<td>处理复杂推理</td>
+</tr>
+</tbody></table>
+<h3 id="CoT示例"><a href="#CoT示例" class="headerlink" title="CoT示例"></a>CoT示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 数学推理CoT</span></span><br><span class="line">prompt = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">问题：小明有5个苹果，给了小红2个，又买了3个，现在有多少个？</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">推理过程：</span></span><br><span class="line"><span class="string">1. 小明原有5个苹果</span></span><br><span class="line"><span class="string">2. 给小红2个后：5 - 2 = 3个</span></span><br><span class="line"><span class="string">3. 又买了3个：3 + 3 = 6个</span></span><br><span class="line"><span class="string">答案：6个苹果</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">问题：一个班级有30人，男生占40%，女生有多少人？</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">推理过程：</span></span><br><span class="line"><span class="string">答案：</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Zero-shot-CoT"><a href="#Zero-shot-CoT" class="headerlink" title="Zero-shot CoT"></a>Zero-shot CoT</h3><p>不加示例，只要求步骤：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">prompt = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">请一步步思考并解决以下问题：</span></span><br><span class="line"><span class="string">...</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="CoT变体"><a href="#CoT变体" class="headerlink" title="CoT变体"></a>CoT变体</h3><table>
+<thead>
+<tr>
+<th>变体</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Zero-shot CoT</td>
+<td>“一步步思考”</td>
+</tr>
+<tr>
+<td>Manual CoT</td>
+<td>手写示例步骤</td>
+</tr>
+<tr>
+<td>Auto CoT</td>
+<td>自动生成步骤</td>
+</tr>
+</tbody></table>
+<h2 id="提示模板设计"><a href="#提示模板设计" class="headerlink" title="提示模板设计"></a>提示模板设计</h2><h3 id="模板的作用"><a href="#模板的作用" class="headerlink" title="模板的作用"></a>模板的作用</h3><p>统一Prompt格式，提高效率。</p>
+<h3 id="模板结构"><a href="#模板结构" class="headerlink" title="模板结构"></a>模板结构</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">template = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">任务：&#123;task_description&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">格式要求：&#123;format_requirement&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">示例：</span></span><br><span class="line"><span class="string">&#123;examples&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">当前输入：&#123;input&#125;</span></span><br><span class="line"><span class="string">输出：</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="模板参数化"><a href="#模板参数化" class="headerlink" title="模板参数化"></a>模板参数化</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> string <span class="keyword">import</span> Template</span><br><span class="line"></span><br><span class="line">prompt_template = Template(<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">请完成以下$task：</span></span><br><span class="line"><span class="string">$examples</span></span><br><span class="line"><span class="string">输入：$input</span></span><br><span class="line"><span class="string">输出：</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用</span></span><br><span class="line">prompt = prompt_template.substitute(</span><br><span class="line">    task=<span class="string">&quot;情感分析&quot;</span>,</span><br><span class="line">    examples=<span class="string">&quot;...&quot;</span>,</span><br><span class="line">    <span class="built_in">input</span>=<span class="string">&quot;这部电影很好看&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="常见模板类型"><a href="#常见模板类型" class="headerlink" title="常见模板类型"></a>常见模板类型</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>适用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>分类模板</td>
+<td>分类任务</td>
+</tr>
+<tr>
+<td>生成模板</td>
+<td>文本生成</td>
+</tr>
+<tr>
+<td>QA模板</td>
+<td>问答任务</td>
+</tr>
+<tr>
+<td>翻译模板</td>
+<td>翻译任务</td>
+</tr>
+</tbody></table>
+<h2 id="提示调优技巧"><a href="#提示调优技巧" class="headerlink" title="提示调优技巧"></a>提示调优技巧</h2><h3 id="调优方向"><a href="#调优方向" class="headerlink" title="调优方向"></a>调优方向</h3><table>
+<thead>
+<tr>
+<th>方向</th>
+<th>方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>指令优化</td>
+<td>更清晰明确</td>
+</tr>
+<tr>
+<td>示例优化</td>
+<td>选择更好示例</td>
+</tr>
+<tr>
+<td>格式优化</td>
+<td>更好输出格式</td>
+</tr>
+</tbody></table>
+<h3 id="迭代调优流程"><a href="#迭代调优流程" class="headerlink" title="迭代调优流程"></a>迭代调优流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">设计初始Prompt → 测试 → 分析问题 → 修改 → 再测试 → 循环</span><br></pre></td></tr></table></figure>
+
+<h3 id="常见问题与解决"><a href="#常见问题与解决" class="headerlink" title="常见问题与解决"></a>常见问题与解决</h3><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>解决</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输出格式不对</td>
+<td>明确格式要求</td>
+</tr>
+<tr>
+<td>答案不准确</td>
+<td>添加更多示例</td>
+</tr>
+<tr>
+<td>偏题</td>
+<td>修改指令</td>
+</tr>
+<tr>
+<td>输出过长</td>
+<td>限制长度</td>
+</tr>
+</tbody></table>
+<h3 id="Prompt调优示例"><a href="#Prompt调优示例" class="headerlink" title="Prompt调优示例"></a>Prompt调优示例</h3><p><strong>问题</strong>：模型输出太长</p>
+<p><strong>解决</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">prompt = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">请用一句话概括以下文章：</span></span><br><span class="line"><span class="string">...</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>问题</strong>：格式不统一</p>
+<p><strong>解决</strong>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">prompt = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">请按以下JSON格式输出：</span></span><br><span class="line"><span class="string">&#123;&quot;sentiment&quot;: &quot;正面/负面&quot;, &quot;reason&quot;: &quot;...&quot;&#125;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="案例实践"><a href="#案例实践" class="headerlink" title="案例实践"></a>案例实践</h2><h3 id="分类任务Prompt"><a href="#分类任务Prompt" class="headerlink" title="分类任务Prompt"></a>分类任务Prompt</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">create_classification_prompt</span>(<span class="params">texts, labels, new_text</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;创建分类Prompt&quot;&quot;&quot;</span></span><br><span class="line">    examples = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> text, label <span class="keyword">in</span> <span class="built_in">zip</span>(texts[:<span class="number">3</span>], labels[:<span class="number">3</span>]):</span><br><span class="line">        examples += <span class="string">f&quot;文本：<span class="subst">&#123;text&#125;</span>\n分类：<span class="subst">&#123;label&#125;</span>\n\n&quot;</span></span><br><span class="line">    </span><br><span class="line">    prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">请对文本进行情感分类（正面/负面/中性）：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"><span class="subst">&#123;examples&#125;</span></span></span><br><span class="line"><span class="string">文本：<span class="subst">&#123;new_text&#125;</span></span></span><br><span class="line"><span class="string">分类：</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> prompt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用</span></span><br><span class="line">prompt = create_classification_prompt(</span><br><span class="line">    texts=[<span class="string">&quot;这部电影很精彩&quot;</span>, <span class="string">&quot;很无聊&quot;</span>],</span><br><span class="line">    labels=[<span class="string">&quot;正面&quot;</span>, <span class="string">&quot;负面&quot;</span>],</span><br><span class="line">    new_text=<span class="string">&quot;还可以，不算特别好&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="CoT推理示例"><a href="#CoT推理示例" class="headerlink" title="CoT推理示例"></a>CoT推理示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">create_cot_prompt</span>(<span class="params">question</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;创建CoT Prompt&quot;&quot;&quot;</span></span><br><span class="line">    prompt = <span class="string">f&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">请按以下格式一步步解决问题：</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">问题：如果一本书有300页，每天读30页，需要几天读完？</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">推理过程：</span></span><br><span class="line"><span class="string">1. 总页数：300页</span></span><br><span class="line"><span class="string">2. 每天读：30页</span></span><br><span class="line"><span class="string">3. 所需天数：300 ÷ 30 = 10天</span></span><br><span class="line"><span class="string">答案：10天</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">问题：<span class="subst">&#123;question&#125;</span></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">推理过程：</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> prompt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 数学问题</span></span><br><span class="line">question = <span class="string">&quot;商店有100件商品，卖出了35件，又进货20件，现在有多少件？&quot;</span></span><br><span class="line">prompt = create_cot_prompt(question)</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用LangChain的Prompt"><a href="#使用LangChain的Prompt" class="headerlink" title="使用LangChain的Prompt"></a>使用LangChain的Prompt</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain.prompts <span class="keyword">import</span> PromptTemplate</span><br><span class="line"></span><br><span class="line">template = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">作为一个&#123;role&#125;，请回答以下问题：</span></span><br><span class="line"><span class="string">&#123;question&#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">请按以下格式回答：</span></span><br><span class="line"><span class="string">&#123;format_instructions&#125;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">prompt = PromptTemplate(</span><br><span class="line">    input_variables=[<span class="string">&quot;role&quot;</span>, <span class="string">&quot;question&quot;</span>, <span class="string">&quot;format_instructions&quot;</span>],</span><br><span class="line">    template=template</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用</span></span><br><span class="line">final_prompt = prompt.<span class="built_in">format</span>(</span><br><span class="line">    role=<span class="string">&quot;Python专家&quot;</span>,</span><br><span class="line">    question=<span class="string">&quot;如何处理列表中的重复元素？&quot;</span>,</span><br><span class="line">    format_instructions=<span class="string">&quot;先解释，然后给代码示例&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Few-shot学习"><a href="#Few-shot学习" class="headerlink" title="Few-shot学习"></a>Few-shot学习</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">few_shot_classification</span>(<span class="params">train_data, test_input, n_examples=<span class="number">5</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Few-shot分类&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 选择示例</span></span><br><span class="line">    examples = train_data[:n_examples]</span><br><span class="line">    </span><br><span class="line">    prompt = <span class="string">&quot;请根据示例对文本进行分类：\n\n&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> text, label <span class="keyword">in</span> examples:</span><br><span class="line">        prompt += <span class="string">f&quot;文本：<span class="subst">&#123;text&#125;</span>\n标签：<span class="subst">&#123;label&#125;</span>\n\n&quot;</span></span><br><span class="line">    </span><br><span class="line">    prompt += <span class="string">f&quot;文本：<span class="subst">&#123;test_input&#125;</span>\n标签：&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> prompt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用</span></span><br><span class="line">train_data = [(<span class="string">&quot;产品很好&quot;</span>, <span class="string">&quot;正面&quot;</span>), (<span class="string">&quot;很差&quot;</span>, <span class="string">&quot;负面&quot;</span>)]</span><br><span class="line">test_input = <span class="string">&quot;质量不错&quot;</span></span><br><span class="line">prompt = few_shot_classification(train_data, test_input)</span><br></pre></td></tr></table></figure>
+
+<h3 id="提示管理"><a href="#提示管理" class="headerlink" title="提示管理"></a>提示管理</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">PromptManager</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Prompt管理器&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.templates = &#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_template</span>(<span class="params">self, name, template</span>):</span><br><span class="line">        <span class="variable language_">self</span>.templates[name] = template</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_prompt</span>(<span class="params">self, name, **kwargs</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.templates[name].<span class="built_in">format</span>(**kwargs)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用</span></span><br><span class="line">manager = PromptManager()</span><br><span class="line">manager.add_template(<span class="string">&quot;classify&quot;</span>, <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">分类以下文本：&#123;input&#125;</span></span><br><span class="line"><span class="string">类别：&#123;categories&#125;</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line">prompt = manager.get_prompt(<span class="string">&quot;classify&quot;</span>, </span><br><span class="line">                            <span class="built_in">input</span>=<span class="string">&quot;很好&quot;</span>, </span><br><span class="line">                            categories=<span class="string">&quot;正面/负面&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="提示工程最佳实践"><a href="#提示工程最佳实践" class="headerlink" title="提示工程最佳实践"></a>提示工程最佳实践</h2><h3 id="安全性考虑"><a href="#安全性考虑" class="headerlink" title="安全性考虑"></a>安全性考虑</h3><table>
+<thead>
+<tr>
+<th>考虑</th>
+<th>方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输入验证</td>
+<td>过滤恶意输入</td>
+</tr>
+<tr>
+<td>输出控制</td>
+<td>限制敏感内容</td>
+</tr>
+<tr>
+<td>防注入</td>
+<td>明确边界</td>
+</tr>
+</tbody></table>
+<h3 id="成本优化"><a href="#成本优化" class="headerlink" title="成本优化"></a>成本优化</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>精简Prompt</td>
+<td>减少无效内容</td>
+</tr>
+<tr>
+<td>批量处理</td>
+<td>合并请求</td>
+</tr>
+<tr>
+<td>缓存结果</td>
+<td>重复问题缓存</td>
+</tr>
+</tbody></table>
+<h3 id="效果评估"><a href="#效果评估" class="headerlink" title="效果评估"></a>效果评估</h3><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>准确率</td>
+<td>分类准确</td>
+</tr>
+<tr>
+<td>完成率</td>
+<td>任务完成比例</td>
+</tr>
+<tr>
+<td>质量评分</td>
+<td>输出质量评估</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>上下文学习与提示工程是大模型应用的关键。核心内容包括：</p>
+<ul>
+<li>ICL原理：无需训练，通过示例学习</li>
+<li>Prompt设计：清晰、相关、统一</li>
+<li>Few-shot提示：少量示例引导</li>
+<li>Chain-of-Thought：展示推理过程</li>
+<li>提示模板：统一格式，参数化</li>
+<li>调优技巧：迭代优化</li>
+</ul>
+<p>Prompt工程直接影响大模型应用效果。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/llm-architecture/">大模型架构演进</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/pretraining-lm/">预训练语言模型</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/fine-tuning/">微调技术详解</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/transformer/">Transformer架构详解</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/02/14/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/prompt-engineering/" data-id="cuidcPYEYqUneDze5bgfMZ-vE" data-title="上下文学习与提示工程" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" rel="tag">大模型</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8F%90%E7%A4%BA%E5%B7%A5%E7%A8%8B/" rel="tag">提示工程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/02/17/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/distributed-training/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          分布式训练
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/02/11/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/fine-tuning/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">微调技术详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><span class="category-list-count">77</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">50</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/LM-2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/17/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/02/">二月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">一月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a><span class="archive-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        All content licensed under CC BY 4.0
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

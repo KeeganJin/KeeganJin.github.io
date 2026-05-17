@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <author>
+    <name>That Jin</name>
+  </author>
+  <generator uri="https://hexo.io/">Hexo</generator>
+  <icon>https://keeganjin.github.io/favicon.png</icon>
+  <id>https://keeganjin.github.io/</id>
+  <link href="https://keeganjin.github.io/" rel="alternate"/>
+  <link href="https://keeganjin.github.io/atom.xml" rel="self"/>
+  <rights>All rights reserved 2026, That Jin</rights>
+  <subtitle>
+    <![CDATA[Tech & Life Notes]]>
+  </subtitle>
+  <title>Jin's Blog</title>
+  <updated>2026-05-17T16:21:49.384Z</updated>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <id>https://keeganjin.github.io/2026/05/18/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/</id>
+    <link href="https://keeganjin.github.io/2026/05/18/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/"/>
+    <published>2026-05-17T16:21:49.384Z</published>
+    <summary>
+      <![CDATA[<p>我理解的人生是不可预料的，但是情绪是可以预料的。情绪就像是大波叠加上各种小波，上上下下，起起伏伏。</p>]]>
+    </summary>
+    <updated>2026-05-17T16:21:49.384Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <id>https://keeganjin.github.io/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/LM-2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/</id>
+    <link href="https://keeganjin.github.io/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/LM-2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/"/>
+    <published>2026-05-17T16:21:44.536Z</published>
+    <summary>
+      <![CDATA[<h1 id="Dense-Model-MoE"><a href="#Dense-Model-MoE" class="headerlink" title="Dense Model &amp; MoE"></a>Dense Model &amp;]]>
+    </summary>
+    <updated>2026-05-17T16:21:44.537Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="多模态" scheme="https://keeganjin.github.io/categories/%E5%A4%9A%E6%A8%A1%E6%80%81/"/>
+    <category term="XGBoost" scheme="https://keeganjin.github.io/tags/XGBoost/"/>
+    <category term="梯度提升" scheme="https://keeganjin.github.io/tags/%E6%A2%AF%E5%BA%A6%E6%8F%90%E5%8D%87/"/>
+    <id>https://keeganjin.github.io/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/</id>
+    <link href="https://keeganjin.github.io/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/"/>
+    <published>2026-05-17T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<p>Image<br> ↓<br>Preprocess<br> ↓<br>Object Detection<br> ↓<br>OCR<br> ↓<br>Arrow Detection<br> ↓<br>Topology Reconstruction<br>]]>
+    </summary>
+    <title>多模态</title>
+    <updated>2026-05-17T16:21:44.568Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="随笔" scheme="https://keeganjin.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="生活" scheme="https://keeganjin.github.io/tags/%E7%94%9F%E6%B4%BB/"/>
+    <category term="感想" scheme="https://keeganjin.github.io/tags/%E6%84%9F%E6%83%B3/"/>
+    <id>https://keeganjin.github.io/2026/05/17/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/</id>
+    <link href="https://keeganjin.github.io/2026/05/17/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/"/>
+    <published>2026-05-16T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="随笔"><a href="#随笔" class="headerlink"]]>
+    </summary>
+    <title>写在博客重构之后</title>
+    <updated>2026-05-17T16:21:49.416Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="技术文档" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
+    <category term="机器学习" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    <category term="GBDT" scheme="https://keeganjin.github.io/tags/GBDT/"/>
+    <category term="决策树" scheme="https://keeganjin.github.io/tags/%E5%86%B3%E7%AD%96%E6%A0%91/"/>
+    <category term="随机森林" scheme="https://keeganjin.github.io/tags/%E9%9A%8F%E6%9C%BA%E6%A3%AE%E6%9E%97/"/>
+    <id>https://keeganjin.github.io/2026/05/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/</id>
+    <link href="https://keeganjin.github.io/2026/05/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/"/>
+    <published>2026-05-12T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h1 id="树模型"><a href="#树模型" class="headerlink" title="树模型"></a>树模型</h1><p>[TOC]</p>
+<h2 id="背景"><a href="#背景" class="headerlink"]]>
+    </summary>
+    <title>树模型</title>
+    <updated>2026-05-17T16:21:44.614Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <id>https://keeganjin.github.io/2026/05/12/zh-CN/%E5%85%B6%E4%BB%96/%E8%BF%90%E7%BB%B4/CICD/</id>
+    <link href="https://keeganjin.github.io/2026/05/12/zh-CN/%E5%85%B6%E4%BB%96/%E8%BF%90%E7%BB%B4/CICD/"/>
+    <published>2026-05-11T16:54:58.686Z</published>
+    <updated>2026-05-11T16:54:58.686Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="随笔" scheme="https://keeganjin.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="life" scheme="https://keeganjin.github.io/tags/life/"/>
+    <category term="thoughts" scheme="https://keeganjin.github.io/tags/thoughts/"/>
+    <id>https://keeganjin.github.io/2026/05/10/en/essays/blog-redesign/</id>
+    <link href="https://keeganjin.github.io/2026/05/10/en/essays/blog-redesign/"/>
+    <published>2026-05-09T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<p>Finally redesigned the blog with tech docs and products sections, plus Chinese&#x2F;English]]>
+    </summary>
+    <title>After the Blog Redesign</title>
+    <updated>2026-05-09T17:28:15.409Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="技术文档" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
+    <category term="机器学习" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    <category term="Decision Tree" scheme="https://keeganjin.github.io/tags/Decision-Tree/"/>
+    <category term="Random Forest" scheme="https://keeganjin.github.io/tags/Random-Forest/"/>
+    <category term="GBDT" scheme="https://keeganjin.github.io/tags/GBDT/"/>
+    <id>https://keeganjin.github.io/2026/05/10/en/tech-docs/machine-learning/tree-models/</id>
+    <link href="https://keeganjin.github.io/2026/05/10/en/tech-docs/machine-learning/tree-models/"/>
+    <published>2026-05-09T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h1 id="Tree-Models"><a href="#Tree-Models" class="headerlink" title="Tree Models"></a>Tree Models</h1><p>[TOC]</p>
+<h2 id="Background"><a]]>
+    </summary>
+    <title>Tree Models</title>
+    <updated>2026-05-11T12:51:04.726Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="技术文档" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
+    <category term="机器学习" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    <category term="XGBoost" scheme="https://keeganjin.github.io/tags/XGBoost/"/>
+    <category term="Gradient Boosting" scheme="https://keeganjin.github.io/tags/Gradient-Boosting/"/>
+    <id>https://keeganjin.github.io/2026/05/09/en/tech-docs/machine-learning/xgboost-algorithm/</id>
+    <link href="https://keeganjin.github.io/2026/05/09/en/tech-docs/machine-learning/xgboost-algorithm/"/>
+    <published>2026-05-08T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="What-is-XGBoost"><a href="#What-is-XGBoost" class="headerlink" title="What is XGBoost"></a>What is XGBoost</h2><p>XGBoost, short]]>
+    </summary>
+    <title>XGBoost Algorithm Explained</title>
+    <updated>2026-05-09T17:27:46.136Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="技术文档" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/tags/Agent/"/>
+    <category term="LLM" scheme="https://keeganjin.github.io/tags/LLM/"/>
+    <category term="Tool Use" scheme="https://keeganjin.github.io/tags/Tool-Use/"/>
+    <id>https://keeganjin.github.io/2026/05/08/en/tech-docs/agent/agent-introduction/</id>
+    <link href="https://keeganjin.github.io/2026/05/08/en/tech-docs/agent/agent-introduction/"/>
+    <published>2026-05-07T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="What-is-an-AI-Agent"><a href="#What-is-an-AI-Agent" class="headerlink" title="What is an AI Agent"></a>What is an AI]]>
+    </summary>
+    <title>AI Agent Introduction</title>
+    <updated>2026-05-09T17:27:48.585Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="技术文档" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/tags/Agent/"/>
+    <category term="未来趋势" scheme="https://keeganjin.github.io/tags/%E6%9C%AA%E6%9D%A5%E8%B6%8B%E5%8A%BF/"/>
+    <category term="AGI" scheme="https://keeganjin.github.io/tags/AGI/"/>
+    <id>https://keeganjin.github.io/2026/05/07/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-future/</id>
+    <link href="https://keeganjin.github.io/2026/05/07/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-future/"/>
+    <published>2026-05-06T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="Agent-技术发展趋势"><a href="#Agent-技术发展趋势" class="headerlink" title="Agent 技术发展趋势"></a>Agent 技术发展趋势</h2><p>Agent]]>
+    </summary>
+    <title>Agent 未来展望</title>
+    <updated>2026-05-17T16:21:25.215Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="技术文档" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/tags/Agent/"/>
+    <category term="LLM" scheme="https://keeganjin.github.io/tags/LLM/"/>
+    <category term="工具调用" scheme="https://keeganjin.github.io/tags/%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8/"/>
+    <id>https://keeganjin.github.io/2026/05/04/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/OpenClaw%E6%8B%86%E8%A7%A3/</id>
+    <link href="https://keeganjin.github.io/2026/05/04/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/OpenClaw%E6%8B%86%E8%A7%A3/"/>
+    <published>2026-05-03T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h1 id="OpenClaw-拆解"><a href="#OpenClaw-拆解" class="headerlink" title="OpenClaw 拆解"></a>OpenClaw 拆解</h1><p>OpenClaw 是一个面向 AI Agent]]>
+    </summary>
+    <title>OpenClaw 拆解</title>
+    <updated>2026-05-17T16:21:25.163Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="技术文档" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/tags/Agent/"/>
+    <category term="伦理" scheme="https://keeganjin.github.io/tags/%E4%BC%A6%E7%90%86/"/>
+    <category term="AI伦理" scheme="https://keeganjin.github.io/tags/AI%E4%BC%A6%E7%90%86/"/>
+    <id>https://keeganjin.github.io/2026/05/01/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-ethics/</id>
+    <link href="https://keeganjin.github.io/2026/05/01/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-ethics/"/>
+    <published>2026-04-30T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="Agent-的责任归属问题"><a href="#Agent-的责任归属问题" class="headerlink" title="Agent 的责任归属问题"></a>Agent 的责任归属问题</h2><p>Agent]]>
+    </summary>
+    <title>Agent 伦理考量</title>
+    <updated>2026-05-17T16:21:25.122Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="技术文档" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/tags/Agent/"/>
+    <category term="评测" scheme="https://keeganjin.github.io/tags/%E8%AF%84%E6%B5%8B/"/>
+    <category term="AgentBench" scheme="https://keeganjin.github.io/tags/AgentBench/"/>
+    <id>https://keeganjin.github.io/2026/04/28/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-evaluation/</id>
+    <link href="https://keeganjin.github.io/2026/04/28/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-evaluation/"/>
+    <published>2026-04-27T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="Agent-评测的挑战"><a href="#Agent-评测的挑战" class="headerlink" title="Agent 评测的挑战"></a>Agent 评测的挑战</h2><p>Agent 评测比传统 AI 评测更复杂：</p>
+<h3]]>
+    </summary>
+    <title>Agent 评测方法</title>
+    <updated>2026-05-17T16:21:25.087Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="技术文档" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/tags/Agent/"/>
+    <category term="安全" scheme="https://keeganjin.github.io/tags/%E5%AE%89%E5%85%A8/"/>
+    <category term="Prompt Injection" scheme="https://keeganjin.github.io/tags/Prompt-Injection/"/>
+    <id>https://keeganjin.github.io/2026/04/25/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-security/</id>
+    <link href="https://keeganjin.github.io/2026/04/25/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-security/"/>
+    <published>2026-04-24T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="Agent-安全风险分类"><a href="#Agent-安全风险分类" class="headerlink" title="Agent 安全风险分类"></a>Agent 安全风险分类</h2><p>Agent]]>
+    </summary>
+    <title>Agent 安全考量</title>
+    <updated>2026-05-17T16:21:25.043Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="技术文档" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
+    <category term="机器学习" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    <category term="机器学习" scheme="https://keeganjin.github.io/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    <category term="神经网络" scheme="https://keeganjin.github.io/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/"/>
+    <category term="超参数调优" scheme="https://keeganjin.github.io/tags/%E8%B6%85%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98/"/>
+    <id>https://keeganjin.github.io/2026/04/25/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/hyperparameter-tuning/</id>
+    <link href="https://keeganjin.github.io/2026/04/25/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/hyperparameter-tuning/"/>
+    <published>2026-04-24T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="超参数分类"><a href="#超参数分类" class="headerlink" title="超参数分类"></a>超参数分类</h2><h3 id="什么是超参数"><a href="#什么是超参数" class="headerlink"]]>
+    </summary>
+    <title>超参数调优</title>
+    <updated>2026-05-11T12:37:04.151Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="技术文档" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/tags/Agent/"/>
+    <category term="调试" scheme="https://keeganjin.github.io/tags/%E8%B0%83%E8%AF%95/"/>
+    <category term="日志" scheme="https://keeganjin.github.io/tags/%E6%97%A5%E5%BF%97/"/>
+    <id>https://keeganjin.github.io/2026/04/22/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-debugging/</id>
+    <link href="https://keeganjin.github.io/2026/04/22/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-debugging/"/>
+    <published>2026-04-21T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="Agent-调试的特殊性"><a href="#Agent-调试的特殊性" class="headerlink" title="Agent 调试的特殊性"></a>Agent 调试的特殊性</h2><p>Agent 调试比传统程序调试更复杂：</p>
+<h3]]>
+    </summary>
+    <title>Agent 调试技巧</title>
+    <updated>2026-05-17T16:21:25.009Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="技术文档" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/tags/Agent/"/>
+    <category term="软件工程" scheme="https://keeganjin.github.io/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/"/>
+    <category term="微服务" scheme="https://keeganjin.github.io/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/"/>
+    <id>https://keeganjin.github.io/2026/04/19/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-software-engineering/</id>
+    <link href="https://keeganjin.github.io/2026/04/19/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/agent-software-engineering/"/>
+    <published>2026-04-18T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="Agent-在软件工程中的定位"><a href="#Agent-在软件工程中的定位" class="headerlink" title="Agent 在软件工程中的定位"></a>Agent 在软件工程中的定位</h2><p>Agent]]>
+    </summary>
+    <title>Agent 与传统软件工程</title>
+    <updated>2026-05-17T16:21:21.012Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="技术文档" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/tags/Agent/"/>
+    <category term="研究" scheme="https://keeganjin.github.io/tags/%E7%A0%94%E7%A9%B6/"/>
+    <category term="信息检索" scheme="https://keeganjin.github.io/tags/%E4%BF%A1%E6%81%AF%E6%A3%80%E7%B4%A2/"/>
+    <id>https://keeganjin.github.io/2026/04/16/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/research-agent/</id>
+    <link href="https://keeganjin.github.io/2026/04/16/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/research-agent/"/>
+    <published>2026-04-15T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="研究-Agent-的应用场景"><a href="#研究-Agent-的应用场景" class="headerlink" title="研究 Agent 的应用场景"></a>研究 Agent 的应用场景</h2><p>自动研究 Agent]]>
+    </summary>
+    <title>自动研究 Agent</title>
+    <updated>2026-05-17T16:21:20.934Z</updated>
+  </entry>
+  <entry>
+    <author>
+      <name>That Jin</name>
+    </author>
+    <category term="技术文档" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/"/>
+    <category term="Agent" scheme="https://keeganjin.github.io/tags/Agent/"/>
+    <category term="客服" scheme="https://keeganjin.github.io/tags/%E5%AE%A2%E6%9C%8D/"/>
+    <category term="对话系统" scheme="https://keeganjin.github.io/tags/%E5%AF%B9%E8%AF%9D%E7%B3%BB%E7%BB%9F/"/>
+    <id>https://keeganjin.github.io/2026/04/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/customer-service-agent/</id>
+    <link href="https://keeganjin.github.io/2026/04/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/customer-service-agent/"/>
+    <published>2026-04-12T16:00:00.000Z</published>
+    <summary>
+      <![CDATA[<h2 id="客服-Agent-的优势"><a href="#客服-Agent-的优势" class="headerlink" title="客服 Agent 的优势"></a>客服 Agent 的优势</h2><p>客户服务 Agent（客服]]>
+    </summary>
+    <title>客户服务 Agent</title>
+    <updated>2026-05-17T16:21:20.865Z</updated>
+  </entry>
+</feed>

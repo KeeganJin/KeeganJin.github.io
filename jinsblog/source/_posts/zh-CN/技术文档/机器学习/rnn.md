@@ -1,6 +1,6 @@
 ---
 title: 循环神经网络（RNN）
-date: 2026-04-18
+date: 2025-12-23
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 深度学习, RNN]

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>微调技术详解 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="全量微调微调的概念微调是在预训练模型基础上，针对特定任务继续训练。 流程： 1预训练模型 → 加载 → 在特定数据训练 → 任务模型  全量微调方法更新模型所有参数： 训练过程：  加载预训练权重 添加任务特定层 用较小学习率训练 更新所有参数  全量微调参数   参数 建议值    学习率 1e-5 - 5e-5   批量大小 8-32   迭代次数 3-10   123456789101112">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微调技术详解">
+<meta property="og:url" content="https://keeganjin.github.io/2026/02/11/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/fine-tuning/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="全量微调微调的概念微调是在预训练模型基础上，针对特定任务继续训练。 流程： 1预训练模型 → 加载 → 在特定数据训练 → 任务模型  全量微调方法更新模型所有参数： 训练过程：  加载预训练权重 添加任务特定层 用较小学习率训练 更新所有参数  全量微调参数   参数 建议值    学习率 1e-5 - 5e-5   批量大小 8-32   迭代次数 3-10   123456789101112">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-02-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-17T16:20:38.128Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="大模型">
+<meta property="article:tag" content="微调">
+<meta property="article:tag" content="机器学习">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+
+  <!-- Nordic Zen Fonts: Noto Serif SC for elegant reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+
+  <!-- MathJax for math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$', '$'], ['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Life Notes</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/机器学习/fine-tuning" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/02/11/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/fine-tuning/" class="article-date">
+  <time class="dt-published" datetime="2026-02-10T16:00:00.000Z" itemprop="datePublished">2026-02-11</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      微调技术详解
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="全量微调"><a href="#全量微调" class="headerlink" title="全量微调"></a>全量微调</h2><h3 id="微调的概念"><a href="#微调的概念" class="headerlink" title="微调的概念"></a>微调的概念</h3><p>微调是在预训练模型基础上，针对特定任务继续训练。</p>
+<p><strong>流程</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">预训练模型 → 加载 → 在特定数据训练 → 任务模型</span><br></pre></td></tr></table></figure>
+
+<h3 id="全量微调方法"><a href="#全量微调方法" class="headerlink" title="全量微调方法"></a>全量微调方法</h3><p>更新模型所有参数：</p>
+<p><strong>训练过程</strong>：</p>
+<ul>
+<li>加载预训练权重</li>
+<li>添加任务特定层</li>
+<li>用较小学习率训练</li>
+<li>更新所有参数</li>
+</ul>
+<h3 id="全量微调参数"><a href="#全量微调参数" class="headerlink" title="全量微调参数"></a>全量微调参数</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>建议值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>学习率</td>
+<td>1e-5 - 5e-5</td>
+</tr>
+<tr>
+<td>批量大小</td>
+<td>8-32</td>
+</tr>
+<tr>
+<td>迭代次数</td>
+<td>3-10</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BertForSequenceClassification, Trainer</span><br><span class="line"></span><br><span class="line">model = BertForSequenceClassification.from_pretrained(<span class="string">&#x27;bert-base-uncased&#x27;</span>, num_labels=<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 全量微调</span></span><br><span class="line">trainer = Trainer(</span><br><span class="line">    model=model,</span><br><span class="line">    args=TrainingArguments(</span><br><span class="line">        learning_rate=<span class="number">2e-5</span>,</span><br><span class="line">        num_train_epochs=<span class="number">3</span></span><br><span class="line">    ),</span><br><span class="line">    train_dataset=train_dataset</span><br><span class="line">)</span><br><span class="line">trainer.train()</span><br></pre></td></tr></table></figure>
+
+<h3 id="全量微调的优缺点"><a href="#全量微调的优缺点" class="headerlink" title="全量微调的优缺点"></a>全量微调的优缺点</h3><table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>效果最好</td>
+<td>计算成本高</td>
+</tr>
+<tr>
+<td>简单直接</td>
+<td>需要存储完整模型</td>
+</tr>
+<tr>
+<td>通用性强</td>
+<td>可能过拟合</td>
+</tr>
+</tbody></table>
+<h2 id="任务特定微调"><a href="#任务特定微调" class="headerlink" title="任务特定微调"></a>任务特定微调</h2><h3 id="分类任务微调"><a href="#分类任务微调" class="headerlink" title="分类任务微调"></a>分类任务微调</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForSequenceClassification</span><br><span class="line"></span><br><span class="line">model = AutoModelForSequenceClassification.from_pretrained(<span class="string">&#x27;bert-base-uncased&#x27;</span>, num_labels=num_classes)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加分类头</span></span><br><span class="line"><span class="comment"># 微调训练</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="生成任务微调"><a href="#生成任务微调" class="headerlink" title="生成任务微调"></a>生成任务微调</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForCausalLM</span><br><span class="line"></span><br><span class="line">model = AutoModelForCausalLM.from_pretrained(<span class="string">&#x27;gpt2&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 继续训练语言模型</span></span><br><span class="line"><span class="comment"># 或特定生成任务</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="序列标注微调"><a href="#序列标注微调" class="headerlink" title="序列标注微调"></a>序列标注微调</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForTokenClassification</span><br><span class="line"></span><br><span class="line">model = AutoModelForTokenClassification.from_pretrained(<span class="string">&#x27;bert-base-uncased&#x27;</span>, num_labels=num_tags)</span><br><span class="line"></span><br><span class="line"><span class="comment"># NER、POS等任务</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="问答任务微调"><a href="#问答任务微调" class="headerlink" title="问答任务微调"></a>问答任务微调</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForQuestionAnswering</span><br><span class="line"></span><br><span class="line">model = AutoModelForQuestionAnswering.from_pretrained(<span class="string">&#x27;bert-base-uncased&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 提取式问答</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Prompt-Tuning"><a href="#Prompt-Tuning" class="headerlink" title="Prompt Tuning"></a>Prompt Tuning</h2><h3 id="Prompt-Tuning原理"><a href="#Prompt-Tuning原理" class="headerlink" title="Prompt Tuning原理"></a>Prompt Tuning原理</h3><p>冻结模型，只训练可学习的提示向量：</p>
+<p>$输入 &#x3D; [P_1, P_2, …, P_m] + [x_1, x_2, …, x_n]$</p>
+<p>其中 $P_i$ 是可学习的提示向量。</p>
+<h3 id="Prompt-Tuning流程"><a href="#Prompt-Tuning流程" class="headerlink" title="Prompt Tuning流程"></a>Prompt Tuning流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">冻结模型 ← 只更新提示</span><br><span class="line">    ↑</span><br><span class="line">[可学习提示] + [实际输入]</span><br></pre></td></tr></table></figure>
+
+<h3 id="Prompt-Tuning参数"><a href="#Prompt-Tuning参数" class="headerlink" title="Prompt Tuning参数"></a>Prompt Tuning参数</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>建议值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>提示长度</td>
+<td>10-100</td>
+</tr>
+<tr>
+<td>初始化</td>
+<td>随机或词汇</td>
+</tr>
+<tr>
+<td>训练轮数</td>
+<td>比全量多</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> PromptTuningConfig, get_peft_model</span><br><span class="line"></span><br><span class="line">config = PromptTuningConfig(</span><br><span class="line">    task_type=<span class="string">&quot;SEQ_CLS&quot;</span>,</span><br><span class="line">    num_virtual_tokens=<span class="number">20</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">model = get_peft_model(model, config)</span><br><span class="line">model.print_trainable_parameters()</span><br><span class="line"><span class="comment"># 输出: trainable params: 20 * d_model || all params: 110M</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Prompt-Tuning优缺点"><a href="#Prompt-Tuning优缺点" class="headerlink" title="Prompt Tuning优缺点"></a>Prompt Tuning优缺点</h3><table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>参数极少</td>
+<td>效果略低于全量</td>
+</tr>
+<tr>
+<td>存储小</td>
+<td>需较长时间收敛</td>
+</tr>
+<tr>
+<td>易切换任务</td>
+<td>提示长度需调优</td>
+</tr>
+</tbody></table>
+<h2 id="Prefix-Tuning"><a href="#Prefix-Tuning" class="headerlink" title="Prefix Tuning"></a>Prefix Tuning</h2><h3 id="Prefix-Tuning原理"><a href="#Prefix-Tuning原理" class="headerlink" title="Prefix Tuning原理"></a>Prefix Tuning原理</h3><p>在每层添加可学习的前缀向量：</p>
+<p>$h_i &#x3D; f([prefix; h_{i-1}])$</p>
+<p>每层都有独立的可学习前缀。</p>
+<h3 id="Prefix-Tuning-vs-Prompt-Tuning"><a href="#Prefix-Tuning-vs-Prompt-Tuning" class="headerlink" title="Prefix Tuning vs Prompt Tuning"></a>Prefix Tuning vs Prompt Tuning</h3><table>
+<thead>
+<tr>
+<th>方面</th>
+<th>Prompt Tuning</th>
+<th>Prefix Tuning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>插入位置</td>
+<td>仅输入层</td>
+<td>每层</td>
+</tr>
+<tr>
+<td>参数数量</td>
+<td>少</td>
+<td>较多</td>
+</tr>
+<tr>
+<td>效果</td>
+<td>中等</td>
+<td>更好</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> PrefixTuningConfig</span><br><span class="line"></span><br><span class="line">config = PrefixTuningConfig(</span><br><span class="line">    task_type=<span class="string">&quot;SEQ_2_SEQ_LM&quot;</span>,</span><br><span class="line">    num_virtual_tokens=<span class="number">20</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">model = get_peft_model(model, config)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Prefix-Tuning的实现"><a href="#Prefix-Tuning的实现" class="headerlink" title="Prefix Tuning的实现"></a>Prefix Tuning的实现</h3><p>每层添加前缀：</p>
+<ul>
+<li>编码器每层</li>
+<li>解码器每层</li>
+<li>前缀参数可学习</li>
+</ul>
+<h2 id="LoRA低秩适配"><a href="#LoRA低秩适配" class="headerlink" title="LoRA低秩适配"></a>LoRA低秩适配</h2><h3 id="LoRA原理"><a href="#LoRA原理" class="headerlink" title="LoRA原理"></a>LoRA原理</h3><p>低秩适配（Low-Rank Adaptation）通过低秩矩阵修改权重：</p>
+<p>$W’ &#x3D; W + BA$</p>
+<p>其中：</p>
+<ul>
+<li>B: $[d \times r]$</li>
+<li>A: $[r \times d]$</li>
+<li>r &lt;&lt; d（低秩）</li>
+</ul>
+<h3 id="LoRA的数学基础"><a href="#LoRA的数学基础" class="headerlink" title="LoRA的数学基础"></a>LoRA的数学基础</h3><p>原权重W冻结，只训练A和B：</p>
+<p>$\Delta W &#x3D; BA$</p>
+<p><strong>参数量</strong>：$2 \times d \times r$ vs $d \times d$</p>
+<p>当$r$小（如4-8），参数量大幅减少。</p>
+<h3 id="LoRA参数"><a href="#LoRA参数" class="headerlink" title="LoRA参数"></a>LoRA参数</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>建议值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>rank (r)</td>
+<td>4-64</td>
+</tr>
+<tr>
+<td>alpha</td>
+<td>16-32</td>
+</tr>
+<tr>
+<td>dropout</td>
+<td>0.05</td>
+</tr>
+</tbody></table>
+<h3 id="LoRA的优势"><a href="#LoRA的优势" class="headerlink" title="LoRA的优势"></a>LoRA的优势</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>参数少</td>
+<td>只训练低秩矩阵</td>
+</tr>
+<tr>
+<td>效果好</td>
+<td>接近全量微调</td>
+</tr>
+<tr>
+<td>合奏</td>
+<td>可合并回原权重</td>
+</tr>
+<tr>
+<td>无推理开销</td>
+<td>合并后与原模型同</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> LoraConfig, get_peft_model</span><br><span class="line"></span><br><span class="line">config = LoraConfig(</span><br><span class="line">    r=<span class="number">8</span>,</span><br><span class="line">    lora_alpha=<span class="number">32</span>,</span><br><span class="line">    target_modules=[<span class="string">&quot;q_proj&quot;</span>, <span class="string">&quot;v_proj&quot;</span>],</span><br><span class="line">    lora_dropout=<span class="number">0.05</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">model = get_peft_model(model, config)</span><br><span class="line">model.print_trainable_parameters()</span><br><span class="line"><span class="comment"># trainable params: ~0.1% of total</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="LoRA应用模块"><a href="#LoRA应用模块" class="headerlink" title="LoRA应用模块"></a>LoRA应用模块</h3><p>通常应用于：</p>
+<ul>
+<li>注意力层（q_proj, v_proj等）</li>
+<li>可扩展到全层</li>
+</ul>
+<h3 id="LoRA合并"><a href="#LoRA合并" class="headerlink" title="LoRA合并"></a>LoRA合并</h3><p>训练后可将LoRA合并到原权重：</p>
+<p>$W_{merged} &#x3D; W + \frac{\alpha}{r}BA$</p>
+<p>合并后无额外推理开销。</p>
+<h2 id="QLoRA量化微调"><a href="#QLoRA量化微调" class="headerlink" title="QLoRA量化微调"></a>QLoRA量化微调</h2><h3 id="QLoRA原理"><a href="#QLoRA原理" class="headerlink" title="QLoRA原理"></a>QLoRA原理</h3><p>结合量化（4-bit）和LoRA：</p>
+<p><strong>流程</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">4-bit量化模型 → LoRA适配器 → 微调 → 合并</span><br></pre></td></tr></table></figure>
+
+<h3 id="QLoRA的技术"><a href="#QLoRA的技术" class="headerlink" title="QLoRA的技术"></a>QLoRA的技术</h3><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>4-bit NormalFloat</td>
+<td>量化数据类型</td>
+</tr>
+<tr>
+<td>双量化</td>
+<td>进一步压缩</td>
+</tr>
+<tr>
+<td>Paged Optimizers</td>
+<td>内存优化</td>
+</tr>
+</tbody></table>
+<h3 id="QLoRA的优势"><a href="#QLoRA的优势" class="headerlink" title="QLoRA的优势"></a>QLoRA的优势</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内存极少</td>
+<td>可微调65B模型</td>
+</tr>
+<tr>
+<td>速度快</td>
+<td>单GPU可行</td>
+</tr>
+<tr>
+<td>效果好</td>
+<td>接近16-bit LoRA</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> LoraConfig</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> BitsAndBytesConfig</span><br><span class="line"></span><br><span class="line"><span class="comment"># 量化配置</span></span><br><span class="line">bnb_config = BitsAndBytesConfig(</span><br><span class="line">    load_in_4bit=<span class="literal">True</span>,</span><br><span class="line">    bnb_4bit_quant_type=<span class="string">&quot;nf4&quot;</span>,</span><br><span class="line">    bnb_4bit_compute_dtype=torch.float16</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载量化模型</span></span><br><span class="line">model = AutoModelForCausalLM.from_pretrained(</span><br><span class="line">    <span class="string">&quot;model_name&quot;</span>,</span><br><span class="line">    quantization_config=bnb_config</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># LoRA配置</span></span><br><span class="line">lora_config = LoraConfig(r=<span class="number">16</span>, lora_alpha=<span class="number">32</span>)</span><br><span class="line">model = get_peft_model(model, lora_config)</span><br></pre></td></tr></table></figure>
+
+<h3 id="QLoRA-vs-LoRA"><a href="#QLoRA-vs-LoRA" class="headerlink" title="QLoRA vs LoRA"></a>QLoRA vs LoRA</h3><table>
+<thead>
+<tr>
+<th>方面</th>
+<th>LoRA</th>
+<th>QLoRA</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内存</td>
+<td>中等</td>
+<td>极低</td>
+</tr>
+<tr>
+<td>速度</td>
+<td>快</td>
+<td>更快</td>
+</tr>
+<tr>
+<td>精度</td>
+<td>高</td>
+<td>略低</td>
+</tr>
+<tr>
+<td>适用场景</td>
+<td>GPU充足</td>
+<td>GPU有限</td>
+</tr>
+</tbody></table>
+<h2 id="微调策略选择"><a href="#微调策略选择" class="headerlink" title="微调策略选择"></a>微调策略选择</h2><h3 id="各方法对比"><a href="#各方法对比" class="headerlink" title="各方法对比"></a>各方法对比</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>参数量</th>
+<th>效果</th>
+<th>内存</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>全量微调</td>
+<td>100%</td>
+<td>最好</td>
+<td>高</td>
+</tr>
+<tr>
+<td>Prompt Tuning</td>
+<td>&lt;1%</td>
+<td>中等</td>
+<td>低</td>
+</tr>
+<tr>
+<td>Prefix Tuning</td>
+<td>~1%</td>
+<td>较好</td>
+<td>低</td>
+</tr>
+<tr>
+<td>LoRA</td>
+<td>~1%</td>
+<td>接近全量</td>
+<td>低</td>
+</tr>
+<tr>
+<td>QLoRA</td>
+<td>~1%</td>
+<td>接近LoRA</td>
+<td>极低</td>
+</tr>
+</tbody></table>
+<h3 id="选择建议"><a href="#选择建议" class="headerlink" title="选择建议"></a>选择建议</h3><table>
+<thead>
+<tr>
+<th>场景</th>
+<th>推荐方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>效果优先</td>
+<td>全量微调或LoRA</td>
+</tr>
+<tr>
+<td>内存有限</td>
+<td>QLoRA</td>
+</tr>
+<tr>
+<td>多任务切换</td>
+<td>Prompt Tuning</td>
+</tr>
+<tr>
+<td>快速实验</td>
+<td>LoRA</td>
+</tr>
+</tbody></table>
+<h2 id="案例实践"><a href="#案例实践" class="headerlink" title="案例实践"></a>案例实践</h2><h3 id="LoRA微调示例"><a href="#LoRA微调示例" class="headerlink" title="LoRA微调示例"></a>LoRA微调示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForCausalLM, AutoTokenizer</span><br><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> LoraConfig, get_peft_model, TaskType</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载模型</span></span><br><span class="line">model = AutoModelForCausalLM.from_pretrained(<span class="string">&quot;decapoda-research/llama-7b-hf&quot;</span>)</span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(<span class="string">&quot;decapoda-research/llama-7b-hf&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># LoRA配置</span></span><br><span class="line">config = LoraConfig(</span><br><span class="line">    task_type=TaskType.CAUSAL_LM,</span><br><span class="line">    r=<span class="number">8</span>,</span><br><span class="line">    lora_alpha=<span class="number">32</span>,</span><br><span class="line">    lora_dropout=<span class="number">0.1</span>,</span><br><span class="line">    target_modules=[<span class="string">&quot;q_proj&quot;</span>, <span class="string">&quot;v_proj&quot;</span>]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 应用LoRA</span></span><br><span class="line">model = get_peft_model(model, config)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练</span></span><br><span class="line">trainer = Trainer(</span><br><span class="line">    model=model,</span><br><span class="line">    args=TrainingArguments(</span><br><span class="line">        output_dir=<span class="string">&quot;./output&quot;</span>,</span><br><span class="line">        learning_rate=<span class="number">1e-4</span>,</span><br><span class="line">        num_train_epochs=<span class="number">3</span></span><br><span class="line">    ),</span><br><span class="line">    train_dataset=train_dataset</span><br><span class="line">)</span><br><span class="line">trainer.train()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存LoRA权重</span></span><br><span class="line">model.save_pretrained(<span class="string">&quot;./lora_weights&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="合并LoRA权重"><a href="#合并LoRA权重" class="headerlink" title="合并LoRA权重"></a>合并LoRA权重</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> PeftModel</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载原模型 + LoRA</span></span><br><span class="line">base_model = AutoModelForCausalLM.from_pretrained(<span class="string">&quot;base_model&quot;</span>)</span><br><span class="line">model = PeftModel.from_pretrained(base_model, <span class="string">&quot;./lora_weights&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 合并</span></span><br><span class="line">merged_model = model.merge_and_unload()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存合并后的模型</span></span><br><span class="line">merged_model.save_pretrained(<span class="string">&quot;./merged_model&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="QLoRA微调"><a href="#QLoRA微调" class="headerlink" title="QLoRA微调"></a>QLoRA微调</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForCausalLM, BitsAndBytesConfig</span><br><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> LoraConfig, get_peft_model</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4-bit量化</span></span><br><span class="line">bnb_config = BitsAndBytesConfig(</span><br><span class="line">    load_in_4bit=<span class="literal">True</span>,</span><br><span class="line">    bnb_4bit_compute_dtype=torch.bfloat16,</span><br><span class="line">    bnb_4bit_quant_type=<span class="string">&quot;nf4&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">model = AutoModelForCausalLM.from_pretrained(</span><br><span class="line">    <span class="string">&quot;meta-llama/Llama-2-7b-hf&quot;</span>,</span><br><span class="line">    quantization_config=bnb_config</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># LoRA</span></span><br><span class="line">lora_config = LoraConfig(</span><br><span class="line">    r=<span class="number">16</span>,</span><br><span class="line">    lora_alpha=<span class="number">32</span>,</span><br><span class="line">    target_modules=[<span class="string">&quot;q_proj&quot;</span>, <span class="string">&quot;k_proj&quot;</span>, <span class="string">&quot;v_proj&quot;</span>, <span class="string">&quot;o_proj&quot;</span>]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">model = get_peft_model(model, lora_config)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练（内存极少）</span></span><br><span class="line">trainer.train()</span><br></pre></td></tr></table></figure>
+
+<h3 id="Prompt-Tuning示例"><a href="#Prompt-Tuning示例" class="headerlink" title="Prompt Tuning示例"></a>Prompt Tuning示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> PromptTuningConfig, get_peft_model, TaskType</span><br><span class="line"></span><br><span class="line">config = PromptTuningConfig(</span><br><span class="line">    task_type=TaskType.CAUSAL_LM,</span><br><span class="line">    num_virtual_tokens=<span class="number">20</span>,</span><br><span class="line">    token_dim=<span class="number">768</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">model = get_peft_model(model, config)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 只训练提示向量</span></span><br><span class="line">model.print_trainable_parameters()</span><br></pre></td></tr></table></figure>
+
+<h3 id="多LoRA适配器管理"><a href="#多LoRA适配器管理" class="headerlink" title="多LoRA适配器管理"></a>多LoRA适配器管理</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 训练多个LoRA适配器</span></span><br><span class="line"><span class="keyword">for</span> task <span class="keyword">in</span> tasks:</span><br><span class="line">    config = LoraConfig(r=<span class="number">8</span>, lora_alpha=<span class="number">32</span>)</span><br><span class="line">    model = get_peft_model(base_model, config)</span><br><span class="line">    trainer.train()</span><br><span class="line">    model.save_pretrained(<span class="string">f&quot;./lora_<span class="subst">&#123;task&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用时加载</span></span><br><span class="line">model = PeftModel.from_pretrained(base_model, <span class="string">f&quot;./lora_<span class="subst">&#123;task&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="微调最佳实践"><a href="#微调最佳实践" class="headerlink" title="微调最佳实践"></a>微调最佳实践</h2><h3 id="学习率选择"><a href="#学习率选择" class="headerlink" title="学习率选择"></a>学习率选择</h3><table>
+<thead>
+<tr>
+<th>模型规模</th>
+<th>建议学习率</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>小（&lt;100M）</td>
+<td>5e-5 - 1e-4</td>
+</tr>
+<tr>
+<td>中（100M-1B）</td>
+<td>1e-5 - 5e-5</td>
+</tr>
+<tr>
+<td>大（&gt;1B）</td>
+<td>1e-6 - 1e-5</td>
+</tr>
+<tr>
+<td>LoRA</td>
+<td>1e-4 - 5e-4</td>
+</tr>
+</tbody></table>
+<h3 id="数据准备"><a href="#数据准备" class="headerlink" title="数据准备"></a>数据准备</h3><table>
+<thead>
+<tr>
+<th>建议</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>格式统一</td>
+<td>标准化输入输出</td>
+</tr>
+<tr>
+<td>清洗数据</td>
+<td>去噪、去重复</td>
+</tr>
+<tr>
+<td>验证集</td>
+<td>保留验证数据</td>
+</tr>
+</tbody></table>
+<h3 id="避免过拟合"><a href="#避免过拟合" class="headerlink" title="避免过拟合"></a>避免过拟合</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>早停</td>
+<td>监控验证损失</td>
+</tr>
+<tr>
+<td>正则化</td>
+<td>权重衰减</td>
+</tr>
+<tr>
+<td>数据增强</td>
+<td>扩充数据</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>微调是利用预训练模型的关键技术。核心内容包括：</p>
+<ul>
+<li>全量微调：更新所有参数，效果最好</li>
+<li>Prompt Tuning：只训练提示向量，参数最少</li>
+<li>Prefix Tuning：每层添加可学习前缀</li>
+<li>LoRA：低秩适配，参数少效果好</li>
+<li>QLoRA：量化+LoRA，内存极少</li>
+</ul>
+<p>LoRA和QLoRA是现代大模型微调的主流方法。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/pretraining-lm/">预训练语言模型</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/llm-architecture/">大模型架构演进</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/model-compression/">模型压缩与加速</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/transformer/">Transformer架构详解</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/02/11/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/fine-tuning/" data-id="cuidV4SaHXa9lKwBVajlQ77mn" data-title="微调技术详解" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" rel="tag">大模型</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BE%AE%E8%B0%83/" rel="tag">微调</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/02/14/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/prompt-engineering/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          上下文学习与提示工程
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/02/08/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/pretraining-lm/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">预训练语言模型</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><span class="category-list-count">77</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">50</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/LM-2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/17/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/02/">二月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">一月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a><span class="archive-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        All content licensed under CC BY 4.0
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

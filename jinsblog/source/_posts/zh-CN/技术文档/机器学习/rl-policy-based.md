@@ -1,6 +1,6 @@
 ---
 title: 基于策略的方法
-date: 2026-04-16
+date: 2026-01-23
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 强化学习, Policy Gradient, PPO]

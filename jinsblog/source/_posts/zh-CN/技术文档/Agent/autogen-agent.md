@@ -1,6 +1,6 @@
 ---
 title: AutoGen 多 Agent 实践
-date: 2026-05-10
+date: 2026-03-19
 categories: [技术文档, Agent]
 lang: zh-CN
 tags: [Agent, AutoGen, Multi-Agent]

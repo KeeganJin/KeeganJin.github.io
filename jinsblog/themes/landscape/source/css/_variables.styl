@@ -2,45 +2,54 @@
 support-for-ie = false
 vendor-prefixes = webkit moz ms official
 
-// Colors
-color-default = #555
-color-grey = #999
-color-border = #ddd
-color-link = #258fb8
-color-background = #eee
-color-sidebar-text = #777
-color-widget-background = #ddd
-color-widget-border = #ccc
-color-footer-background = #262a30
-color-mobile-nav-background = #191919
+// ========================================
+// Nordic Zen Theme Colors (北欧极简白)
+// ========================================
+// Warm ochre accent, high contrast, refined serif aesthetic
+
+color-default = #2D3748      // 深灰蓝 - 正文颜色
+color-grey = #64748B        // 灰蓝色 - 次级文字
+color-border = #E2E8F0      // 浅灰边框
+color-link = #B87D4B        // 暖赭色 - 主强调色
+color-background = #FAF8F5  // 温暖米白 - 页面背景
+color-sidebar-text = #475569 // 侧栏文字
+color-widget-background = #F3ECE3 // 暖色小部件背景
+color-widget-border = #E2E8F0
+color-footer-background = #F7F5F2  // 温暖的页脚背景
+color-mobile-nav-background = #FAF8F5
+
+// Social colors (保留)
 color-twitter = #00aced
 color-facebook = #3b5998
 color-pinterest = #cb2027
 color-linkedin = #0077B5
 
-// Fonts
-font-sans = -apple-system, BlinkMacSystemFont,
-    "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
-    "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif
-font-serif = Georgia, "Times New Roman", serif
-font-mono = "Source Code Pro", Consolas, Monaco, Menlo, Consolas, monospace
+// ========================================
+// Fonts (北欧极简衬线风格)
+// ========================================
+font-sans = "Noto Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif
+font-serif = "Noto Serif SC", Georgia, "Times New Roman", serif
+font-mono = "Fira Code", "Source Code Pro", Consolas, Monaco, monospace
 font-icon = ForkAwesome
-font-size = 14px
-line-height = 1.6em
-line-height-title = 1.1em
+font-size = 15px           // 略大的正文，阅读舒适
+line-height = 1.75em       // 宽松的行高
+line-height-title = 1.3em
 
-// Header
-logo-size = 40px
-subtitle-size = 16px
-banner-height = 300px
-banner-url = hexo-config("banner")
+// ========================================
+// Header (北欧极简 - 无banner，纯文字header)
+// ========================================
+logo-size = 32px
+subtitle-size = 14px
+banner-height = 0          // 移除banner
+banner-url = ""
 
 sidebar = hexo-config("sidebar")
 
-// Layout
-block-margin = 50px
-article-padding = 20px
+// ========================================
+// Layout (左侧边栏 + 圆角卡片)
+// ========================================
+block-margin = 40px
+article-padding = 28px     // 更宽松的内边距
 mobile-nav-width = 280px
 main-column = 9
 sidebar-column = 3
@@ -50,12 +59,23 @@ if sidebar and sidebar isnt bottom
 else
   _sidebar-column = 0
 
+// ========================================
 // Grids
+// ========================================
 column-width = 80px
-gutter-width = 20px
+gutter-width = 24px
 columns = main-column + _sidebar-column
 
+// ========================================
+// Border Radius (中等圆角)
+// ========================================
+radius-sm = 4px
+radius-md = 8px
+radius-lg = 12px
+
+// ========================================
 // Media queries
+// ========================================
 mq-mobile = "screen and (max-width: 479px)"
 mq-tablet = "screen and (min-width: 480px) and (max-width: 767px)"
 mq-normal = "screen and (min-width: 768px)"

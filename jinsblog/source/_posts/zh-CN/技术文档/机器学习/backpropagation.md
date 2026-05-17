@@ -1,6 +1,6 @@
 ---
 title: 反向传播算法详解
-date: 2026-04-12
+date: 2025-12-07
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 神经网络, 反向传播]

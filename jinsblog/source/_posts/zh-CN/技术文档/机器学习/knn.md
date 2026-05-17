@@ -1,6 +1,6 @@
 ---
 title: K近邻（KNN）
-date: 2026-04-26
+date: 2025-10-21
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, KNN, 分类算法]

@@ -1,3 +1,7 @@
+// ========================================
+// Nordic Zen Archive (北欧极简白归档页)
+// ========================================
+
 .archives-wrap
   margin: block-margin 0
 
@@ -5,13 +9,17 @@
   clearfix()
 
 .archive-year-wrap
-  margin-bottom: 1em
+  margin-bottom: 1.5em
 
 .archive-year
   @extend $block-caption
+  font-size: 14px
+  color: #1A202C
+  font-weight: 700
+  letter-spacing: 3px
 
 .archives
-  column-gap: 10px
+  column-gap: 20px
   @media mq-tablet
     column-count: 2
   @media mq-normal
@@ -22,59 +30,70 @@
 
 .archive-article-inner
   @extend $block
-  padding: 10px
-  margin-bottom: 15px
+  padding: 16px
+  margin-bottom: 16px
+  border-radius: radius-md
 
 .archive-article-title
   text-decoration: none
-  font-weight: bold
-  color: color-default
-  transition: color 0.2s
-  line-height: line-height
+  font-family: font-serif
+  font-weight: 700
+  font-size: 16px
+  color: #1A202C
+  transition: color 0.3s ease
+  line-height: 1.4
+  display: block
   &:hover
     color: color-link
 
 .archive-article-footer
-  margin-top: 1em
+  margin-top: 8px
+  font-family: font-sans
 
 .archive-article-date
   color: color-grey
   text-decoration: none
-  font-size: 0.85em
+  font-size: 13px
+  font-family: font-sans
   line-height: 1em
-  margin-bottom: 0.5em
+  margin-bottom: 8px
   display: block
 
 #page-nav
   clearfix()
   margin: block-margin auto
-  background: #fff
-  box-shadow: 1px 2px 3px #ddd
+  background: #FFFFFF
   border: 1px solid color-border
-  border-radius: 3px
+  border-radius: radius-md
   text-align: center
   color: color-grey
   overflow: hidden
+  font-family: font-sans
   a, span
-    padding: 10px 20px
+    padding: 12px 20px
     line-height: 1
-    height: 2ex
+    display: inline-block
+    transition: all 0.3s ease
   a
     color: color-grey
     text-decoration: none
     &:hover
-      background: color-grey
-      color: #fff
+      background: color-link
+      color: #FFFFFF
+      border-radius: radius-md
   .prev
     float: left
+    border-right: 1px solid color-border
   .next
     float: right
+    border-left: 1px solid color-border
   .page-number
     display: inline-block
     @media mq-mobile
       display: none
   .current
-    color: color-default
-    font-weight: bold
+    color: color-link
+    font-weight: 700
+    background: color-widget-background
   .space
     color: color-border

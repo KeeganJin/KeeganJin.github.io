@@ -1,6 +1,6 @@
 ---
 title: 激活函数详解
-date: 2026-04-10
+date: 2025-12-04
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 神经网络, 激活函数]

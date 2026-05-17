@@ -1,6 +1,6 @@
 ---
 title: 优化算法详解
-date: 2026-05-08
+date: 2025-12-17
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 神经网络, 优化算法]

@@ -1,6 +1,6 @@
 ---
 title: Agent 入门指南
-date: 2026-05-10
+date: 2026-02-26
 categories: [技术文档, Agent]
 lang: zh-CN
 translation: /2026/05/10/en/tech-docs/agent/agent-introduction/

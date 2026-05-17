@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>扩散模型详解 | Jin&#39;s Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="扩散模型原理扩散过程概述扩散模型通过：  前向扩散：逐步添加噪声 反向去噪：逐步恢复数据  前向扩散过程逐步向数据添加噪声：$x_t &#x3D; \sqrt{1-\beta_t}x_{t-1} + \sqrt{\beta_t}\epsilon_t$ 其中 $\epsilon_t \sim \mathcal{N}(0, I)$。 反向去噪过程学习逐步去噪：$p(x_{t-1}|x_t) &amp;#x3D">
+<meta property="og:type" content="article">
+<meta property="og:title" content="扩散模型详解">
+<meta property="og:url" content="https://keeganjin.github.io/2026/01/14/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/diffusion-models/index.html">
+<meta property="og:site_name" content="Jin&#39;s Blog">
+<meta property="og:description" content="扩散模型原理扩散过程概述扩散模型通过：  前向扩散：逐步添加噪声 反向去噪：逐步恢复数据  前向扩散过程逐步向数据添加噪声：$x_t &#x3D; \sqrt{1-\beta_t}x_{t-1} + \sqrt{\beta_t}\epsilon_t$ 其中 $\epsilon_t \sim \mathcal{N}(0, I)$。 反向去噪过程学习逐步去噪：$p(x_{t-1}|x_t) &amp;#x3D">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-01-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-17T16:20:33.504Z">
+<meta property="article:author" content="That Jin">
+<meta property="article:tag" content="扩散模型">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="生成模型">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jin's Blog" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+
+  <!-- Nordic Zen Fonts: Noto Serif SC for elegant reading -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fork-awesome@1.2.0/css/fork-awesome.min.css">
+
+
+  <!-- MathJax for math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['$', '$'], ['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 8.1.2"></head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jin&#39;s Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Tech &amp; Life Notes</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon lang-switch" href="/en/" title="English"><span>EN</span></a>
+        
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS 订阅"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="搜索"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://keeganjin.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-zh-CN/技术文档/机器学习/diffusion-models" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2026/01/14/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/diffusion-models/" class="article-date">
+  <time class="dt-published" datetime="2026-01-13T16:00:00.000Z" itemprop="datePublished">2026-01-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a>►<a class="article-category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      扩散模型详解
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="扩散模型原理"><a href="#扩散模型原理" class="headerlink" title="扩散模型原理"></a>扩散模型原理</h2><h3 id="扩散过程概述"><a href="#扩散过程概述" class="headerlink" title="扩散过程概述"></a>扩散过程概述</h3><p>扩散模型通过：</p>
+<ul>
+<li>前向扩散：逐步添加噪声</li>
+<li>反向去噪：逐步恢复数据</li>
+</ul>
+<h3 id="前向扩散过程"><a href="#前向扩散过程" class="headerlink" title="前向扩散过程"></a>前向扩散过程</h3><p>逐步向数据添加噪声：<br>$x_t &#x3D; \sqrt{1-\beta_t}x_{t-1} + \sqrt{\beta_t}\epsilon_t$</p>
+<p>其中 $\epsilon_t \sim \mathcal{N}(0, I)$。</p>
+<h3 id="反向去噪过程"><a href="#反向去噪过程" class="headerlink" title="反向去噪过程"></a>反向去噪过程</h3><p>学习逐步去噪：<br>$p(x_{t-1}|x_t) &#x3D; \mathcal{N}(x_{t-1}; \mu_\theta(x_t, t), \sigma_t^2 I)$</p>
+<p>神经网络学习去噪函数。</p>
+<h3 id="与其他生成模型对比"><a href="#与其他生成模型对比" class="headerlink" title="与其他生成模型对比"></a>与其他生成模型对比</h3><table>
+<thead>
+<tr>
+<th>模型</th>
+<th>原理</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>VAE</td>
+<td>编码-解码</td>
+</tr>
+<tr>
+<td>GAN</td>
+<td>对抗训练</td>
+</tr>
+<tr>
+<td>扩散模型</td>
+<td>逐步去噪</td>
+</tr>
+</tbody></table>
+<h3 id="扩散模型优势"><a href="#扩散模型优势" class="headerlink" title="扩散模型优势"></a>扩散模型优势</h3><table>
+<thead>
+<tr>
+<th>优势</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>训练稳定</td>
+<td>无对抗不稳定</td>
+</tr>
+<tr>
+<td>高质量生成</td>
+<td>生成质量优秀</td>
+</tr>
+<tr>
+<td>理论清晰</td>
+<td>概率框架明确</td>
+</tr>
+<tr>
+<td>灵活条件</td>
+<td>易加条件控制</td>
+</tr>
+</tbody></table>
+<h2 id="DDPM算法"><a href="#DDPM算法" class="headerlink" title="DDPM算法"></a>DDPM算法</h2><h3 id="DDPM原理"><a href="#DDPM原理" class="headerlink" title="DDPM原理"></a>DDPM原理</h3><p>Denoising Diffusion Probabilistic Models（DDPM）：</p>
+<ul>
+<li>固定前向过程</li>
+<li>学习反向过程</li>
+</ul>
+<h3 id="前向扩散"><a href="#前向扩散" class="headerlink" title="前向扩散"></a>前向扩散</h3><p><strong>噪声调度</strong>：$\beta_1, \beta_2, …, \beta_T$</p>
+<p>$q(x_t|x_{t-1}) &#x3D; \mathcal{N}(x_t; \sqrt{1-\beta_t}x_{t-1}, \beta_t I)$</p>
+<p><strong>直接跳转</strong>：<br>$x_t &#x3D; \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1-\bar{\alpha}_t}\epsilon$</p>
+<p>其中 $\bar{\alpha}<em>t &#x3D; \prod</em>{i&#x3D;1}^t(1-\beta_i)$。</p>
+<h3 id="反向去噪"><a href="#反向去噪" class="headerlink" title="反向去噪"></a>反向去噪</h3><p>学习去噪网络 $\epsilon_\theta(x_t, t)$：<br>$x_{t-1} &#x3D; \frac{1}{\sqrt{1-\beta_t}}(x_t - \frac{\beta_t}{\sqrt{1-\bar{\alpha}<em>t}}\epsilon</em>\theta(x_t, t)) + \sigma_t z$</p>
+<h3 id="训练目标"><a href="#训练目标" class="headerlink" title="训练目标"></a>训练目标</h3><p><strong>简化目标</strong>：<br>$L &#x3D; \mathbb{E}<em>{t, x_0, \epsilon}[||\epsilon - \epsilon</em>\theta(x_t, t)||^2]$</p>
+<p>预测添加的噪声。</p>
+<h3 id="噪声调度"><a href="#噪声调度" class="headerlink" title="噪声调度"></a>噪声调度</h3><table>
+<thead>
+<tr>
+<th>类型</th>
+<th>公式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>线性</td>
+<td>$\beta_t$线性增长</td>
+</tr>
+<tr>
+<td>余弦</td>
+<td>$\beta_t$余弦调度</td>
+</tr>
+<tr>
+<td>自适应</td>
+<td>根据数据调整</td>
+</tr>
+</tbody></table>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">linear_beta_schedule</span>(<span class="params">timesteps</span>):</span><br><span class="line">    beta_start = <span class="number">0.0001</span></span><br><span class="line">    beta_end = <span class="number">0.02</span></span><br><span class="line">    <span class="keyword">return</span> torch.linspace(beta_start, beta_end, timesteps)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cosine_beta_schedule</span>(<span class="params">timesteps, s=<span class="number">0.008</span></span>):</span><br><span class="line">    steps = timesteps + <span class="number">1</span></span><br><span class="line">    x = torch.linspace(<span class="number">0</span>, timesteps, steps)</span><br><span class="line">    alphas_cumprod = torch.cos(((x / timesteps) + s) / (<span class="number">1</span> + s) * torch.pi * <span class="number">0.5</span>) ** <span class="number">2</span></span><br><span class="line">    alphas_cumprod = alphas_cumprod / alphas_cumprod[<span class="number">0</span>]</span><br><span class="line">    betas = <span class="number">1</span> - (alphas_cumprod[<span class="number">1</span>:] / alphas_cumprod[:-<span class="number">1</span>])</span><br><span class="line">    <span class="keyword">return</span> torch.clip(betas, <span class="number">0.0001</span>, <span class="number">0.9999</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="条件扩散模型"><a href="#条件扩散模型" class="headerlink" title="条件扩散模型"></a>条件扩散模型</h2><h3 id="条件生成"><a href="#条件生成" class="headerlink" title="条件生成"></a>条件生成</h3><p>加入条件信息：<br>$p(x_{t-1}|x_t, c)$</p>
+<h3 id="条件注入方式"><a href="#条件注入方式" class="headerlink" title="条件注入方式"></a>条件注入方式</h3><table>
+<thead>
+<tr>
+<th>方式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输入拼接</td>
+<td>条件与x_t拼接</td>
+</tr>
+<tr>
+<td>条件编码</td>
+<td>条件编码器</td>
+</tr>
+<tr>
+<td>交叉注意力</td>
+<td>注意力注入</td>
+</tr>
+<tr>
+<td>Classifier-free</td>
+<td>无分类器引导</td>
+</tr>
+</tbody></table>
+<h3 id="Classifier-Free-Guidance"><a href="#Classifier-Free-Guidance" class="headerlink" title="Classifier-Free Guidance"></a>Classifier-Free Guidance</h3><p>同时训练条件和无条件模型：<br>$\tilde{\epsilon}<em>\theta &#x3D; \epsilon</em>\theta(x_t, t, c) + s(\epsilon_\theta(x_t, t, c) - \epsilon_\theta(x_t, t))$</p>
+<p><strong>s为引导强度</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">classifier_free_guidance</span>(<span class="params">model, x_t, t, condition, guidance_scale=<span class="number">7.5</span></span>):</span><br><span class="line">    <span class="comment"># 无条件预测</span></span><br><span class="line">    uncond_pred = model(x_t, t, <span class="literal">None</span>)</span><br><span class="line">    <span class="comment"># 条件预测</span></span><br><span class="line">    cond_pred = model(x_t, t, condition)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 引导</span></span><br><span class="line">    <span class="keyword">return</span> uncond_pred + guidance_scale * (cond_pred - uncond_pred)</span><br></pre></td></tr></table></figure>
+
+<h3 id="文本条件扩散"><a href="#文本条件扩散" class="headerlink" title="文本条件扩散"></a>文本条件扩散</h3><p>如Stable Diffusion：</p>
+<ul>
+<li>文本编码器（CLIP）</li>
+<li>交叉注意力注入</li>
+<li>Classifier-free引导</li>
+</ul>
+<h2 id="高效扩散模型"><a href="#高效扩散模型" class="headerlink" title="高效扩散模型"></a>高效扩散模型</h2><h3 id="采样加速"><a href="#采样加速" class="headerlink" title="采样加速"></a>采样加速</h3><p>扩散模型采样慢（需T步）。</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DDIM</td>
+<td>非马尔可夫采样</td>
+</tr>
+<tr>
+<td>DPM-Solver</td>
+<td>高效ODE求解</td>
+</tr>
+<tr>
+<td>跳步采样</td>
+<td>减少步数</td>
+</tr>
+</tbody></table>
+<h3 id="DDIM采样"><a href="#DDIM采样" class="headerlink" title="DDIM采样"></a>DDIM采样</h3><p>非马尔可夫采样，可跳步：<br>$x_{t-1} &#x3D; \sqrt{\bar{\alpha}<em>{t-1}}\hat{x}<em>0 + \sqrt{1-\bar{\alpha}</em>{t-1}}\epsilon</em>\theta(x_t, t)$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">ddim_sample</span>(<span class="params">model, x, steps, eta=<span class="number">0</span></span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">reversed</span>(<span class="built_in">range</span>(steps)):</span><br><span class="line">        t = torch.full((x.size(<span class="number">0</span>),), i)</span><br><span class="line">        </span><br><span class="line">        eps = model(x, t)</span><br><span class="line">        x0_pred = (x - sqrt(<span class="number">1</span> - alpha_bar[t]) * eps) / sqrt(alpha_bar[t])</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> i &gt; <span class="number">0</span>:</span><br><span class="line">            noise = torch.randn_like(x)</span><br><span class="line">            x = sqrt(alpha_bar[i-<span class="number">1</span>]) * x0_pred + \</span><br><span class="line">                sqrt(<span class="number">1</span> - alpha_bar[i-<span class="number">1</span>] - eta**<span class="number">2</span> * sigma[i]**<span class="number">2</span>) * eps + \</span><br><span class="line">                eta * sigma[i] * noise</span><br><span class="line">    <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+
+<h3 id="潜在扩散模型（LDM）"><a href="#潜在扩散模型（LDM）" class="headerlink" title="潜在扩散模型（LDM）"></a>潜在扩散模型（LDM）</h3><p>在潜在空间扩散：</p>
+<ul>
+<li>先编码到低维空间</li>
+<li>在潜在空间扩散</li>
+<li>再解码回像素空间</li>
+</ul>
+<p><strong>优势</strong>：计算效率高。</p>
+<p>Stable Diffusion采用此架构。</p>
+<h2 id="扩散模型架构"><a href="#扩散模型架构" class="headerlink" title="扩散模型架构"></a>扩散模型架构</h2><h3 id="U-Net去噪网络"><a href="#U-Net去噪网络" class="headerlink" title="U-Net去噪网络"></a>U-Net去噪网络</h3><p>典型去噪网络：</p>
+<ul>
+<li>U-Net结构</li>
+<li>时间步嵌入</li>
+<li>自注意力&#x2F;交叉注意力</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">UNet</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, in_channels, out_channels, time_dim</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        </span><br><span class="line">        <span class="variable language_">self</span>.time_mlp = nn.Sequential(</span><br><span class="line">            SinusoidalPositionEmbeddings(time_dim),</span><br><span class="line">            nn.Linear(time_dim, time_dim),</span><br><span class="line">            nn.ReLU()</span><br><span class="line">        )</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 下采样</span></span><br><span class="line">        <span class="variable language_">self</span>.conv1 = ConvBlock(in_channels, <span class="number">64</span>, time_dim)</span><br><span class="line">        <span class="variable language_">self</span>.conv2 = ConvBlock(<span class="number">64</span>, <span class="number">128</span>, time_dim)</span><br><span class="line">        <span class="variable language_">self</span>.conv3 = ConvBlock(<span class="number">128</span>, <span class="number">256</span>, time_dim)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 上采样</span></span><br><span class="line">        <span class="variable language_">self</span>.up1 = ConvBlock(<span class="number">256</span>, <span class="number">128</span>, time_dim)</span><br><span class="line">        <span class="variable language_">self</span>.up2 = ConvBlock(<span class="number">128</span>, <span class="number">64</span>, time_dim)</span><br><span class="line">        <span class="variable language_">self</span>.up3 = ConvBlock(<span class="number">64</span>, out_channels, time_dim)</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x, t</span>):</span><br><span class="line">        t_emb = <span class="variable language_">self</span>.time_mlp(t)</span><br><span class="line">        </span><br><span class="line">        d1 = <span class="variable language_">self</span>.conv1(x, t_emb)</span><br><span class="line">        d2 = <span class="variable language_">self</span>.conv2(d1, t_emb)</span><br><span class="line">        d3 = <span class="variable language_">self</span>.conv3(d2, t_emb)</span><br><span class="line">        </span><br><span class="line">        u1 = <span class="variable language_">self</span>.up1(d3, t_emb)</span><br><span class="line">        u2 = <span class="variable language_">self</span>.up2(u1 + d2, t_emb)</span><br><span class="line">        u3 = <span class="variable language_">self</span>.up3(u2 + d1, t_emb)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> u3</span><br></pre></td></tr></table></figure>
+
+<h3 id="时间步嵌入"><a href="#时间步嵌入" class="headerlink" title="时间步嵌入"></a>时间步嵌入</h3><p>将时间步编码为向量：<br>$PE(t) &#x3D; [\sin(t&#x2F;10000^{2i&#x2F;d}), \cos(t&#x2F;10000^{2i&#x2F;d})]$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SinusoidalPositionEmbeddings</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, dim</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="variable language_">self</span>.dim = dim</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, time</span>):</span><br><span class="line">        device = time.device</span><br><span class="line">        half_dim = <span class="variable language_">self</span>.dim // <span class="number">2</span></span><br><span class="line">        embeddings = math.log(<span class="number">10000</span>) / (half_dim - <span class="number">1</span>)</span><br><span class="line">        embeddings = torch.exp(torch.arange(half_dim, device=device) * -embeddings)</span><br><span class="line">        embeddings = time[:, <span class="literal">None</span>] * embeddings[<span class="literal">None</span>, :]</span><br><span class="line">        embeddings = torch.cat((embeddings.sin(), embeddings.cos()), dim=-<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">return</span> embeddings</span><br></pre></td></tr></table></figure>
+
+<h3 id="注意力机制"><a href="#注意力机制" class="headerlink" title="注意力机制"></a>注意力机制</h3><p>在U-Net中加入：</p>
+<ul>
+<li>自注意力：处理全局信息</li>
+<li>交叉注意力：注入条件</li>
+</ul>
+<h2 id="案例实践"><a href="#案例实践" class="headerlink" title="案例实践"></a>案例实践</h2><h3 id="DDPM实现"><a href="#DDPM实现" class="headerlink" title="DDPM实现"></a>DDPM实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">GaussianDiffusion</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model, timesteps=<span class="number">1000</span>, beta_schedule=<span class="string">&#x27;linear&#x27;</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.model = model</span><br><span class="line">        <span class="variable language_">self</span>.timesteps = timesteps</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> beta_schedule == <span class="string">&#x27;linear&#x27;</span>:</span><br><span class="line">            betas = torch.linspace(<span class="number">0.0001</span>, <span class="number">0.02</span>, timesteps)</span><br><span class="line">        </span><br><span class="line">        alphas = <span class="number">1.0</span> - betas</span><br><span class="line">        alphas_cumprod = torch.cumprod(alphas, dim=<span class="number">0</span>)</span><br><span class="line">        </span><br><span class="line">        <span class="variable language_">self</span>.betas = betas</span><br><span class="line">        <span class="variable language_">self</span>.alphas = alphas</span><br><span class="line">        <span class="variable language_">self</span>.alphas_cumprod = alphas_cumprod</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">q_sample</span>(<span class="params">self, x0, t, noise=<span class="literal">None</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;前向扩散&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> noise <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">            noise = torch.randn_like(x0)</span><br><span class="line">        </span><br><span class="line">        sqrt_alphas_cumprod_t = <span class="variable language_">self</span>.alphas_cumprod[t]</span><br><span class="line">        sqrt_one_minus_alphas_cumprod_t = (<span class="number">1</span> - <span class="variable language_">self</span>.alphas_cumprod[t])</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> sqrt_alphas_cumprod_t * x0 + sqrt_one_minus_alphas_cumprod_t * noise</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">p_losses</span>(<span class="params">self, x0, t</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;训练损失&quot;&quot;&quot;</span></span><br><span class="line">        noise = torch.randn_like(x0)</span><br><span class="line">        x_noisy = <span class="variable language_">self</span>.q_sample(x0, t, noise)</span><br><span class="line">        </span><br><span class="line">        predicted_noise = <span class="variable language_">self</span>.model(x_noisy, t)</span><br><span class="line">        loss = F.mse_loss(noise, predicted_noise)</span><br><span class="line">        <span class="keyword">return</span> loss</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">p_sample</span>(<span class="params">self, x, t</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;单步去噪&quot;&quot;&quot;</span></span><br><span class="line">        betas_t = <span class="variable language_">self</span>.betas[t]</span><br><span class="line">        sqrt_one_minus_alphas_cumprod_t = (<span class="number">1</span> - <span class="variable language_">self</span>.alphas_cumprod[t])</span><br><span class="line">        sqrt_recip_alphas_t = <span class="number">1.0</span> / <span class="variable language_">self</span>.alphas[t]</span><br><span class="line">        </span><br><span class="line">        predicted_noise = <span class="variable language_">self</span>.model(x, t)</span><br><span class="line">        </span><br><span class="line">        model_mean = sqrt_recip_alphas_t * (x - betas_t * predicted_noise / sqrt_one_minus_alphas_cumprod_t)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> t &gt; <span class="number">0</span>:</span><br><span class="line">            noise = torch.randn_like(x)</span><br><span class="line">            model_std = betas_t.sqrt()</span><br><span class="line">            <span class="keyword">return</span> model_mean + model_std * noise</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">return</span> model_mean</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sample</span>(<span class="params">self, shape</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;完整采样&quot;&quot;&quot;</span></span><br><span class="line">        x = torch.randn(shape)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> t <span class="keyword">in</span> <span class="built_in">reversed</span>(<span class="built_in">range</span>(<span class="variable language_">self</span>.timesteps)):</span><br><span class="line">            x = <span class="variable language_">self</span>.p_sample(x, t)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用</span></span><br><span class="line">model = UNet(in_channels=<span class="number">1</span>, out_channels=<span class="number">1</span>, time_dim=<span class="number">256</span>)</span><br><span class="line">diffusion = GaussianDiffusion(model)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练</span></span><br><span class="line">optimizer = torch.optim.Adam(model.parameters())</span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(epochs):</span><br><span class="line">    <span class="keyword">for</span> x0 <span class="keyword">in</span> train_loader:</span><br><span class="line">        t = torch.randint(<span class="number">0</span>, diffusion.timesteps, (x0.size(<span class="number">0</span>),))</span><br><span class="line">        loss = diffusion.p_losses(x0, t)</span><br><span class="line">        </span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br></pre></td></tr></table></figure>
+
+<h3 id="简化扩散模型"><a href="#简化扩散模型" class="headerlink" title="简化扩散模型"></a>简化扩散模型</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SimpleDiffusion</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model, steps=<span class="number">100</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="variable language_">self</span>.model = model</span><br><span class="line">        <span class="variable language_">self</span>.steps = steps</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">add_noise</span>(<span class="params">self, x, t</span>):</span><br><span class="line">        alpha = <span class="number">1</span> - t / <span class="variable language_">self</span>.steps</span><br><span class="line">        <span class="keyword">return</span> alpha * x + (<span class="number">1</span> - alpha) * torch.randn_like(x)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;训练：预测噪声&quot;&quot;&quot;</span></span><br><span class="line">        t = torch.randint(<span class="number">1</span>, <span class="variable language_">self</span>.steps, (x.size(<span class="number">0</span>),))</span><br><span class="line">        noisy_x = <span class="variable language_">self</span>.add_noise(x, t)</span><br><span class="line">        predicted_noise = <span class="variable language_">self</span>.model(noisy_x, t)</span><br><span class="line">        <span class="keyword">return</span> predicted_noise</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">generate</span>(<span class="params">self, batch_size</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;生成&quot;&quot;&quot;</span></span><br><span class="line">        x = torch.randn(batch_size, *<span class="variable language_">self</span>.input_shape)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> t <span class="keyword">in</span> <span class="built_in">reversed</span>(<span class="built_in">range</span>(<span class="number">1</span>, <span class="variable language_">self</span>.steps)):</span><br><span class="line">            t_batch = torch.full((batch_size,), t)</span><br><span class="line">            noise_pred = <span class="variable language_">self</span>.model(x, t_batch)</span><br><span class="line">            </span><br><span class="line">            alpha = <span class="number">1</span> - t / <span class="variable language_">self</span>.steps</span><br><span class="line">            x = (x - (<span class="number">1</span> - alpha) * noise_pred) / alpha</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> t &gt; <span class="number">1</span>:</span><br><span class="line">                x = x + torch.randn_like(x) * <span class="number">0.1</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+
+<h3 id="条件扩散实现"><a href="#条件扩散实现" class="headerlink" title="条件扩散实现"></a>条件扩散实现</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ConditionalDiffusion</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, model, timesteps=<span class="number">1000</span></span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="variable language_">self</span>.model = model</span><br><span class="line">        <span class="variable language_">self</span>.timesteps = timesteps</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x, condition, t</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;条件去噪&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">self</span>.model(x, t, condition)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">train_step</span>(<span class="params">self, x0, condition</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;训练&quot;&quot;&quot;</span></span><br><span class="line">        t = torch.randint(<span class="number">0</span>, <span class="variable language_">self</span>.timesteps, (x0.size(<span class="number">0</span>),))</span><br><span class="line">        noise = torch.randn_like(x0)</span><br><span class="line">        x_noisy = <span class="variable language_">self</span>.q_sample(x0, t, noise)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 随机丢弃条件（classifier-free）</span></span><br><span class="line">        drop_mask = torch.rand(x0.size(<span class="number">0</span>)) &lt; <span class="number">0.1</span></span><br><span class="line">        condition[drop_mask] = <span class="literal">None</span></span><br><span class="line">        </span><br><span class="line">        noise_pred = <span class="variable language_">self</span>.model(x_noisy, t, condition)</span><br><span class="line">        <span class="keyword">return</span> F.mse_loss(noise, noise_pred)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sample</span>(<span class="params">self, condition, guidance_scale=<span class="number">7.5</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;条件生成&quot;&quot;&quot;</span></span><br><span class="line">        x = torch.randn(condition.size(<span class="number">0</span>), *<span class="variable language_">self</span>.shape)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> t <span class="keyword">in</span> <span class="built_in">reversed</span>(<span class="built_in">range</span>(<span class="variable language_">self</span>.timesteps)):</span><br><span class="line">            <span class="comment"># 无条件</span></span><br><span class="line">            uncond_pred = <span class="variable language_">self</span>.model(x, t, <span class="literal">None</span>)</span><br><span class="line">            <span class="comment"># 条件</span></span><br><span class="line">            cond_pred = <span class="variable language_">self</span>.model(x, t, condition)</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 引导</span></span><br><span class="line">            noise_pred = uncond_pred + guidance_scale * (cond_pred - uncond_pred)</span><br><span class="line">            x = <span class="variable language_">self</span>.p_sample(x, t, noise_pred)</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+
+<h3 id="图像生成示例"><a href="#图像生成示例" class="headerlink" title="图像生成示例"></a>图像生成示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> diffusers <span class="keyword">import</span> DDPMPipeline</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用预训练模型</span></span><br><span class="line">pipeline = DDPMPipeline.from_pretrained(<span class="string">&quot;google/ddpm-cifar10-32&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成图像</span></span><br><span class="line">images = pipeline(batch_size=<span class="number">4</span>).images</span><br><span class="line"></span><br><span class="line"><span class="comment"># 保存</span></span><br><span class="line"><span class="keyword">for</span> i, img <span class="keyword">in</span> <span class="built_in">enumerate</span>(images):</span><br><span class="line">    img.save(<span class="string">f&quot;generated_<span class="subst">&#123;i&#125;</span>.png&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Stable-Diffusion使用"><a href="#Stable-Diffusion使用" class="headerlink" title="Stable Diffusion使用"></a>Stable Diffusion使用</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> diffusers <span class="keyword">import</span> StableDiffusionPipeline</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载模型</span></span><br><span class="line">pipeline = StableDiffusionPipeline.from_pretrained(</span><br><span class="line">    <span class="string">&quot;CompVis/stable-diffusion-v1-4&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 文本生成图像</span></span><br><span class="line">image = pipeline(<span class="string">&quot;A beautiful sunset over mountains&quot;</span>).images[<span class="number">0</span>]</span><br><span class="line">image.save(<span class="string">&quot;sunset.png&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 多张</span></span><br><span class="line">images = pipeline([<span class="string">&quot;A cat&quot;</span>, <span class="string">&quot;A dog&quot;</span>], num_images_per_prompt=<span class="number">2</span>).images</span><br></pre></td></tr></table></figure>
+
+<h2 id="扩散模型应用"><a href="#扩散模型应用" class="headerlink" title="扩散模型应用"></a>扩散模型应用</h2><h3 id="图像生成"><a href="#图像生成" class="headerlink" title="图像生成"></a>图像生成</h3><table>
+<thead>
+<tr>
+<th>应用</th>
+<th>模型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>文生图</td>
+<td>Stable Diffusion, DALL-E</td>
+</tr>
+<tr>
+<td>图生图</td>
+<td>img2img</td>
+</tr>
+<tr>
+<td>图像修复</td>
+<td>Inpainting</td>
+</tr>
+<tr>
+<td>超分辨率</td>
+<td>扩散超分</td>
+</tr>
+</tbody></table>
+<h3 id="其他生成"><a href="#其他生成" class="headerlink" title="其他生成"></a>其他生成</h3><table>
+<thead>
+<tr>
+<th>应用</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>音频生成</td>
+<td>DiffWave, AudioLDM</td>
+</tr>
+<tr>
+<td>视频生成</td>
+<td>视频扩散模型</td>
+</tr>
+<tr>
+<td>3D生成</td>
+<td>3D扩散模型</td>
+</tr>
+</tbody></table>
+<h3 id="应用案例"><a href="#应用案例" class="headerlink" title="应用案例"></a>应用案例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 图像修复</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">inpaint</span>(<span class="params">pipeline, image, mask, prompt</span>):</span><br><span class="line">    result = pipeline(</span><br><span class="line">        prompt=prompt,</span><br><span class="line">        image=image,</span><br><span class="line">        mask_image=mask,</span><br><span class="line">        num_inference_steps=<span class="number">50</span></span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> result.images[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 图生图</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">img2img</span>(<span class="params">pipeline, init_image, prompt, strength=<span class="number">0.75</span></span>):</span><br><span class="line">    result = pipeline(</span><br><span class="line">        prompt=prompt,</span><br><span class="line">        image=init_image,</span><br><span class="line">        strength=strength</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> result.images[<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="扩散模型的优缺点"><a href="#扩散模型的优缺点" class="headerlink" title="扩散模型的优缺点"></a>扩散模型的优缺点</h2><h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><table>
+<thead>
+<tr>
+<th>优点</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>高质量生成</td>
+<td>生成质量优秀</td>
+</tr>
+<tr>
+<td>训练稳定</td>
+<td>无对抗不稳定</td>
+</tr>
+<tr>
+<td>理论清晰</td>
+<td>概率框架明确</td>
+</tr>
+<tr>
+<td>灵活控制</td>
+<td>易加条件</td>
+</tr>
+</tbody></table>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><table>
+<thead>
+<tr>
+<th>缺点</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>采样慢</td>
+<td>需多步迭代</td>
+</tr>
+<tr>
+<td>计算成本</td>
+<td>推理时间长</td>
+</tr>
+<tr>
+<td>内存占用</td>
+<td>高分辨率需大内存</td>
+</tr>
+</tbody></table>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>扩散模型是重要的生成模型。核心内容包括：</p>
+<ul>
+<li>前向扩散：逐步添加噪声</li>
+<li>反向去噪：逐步恢复数据</li>
+<li>DDPM：基础扩散算法</li>
+<li>条件扩散：Classifier-free引导</li>
+<li>高效采样：DDIM、DPM-Solver</li>
+<li>U-Net架构：去噪网络设计</li>
+</ul>
+<p>扩散模型生成质量高，是当前主流生成技术。</p>
+<h2 id="延伸阅读"><a href="#延伸阅读" class="headerlink" title="延伸阅读"></a>延伸阅读</h2><ul>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/vae/">变分自编码器</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/gan/">生成对抗网络</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/neural-network-intro/">神经网络入门</a></li>
+<li><a href="/2026/05/10/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/probability-theory/">概率论基础</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://keeganjin.github.io/2026/01/14/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/diffusion-models/" data-id="cuid8e-QKYNhqzCUm7W9emqQQ" data-title="扩散模型详解" class="article-share-link"><span class="fa fa-share">分享</span></a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/" rel="tag">扩散模型</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag">机器学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" rel="tag">生成模型</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2026/01/17/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/rl-introduction/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          强化学习基础
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2026/01/11/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/vae/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">变分自编码器（VAE）</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/">技术文档</a><span class="category-list-count">77</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/Agent/">Agent</a><span class="category-list-count">27</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a><span class="category-list-count">50</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E9%9A%8F%E7%AC%94/%E4%BA%BA%E7%94%9F%E7%9A%84%E5%A5%A5%E5%BE%B7%E8%B5%9B/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/LM-2-%E6%A8%A1%E5%9E%8B%E6%9E%B6%E6%9E%84/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/18/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%A4%9A%E6%A8%A1%E6%80%81/">多模态</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/17/zh-CN/%E9%9A%8F%E7%AC%94/blog-redesign/">写在博客重构之后</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/13/zh-CN/%E6%8A%80%E6%9C%AF%E6%96%87%E6%A1%A3/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E6%A0%91%E6%A8%A1%E5%9E%8B/">树模型</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/05/">五月 2026</a><span class="archive-list-count">13</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/04/">四月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/03/">三月 2026</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/02/">二月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2026/01/">一月 2026</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/12/">十二月 2025</a><span class="archive-list-count">10</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/11/">十一月 2025</a><span class="archive-list-count">11</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/10/">十月 2025</a><span class="archive-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        All content licensed under CC BY 4.0
+      
+      &copy; 2026 That Jin<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

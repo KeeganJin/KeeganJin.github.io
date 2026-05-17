@@ -1,6 +1,6 @@
 ---
 title: 生成对抗网络（GAN）
-date: 2026-04-23
+date: 2026-01-08
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 深度学习, 生成模型, GAN]

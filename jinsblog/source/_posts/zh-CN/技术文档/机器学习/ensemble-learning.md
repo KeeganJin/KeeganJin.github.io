@@ -1,6 +1,6 @@
 ---
 title: 集成学习概述
-date: 2026-04-20
+date: 2025-11-10
 categories: [技术文档, 机器学习]
 lang: zh-CN
 tags: [机器学习, 集成学习, Boosting]
