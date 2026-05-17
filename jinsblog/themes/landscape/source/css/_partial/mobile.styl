@@ -82,6 +82,76 @@
       background: color-link
       color: #FFFFFF
 
+// Mobile nav widgets (侧边栏内容在移动端导航中)
+@media mq-mobile
+  .mobile-nav-widgets
+    padding: 20px
+
+    .widget-wrap
+      margin: 16px 0
+      &:first-child
+        margin-top: 24px
+
+    .widget-title
+      font-family: font-serif
+      font-size: 13px
+      font-weight: 700
+      color: #1A202C
+      margin-bottom: 10px
+      padding-bottom: 6px
+      border-bottom: 2px solid color-link
+
+    .widget
+      font-size: 13px
+
+      a
+        display: block
+        padding: 8px 0
+        color: color-default
+        text-decoration: none
+        transition: color 0.3s ease
+        &:hover
+          color: color-link
+
+      ul, ol
+        list-style: none
+        margin: 0
+        padding: 0
+
+    // Category in mobile nav
+    .category-list
+      .category-list-item
+        margin-bottom: 4px
+
+      .category-list-link
+        font-size: 13px
+        padding: 8px 0
+
+      .category-list-child
+        padding-left: 12px
+        border-left: 1px solid color-border
+        margin-top: 4px
+
+    // Recent posts in mobile nav
+    .recent-posts-list
+      .recent-posts-item
+        margin-bottom: 8px
+
+      .recent-posts-link
+        font-family: font-serif
+        font-size: 13px
+        padding: 6px 0
+        border-bottom: 1px solid color-border
+
+    // Archive in mobile nav
+    .archive-list
+      .archive-list-item
+        margin-bottom: 4px
+
+      .archive-list-link
+        font-size: 13px
+        padding: 6px 0
+
 @media mq-tablet
   .article-inner
     border-radius: radius-md

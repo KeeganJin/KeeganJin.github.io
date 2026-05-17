@@ -1573,6 +1573,76 @@ pre .javascript .function {
     color: #fff;
   }
 }
+@media screen and (max-width: 479px) {
+  .mobile-nav-widgets {
+    padding: 20px;
+  }
+  .mobile-nav-widgets .widget-wrap {
+    margin: 16px 0;
+  }
+  .mobile-nav-widgets .widget-wrap:first-child {
+    margin-top: 24px;
+  }
+  .mobile-nav-widgets .widget-title {
+    font-family: "Noto Serif SC", Georgia, "Times New Roman", serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #b87d4b;
+  }
+  .mobile-nav-widgets .widget {
+    font-size: 13px;
+  }
+  .mobile-nav-widgets .widget a {
+    display: block;
+    padding: 8px 0;
+    color: #2d3748;
+    text-decoration: none;
+    -webkit-transition: color 0.3s ease;
+    -moz-transition: color 0.3s ease;
+    -ms-transition: color 0.3s ease;
+    transition: color 0.3s ease;
+  }
+  .mobile-nav-widgets .widget a:hover {
+    color: #b87d4b;
+  }
+  .mobile-nav-widgets .widget ul,
+  .mobile-nav-widgets .widget ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .mobile-nav-widgets .category-list .category-list-item {
+    margin-bottom: 4px;
+  }
+  .mobile-nav-widgets .category-list .category-list-link {
+    font-size: 13px;
+    padding: 8px 0;
+  }
+  .mobile-nav-widgets .category-list .category-list-child {
+    padding-left: 12px;
+    border-left: 1px solid #e2e8f0;
+    margin-top: 4px;
+  }
+  .mobile-nav-widgets .recent-posts-list .recent-posts-item {
+    margin-bottom: 8px;
+  }
+  .mobile-nav-widgets .recent-posts-list .recent-posts-link {
+    font-family: "Noto Serif SC", Georgia, "Times New Roman", serif;
+    font-size: 13px;
+    padding: 6px 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .mobile-nav-widgets .archive-list .archive-list-item {
+    margin-bottom: 4px;
+  }
+  .mobile-nav-widgets .archive-list .archive-list-link {
+    font-size: 13px;
+    padding: 6px 0;
+  }
+}
 @media screen and (min-width: 480px) and (max-width: 767px) {
   .article-inner {
     border-radius: 8px;
