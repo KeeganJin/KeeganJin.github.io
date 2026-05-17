@@ -30,7 +30,9 @@
       "Bash(sed -i 's/date: 2026-05-08/date: 2026-05-04/' OpenClaw拆解.md)",
       "Bash(sed -i 's/date: 2026-05-14/date: 2026-02-05/' LM-2-模型架构.md)",
       "Bash(sed -i 's/date: 2026-05-17/date: 2026-05-10/' 多模态.md)",
-      "Bash(sed -i 's/date: 2026-05-11/date: 2026-05-13/' 树模型.md)"
+      "Bash(sed -i 's/date: 2026-05-11/date: 2026-05-13/' 树模型.md)",
+      "Bash(hexo clean *)",
+      "Bash(hexo generate *)"
     ]
   }
 }
